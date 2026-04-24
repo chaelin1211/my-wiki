@@ -36,3 +36,10 @@ type: log
 - 위키 프로젝트 폴더 생성: projects/kacportal
 - 목표: KAC 공항공사 통합데이터플랫폼 포털 웹 애플리케이션
 - 스택: java, spring, egovframe, oracle-db, tomcat
+
+## [2026-04-20] session | kacportal — 법령정보 URL 더블 인코딩 픽스 & 공지사항 팝업 내비게이션 수정
+
+- 법령정보 첨부파일 다운로드 URL 더블 프리픽스/더블 인코딩 수정 (`LawSrchController.java`)
+- 공지사항 팝업 POST → GET 방식 변경, 내부/외부 링크 분기 추가 (`main.jsp`)
+- 이슈 기록: law-url-double-prefix, notice-popup-post-navigation
+- 지식 기록: knowledge/troubleshooting/spring-url-double-encoding

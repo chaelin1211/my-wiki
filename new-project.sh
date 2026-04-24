@@ -70,7 +70,7 @@ echo ""
 echo "📁 위키 프로젝트 생성 중..."
 echo ""
 
-mkdir -p "$WIKI_PROJECT"/{decisions,sessions,issues,raw}
+mkdir -p "$WIKI_PROJECT"/{decisions,sessions,issues,raw,meetings}
 
 # ── overview.md ───────────────────────────────────────────────
 if [ ! -f "$WIKI_PROJECT/overview.md" ]; then
@@ -360,6 +360,35 @@ EOF
 echo "  ✅ issues/000-template.md"
 fi
 
+# ── meetings/000-template.md ──────────────────────────────────
+if [ ! -f "$WIKI_PROJECT/meetings/000-template.md" ]; then
+cat > "$WIKI_PROJECT/meetings/000-template.md" << EOF
+---
+type: meeting
+project: $PROJECT_NAME
+date: YYYY-MM-DD
+attendees: []
+---
+
+# YYYY-MM-DD — 미팅 제목
+
+## 안건
+
+-
+
+## 결정사항
+
+-
+
+## 액션아이템
+
+- [ ] 담당자 — 내용
+
+## 기타 논의
+EOF
+echo "  ✅ meetings/000-template.md"
+fi
+
 # ── raw/README.md ─────────────────────────────────────────────
 if [ ! -f "$WIKI_PROJECT/raw/README.md" ]; then
 cat > "$WIKI_PROJECT/raw/README.md" << EOF
@@ -405,6 +434,24 @@ if [ -f "$LOG" ]; then
         [ -n "$STACK_INPUT" ] && echo "- 스택: $STACK_INPUT"
     } >> "$LOG"
     echo "📝 _meta/log.md 갱신"
+fi
+
+INDEX="$WIKI_ROOT/_meta/index.md"
+if [ -f "$INDEX" ]; then
+    STACK_DISPLAY=$(echo "$STACK_INPUT" | sed 's/,/, /g')
+    [ -z "$STACK_DISPLAY" ] && STACK_DISPLAY="—"
+    NEW_ROW="| [[projects/${PROJECT_NAME}/overview\\|${PROJECT_NAME}]] | active | ${STACK_DISPLAY} | ${TODAY} |"
+    awk -v new="$NEW_ROW" '
+        /^\| \[\[projects\// { last=NR }
+        { lines[NR]=$0 }
+        END {
+            for(i=1;i<=NR;i++) {
+                print lines[i]
+                if(i==last) print new
+            }
+        }
+    ' "$INDEX" > "${INDEX}.tmp" && mv "${INDEX}.tmp" "$INDEX"
+    echo "📝 _meta/index.md 갱신"
 fi
 
 echo ""
