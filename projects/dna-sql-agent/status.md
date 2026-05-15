@@ -1,7 +1,7 @@
 ---
 type: project-status
 project: dna-sql-agent
-updated: 2026-05-14
+updated: 2026-05-15
 phase: active
 ---
 
@@ -20,10 +20,16 @@ phase: active
 - [x] UI 작업 요소들 리스트업 (시각화 툴 수정 - chart 종류 추가 및 종류 선택 llm에게 일임)
 - [x] few-shot 활용 전략 확정 — 비즈니스 로직/도메인 지식 제공용 (document RAG 구축 대신)
 - [x] UI 개선 목표 방향 확정 — 오류 없이 동작, 한글화 우선(i18n 미적용), 관리자 페이지 포함
+- [x] 웹 서버 배포
 
 ## 진행 중
 
-- [ ] 
+- [ ] SQL Guard: group 별 테이블 접근 제한 처리 (현재 json 고정 데이터 → DB 연동, 화면·로직 변경 필요)
+- [ ] SQL Guard: 관리자 페이지 수정 기능 연동
+- [ ] SQL Guard: RAG 테이블 추출 시 프롬프트에 테이블 제약 포함 (top 테이블 사전 필터링)
+- [ ] bug fix: 채팅 생성 시 쿼리 수정 (시스템 조회 시 커넥션 매핑 확인)
+- [ ] bug fix: 커넥션 목록 inactive 상태도 목록에 표시
+- [ ] 채팅 목록: 대화 저장 시 tool 미사용·텍스트만 오는 경우 저장 안 되는 버그
 
 ## 다음 할 일
 
