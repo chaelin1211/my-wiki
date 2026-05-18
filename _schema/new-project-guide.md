@@ -28,39 +28,14 @@ projects/{project-name}/
 ├── architecture.md
 ├── status.md
 ├── decisions/000-template.md
+├── meetings/000-template.md    ← 생성일 기준 날짜·요일 자동 삽입
+│   └── old/
 ├── sessions/000-template.md
 ├── issues/000-template.md
 └── raw/README.md
 ```
 
-## 2. meetings/ 폴더 수동 추가
-
-> **스크립트가 생성하지 않으므로 직접 추가해야 한다.**
-
-```bash
-mkdir -p projects/{project-name}/meetings/old
-```
-
-최종 구조:
-
-```
-projects/{project-name}/
-├── overview.md              ← 프로젝트 진입점 (목표·스택·링크 모음)
-├── architecture.md          ← 시스템 구조·데이터 흐름·외부 의존성
-├── status.md                ← 현재 상태 (DONE / ING / TODO / 블로커)
-├── decisions/               ← 의사결정 기록 (ADR)
-│   └── 000-template.md
-├── meetings/                ← 회의록
-│   └── old/                 ← 정리 전 원본 메모 보관
-├── sessions/                ← Claude Code 작업 세션 로그
-│   └── 000-template.md
-├── issues/                  ← 트러블슈팅 기록
-│   └── 000-template.md
-└── raw/                     ← 원본 자료 (LLM 수정 금지)
-    └── README.md
-```
-
-## 3. 각 파일 역할
+## 2. 각 파일 역할
 
 ### overview.md
 프로젝트의 **진입점**. 목표·스택·주요 의사결정 링크를 한 곳에 모은다.
@@ -126,7 +101,7 @@ Claude Code 작업 세션 단위로 기록. 무엇을 왜 했는지, 배운 것,
 ### raw/
 **LLM이 수정하지 않는다.** 원본 자료(요구사항 문서, 스크린샷, 외부 참고 자료)를 보관.
 
-## 4. 스킬 연동
+## 3. 스킬 연동
 
 | 스킬 | 트리거 | 동작 |
 |------|--------|------|
@@ -134,12 +109,11 @@ Claude Code 작업 세션 단위로 기록. 무엇을 왜 했는지, 배운 것,
 | `/wiki-weekly-rollover` | 매주 월요일 | 직전 주 ING·TODO → 이번 주 주간보고 이관 |
 | `/wiki-meeting-sync` | 수동 | 오늘 날짜 회의록 → status.md 갱신 |
 
-## 5. 체크리스트
+## 4. 체크리스트
 
 새 프로젝트 생성 후 확인:
 
 - [ ] `./new-project.sh` 실행 완료
-- [ ] `meetings/`, `meetings/old/` 폴더 생성
 - [ ] `overview.md` 목표·스택 채움
 - [ ] `architecture.md` 시스템 개요 초안 작성
 - [ ] `status.md` 초기 TODO 작성

@@ -8,6 +8,11 @@ set -e
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 TODAY=$(date +%Y-%m-%d)
+DAY_NUM=$(date +%u)
+case $DAY_NUM in
+  1) DAY_KR="월" ;; 2) DAY_KR="화" ;; 3) DAY_KR="수" ;;
+  4) DAY_KR="목" ;; 5) DAY_KR="금" ;; 6) DAY_KR="토" ;; 7) DAY_KR="일" ;;
+esac
 
 # ── wiki config 읽기 ──────────────────────────────────────────
 
@@ -364,11 +369,11 @@ cat > "$WIKI_PROJECT/meetings/000-template.md" << EOF
 ---
 type: meeting
 project: $PROJECT_NAME
-date: YYYY-MM-DD
+date: $TODAY
 attendees: []
 ---
 
-# YYYY-MM-DD (요일) — 미팅 제목
+# $TODAY ($DAY_KR) — 미팅 제목
 
 ## 안건
 
