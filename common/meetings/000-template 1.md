@@ -5,7 +5,7 @@ date: YYYY-MM-DD
 attendees: []
 ---
 
-# YYYY-MM-DD — 미팅 제목
+# YYYY-MM-DD (요일) — 미팅 제목
 
 ## 안건
 

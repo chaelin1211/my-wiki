@@ -89,6 +89,7 @@ projects/{project-name}/
 
 ### meetings/
 파일명: `YYYY-MM-DD 회의 제목.md`
+제목(H1): `# YYYY-MM-DD (요일) — 회의 제목`
 
 **wiki-meeting-sync** 스킬이 오늘 날짜 파일을 자동으로 감지해 `status.md`에 반영한다.
 
