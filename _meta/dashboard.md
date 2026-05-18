@@ -7,7 +7,7 @@ type: dashboard
 ## 활성 프로젝트
 
 ```dataview
-TABLE status, stack, updated
+TABLE project AS "프로젝트", goal AS "목표", stack, updated AS "갱신"
 FROM "projects"
 WHERE type = "project-overview" AND status = "active"
 SORT updated DESC
