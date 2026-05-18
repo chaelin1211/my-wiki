@@ -28,7 +28,7 @@ projects/{project-name}/
 ├── architecture.md
 ├── status.md
 ├── decisions/000-template.md
-├── meetings/000-template.md    ← 생성일 기준 날짜·요일 자동 삽입
+├── meetings/_template.md    ← 생성일 기준 날짜·요일 자동 삽입
 │   └── old/
 ├── sessions/000-template.md
 ├── issues/000-template.md

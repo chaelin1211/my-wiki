@@ -364,8 +364,8 @@ echo "  ✅ issues/000-template.md"
 fi
 
 # ── meetings/000-template.md ──────────────────────────────────
-if [ ! -f "$WIKI_PROJECT/meetings/000-template.md" ]; then
-cat > "$WIKI_PROJECT/meetings/000-template.md" << EOF
+if [ ! -f "$WIKI_PROJECT/meetings/_template.md" ]; then
+cat > "$WIKI_PROJECT/meetings/_template.md" << EOF
 ---
 type: meeting
 project: $PROJECT_NAME
@@ -389,7 +389,7 @@ attendees: []
 
 ## 기타 논의
 EOF
-echo "  ✅ meetings/000-template.md"
+echo "  ✅ meetings/_template.md"
 fi
 
 # ── raw/README.md ─────────────────────────────────────────────
