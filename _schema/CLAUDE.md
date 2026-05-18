@@ -50,6 +50,8 @@ projects/{project-name}/
 ├── architecture.md          ← 기술 스택, 구조 결정 종합
 ├── status.md                ← 현재 상태, 다음 할 일
 ├── decisions/               ← ADR (NNN-제목.md)
+├── meetings/                ← 회의록 (YYYY-MM-DD 제목.md)
+│   └── old/                 ← 정리 전 원본 메모 보관
 ├── sessions/                ← 세션 로그 (YYYY-MM-DD-주제.md)
 ├── issues/                  ← 문제 해결 기록
 └── raw/                     ← 프로젝트 전용 원본·스냅샷
