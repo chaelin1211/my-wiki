@@ -1,7 +1,7 @@
 ---
 type: project-status
 project: dna-sql-agent
-updated: 2026-05-15
+updated: 2026-05-18
 phase: active
 ---
 
@@ -21,6 +21,7 @@ phase: active
 - [x] few-shot 활용 전략 확정 — 비즈니스 로직/도메인 지식 제공용 (document RAG 구축 대신)
 - [x] UI 개선 목표 방향 확정 — 오류 없이 동작, 한글화 우선(i18n 미적용), 관리자 페이지 포함
 - [x] 웹 서버 배포
+- [x] 서비스 명 확정 — 다담
 
 ## 진행 중
 
@@ -48,3 +49,4 @@ _(없음)_
 ## 메모
 
 - 미팅: [[meetings/2026-05-13 SQL Agent 검토 회의 (실장님 제작 버전)|2026-05-13 SQL Agent 검토 회의 (실장님 제작 버전)]]
+- 미팅: [[projects/dna-sql-agent/meetings/2026-05-18 활용 방안 및 제품명 결정]]
