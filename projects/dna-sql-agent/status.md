@@ -1,7 +1,7 @@
 ---
 type: project-status
 project: dna-sql-agent
-updated: 2026-05-19
+updated: 2026-05-20
 phase: active
 ---
 
@@ -25,15 +25,16 @@ phase: active
 - [x] 요구사항 담당자 할당 관련 검토
 - [x] 브랜치 생성 — main / mania (백업·배포용) 분리
 - [x] 진행사항 관리 방식 확정 — 시트 내 관리 (완료 여부, 완료 일자, 완료율)
+- [x] bug fix: 시스템 비활성화 시 404 오류 (get_system_by_conn_and_name status 필터 문제)
+- [x] bug fix: 채팅 생성 시 쿼리 수정 (시스템 조회 시 커넥션 매핑 확인)
+- [x] bug fix: inactive 커넥션 목록 표시 및 채팅 필터 처리
+- [x] bug fix: 대화 저장 시 tool 미사용·텍스트만 오는 경우 저장 안 되는 버그 (web 필터링)
 
 ## 진행 중
 
 - [ ] SQL Guard: group 별 테이블 접근 제한 처리 (현재 json 고정 데이터 → DB 연동, 화면·로직 변경 필요)
 - [ ] SQL Guard: 관리자 페이지 수정 기능 연동
 - [ ] SQL Guard: RAG 테이블 추출 시 프롬프트에 테이블 제약 포함 (top 테이블 사전 필터링)
-- [ ] bug fix: 채팅 생성 시 쿼리 수정 (시스템 조회 시 커넥션 매핑 확인)
-- [ ] bug fix: 커넥션 목록 inactive 상태도 목록에 표시
-- [ ] 채팅 목록: 대화 저장 시 tool 미사용·텍스트만 오는 경우 저장 안 되는 버그
 
 ## 다음 할 일
 
