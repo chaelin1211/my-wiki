@@ -26,6 +26,7 @@ updated: 2026-04-20
 
 ### 트러블슈팅
 - [[knowledge/troubleshooting/spring-url-double-encoding|Spring — 외부 API URL 더블 인코딩/프리픽스 방지]]
+- [[knowledge/troubleshooting/message-rendering-heuristic-pitfall|메시지 렌더링 휴리스틱의 함정 — 단순 텍스트 드랍 안티패턴]]
 
 ### 프롬프팅
 - [[knowledge/prompting/effective-instructions|Claude Code 효과적 지시법]]

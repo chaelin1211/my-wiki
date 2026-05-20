@@ -39,6 +39,10 @@ type: log
 
 ## [2026-05-14] session | dna-sql-agent-web — docker --network host 적용 & 시스템 선택 팝업 디버깅
 
+## [2026-05-19] session | dna-sql-agent-web — 마이페이지 커밋/PR 생성, 어드민 인증 가드 추가
+
+## [2026-05-20] session | dna-sql-agent-web — 이전 대화 단순 응답 메시지 누락 버그 수정
+
 ## [2026-04-20] session | kacportal — 법령정보 URL 더블 인코딩 픽스 & 공지사항 팝업 내비게이션 수정
 
 - 법령정보 첨부파일 다운로드 URL 더블 프리픽스/더블 인코딩 수정 (`LawSrchController.java`)
