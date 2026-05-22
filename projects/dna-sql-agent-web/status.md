@@ -1,7 +1,7 @@
 ---
 type: project-status
 project: dna-sql-agent-web
-updated: 2026-05-20
+updated: 2026-05-22
 phase: active
 ---
 
@@ -22,20 +22,43 @@ phase: active
 - [x] 어드민 레이아웃 인증 가드 추가 (비어드민 URL 직접 접근 차단)
 - [x] 이전 대화 로드 시 단순 응답 메시지 누락 버그 수정 — PR #4
 - [x] UI 수정: 접근 불가 메뉴 표시 제거 — 일반 사용자는 어드민 전체 접근 블락 처리
+- [x] 대화 목록 이름 변경 (인라인 input, Enter/blur 저장, Escape 취소, 낙관적 업데이트)
+- [x] 삭제 UX → DropdownMenu + AlertDialog 확인 모달로 교체
+- [x] Toast JSX 아이콘 패턴 표준화 (성공 CheckCircle2, 오류 AlertTriangle)
+- [x] `docs/ui-components-design.md` 작성 (Toast, AlertDialog, DropdownMenu)
+- [x] `docs/toast-preview.html` 작성 (성공/오류 패턴 라이트·다크 미리보기)
+- [x] destructive 토스트 배경/글씨 색 정비 (`bg-background`, `text-destructive`)
+- [x] `/ui` 컴포넌트 미리보기 페이지 추가 (toast 3종 트리거 버튼)
+- [x] feat/chat-list PR #8 생성 및 머지
+
+## 완료된 것 (추가)
+
+- [x] 대화 고정(pin) 기능 구현 및 PR #10 머지 (2026-05-21)
+- [x] 북마크 기능 구현 (채팅 결과 카드 즐겨찾기) — feat/pin-chat 브랜치
+- [x] UI 수정: light mode 채팅 목록 삭제 아이콘 안 보임 수정
+  - 차트·표·아티팩트 컴포넌트 헤더에 북마크 토글
+  - 사이드바 북마크 메뉴 버튼 (active 시 채워진 아이콘)
+  - BookmarkView: 검색, 정렬, 카드 그리드, 인라인 제목 편집
+  - flat prop 패턴으로 컴포넌트 재사용 (DataTable, ChartBlock, DevExtremeChartBlock)
+  - patchBackendMessageIds 분리 (SSE steps 보존)
 
 ## 진행 중
 
-- [ ] PR #4 리뷰 및 머지 (`fix/chat-history`)
-- [ ] Connections status 토글 깜빡임 수정 (옵티미스틱 업데이트)
-- [ ] 백엔드 어드민 API 권한 체크 확인
-- [ ] 채팅 목록: 최신 업데이트 기준 정렬
-- [ ] 채팅 목록: 제목 수정 기능 추가
+- [ ] feat/pin-chat PR 생성 및 머지
 
 ## 다음 할 일
 
-- [ ] UI 수정: light mode 채팅 목록 삭제 아이콘 안 보임 수정
-- [ ] UI 수정: 삭제 시 완전한 삭제 미보장 확인 및 처리
-- [ ] 화면 - 채팅 목록 채팅 제목 밑에 No message 왜 뜨는지 확인하고 처리
+- [ ] 북마크 화면 Plotly 차트 초기 미렌더 이슈 (SPA 네비게이션 타이밍 — resize 트리거)
+- [ ] 어드민 쪽 toast 한국어 + JSX 패턴으로 통일 (db-management/*, app/admin/*)
+- [ ] Connections status 토글 깜빡임 수정 (옵티미스틱 업데이트)
+- [ ] 채팅 목록 "No messages" 표시 조건 확인 및 처리
+- [ ] 백엔드 어드민 API 권한 체크 확인
+- [ ] 북마크: API 정렬·검색 기능 추가 및 화면 연동
+- [ ] 북마크: 삭제 시 lazy delete (리로드 전까지 화면에 유지)
+- [ ] 북마크: 제목 수정 후 원복 기능 추가
+- [ ] 북마크: 반응형 — 2 rows→1 row 전환 최소 폭 넓히기
+- [ ] 채팅 메인 창 상단 시스템 뱃지 스타일 통일 (채팅 목록 화면과 다름)
+- [ ] 채팅 옵션 버튼 툴팁 메뉴 화면 바깥으로 삐져나가는 문제
 
 ## 블로커
 
@@ -45,6 +68,7 @@ _(없음)_
 
 - 시스템 선택 팝업: active 시스템 2개 이상일 때만 표시, 1개면 바로 생성 (설계 동작)
 - 어드민 인증 가드: 클라이언트 사이드만 적용됨, 백엔드 API 권한 체크 별도 확인 필요
+- Toast 표준 패턴: 성공=CheckCircle2(green), 오류=AlertTriangle(red) JSX 형식 — [[decisions/002-toast-pattern-jsx-icon]]
 - 나중에 한번에 처리할 UI 개선 목록 (우선순위 낮음):
   1. 불필요한 리로드로 인한 서비스 매끄러움 감소 (system, connection 등 토글 시 깜빡임)
   2. system 토글 불가 상황 시 readonly 처리 및 안내 문구
