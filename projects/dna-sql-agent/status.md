@@ -37,6 +37,7 @@ phase: active
 - [x] feat: SSE 종료 이벤트 → `{"type":"done","message_id":...}` (북마크 신규 메시지 404 해결)
 - [x] fix: DevExtreme 차트 E2004 — 컬럼명 대소문자 무시 매칭 + auto-select fallback
 - [x] 연관관계 추론 방식 확정 — 벡터라이징 시점에 수행, 쿼리 생성 시 추론 결과 포함하여 전달
+- [x] 대화 목록 description — 마지막 메시지 조회 후 표시하도록 수정
 
 ## 진행 중
 
@@ -65,7 +66,6 @@ phase: active
 - [ ] SQL reverse engineering: 백엔드 자동 수집 로직 추가
 - [ ] admin example 화면 vectorize 버튼 제거
 - [ ] admin 수정 즉시 반영 항목 검토 및 처리
-- [ ] 대화 목록 description — 마지막 메시지 조회 후 표시하도록 수정
 
 ## 블로커
 
