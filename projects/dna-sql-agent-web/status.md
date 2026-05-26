@@ -1,7 +1,7 @@
 ---
 type: project-status
 project: dna-sql-agent-web
-updated: 2026-05-22
+updated: 2026-05-26
 phase: active
 ---
 
@@ -41,6 +41,12 @@ phase: active
   - BookmarkView: 검색, 정렬, 카드 그리드, 인라인 제목 편집
   - flat prop 패턴으로 컴포넌트 재사용 (DataTable, ChartBlock, DevExtremeChartBlock)
   - patchBackendMessageIds 분리 (SSE steps 보존)
+- [x] 북마크: API 정렬·검색 기능 추가 및 화면 연동
+- [x] 북마크: 삭제 시 lazy delete (리로드 전까지 화면에 유지)
+- [x] 북마크: 제목 수정 후 원복 기능 추가
+- [x] 북마크: 반응형 — 2 rows→1 row 전환 최소 폭 넓히기
+- [x] 북마크 열고 닫기 아이콘 방향 대화 목록과 통일
+- [x] 북마크 카드 내 DevExtreme 차트 높이 조정 및 여백 처리
 
 ## 진행 중
 
@@ -53,12 +59,9 @@ phase: active
 - [ ] Connections status 토글 깜빡임 수정 (옵티미스틱 업데이트)
 - [ ] 채팅 목록 "No messages" 표시 조건 확인 및 처리
 - [ ] 백엔드 어드민 API 권한 체크 확인
-- [ ] 북마크: API 정렬·검색 기능 추가 및 화면 연동
-- [ ] 북마크: 삭제 시 lazy delete (리로드 전까지 화면에 유지)
-- [ ] 북마크: 제목 수정 후 원복 기능 추가
-- [ ] 북마크: 반응형 — 2 rows→1 row 전환 최소 폭 넓히기
 - [ ] 채팅 메인 창 상단 시스템 뱃지 스타일 통일 (채팅 목록 화면과 다름)
 - [ ] 채팅 옵션 버튼 툴팁 메뉴 화면 바깥으로 삐져나가는 문제
+- [ ] 채팅에서 바로 북마크 시 not found 이슈
 
 ## 블로커
 
