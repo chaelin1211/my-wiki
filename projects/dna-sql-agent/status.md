@@ -48,12 +48,11 @@ phase: active
 ## 다음 할 일
 
 - [x] bookmark PR #25 merge 완료
-- [ ] PR #27 리뷰 및 merge (fix/chat-bookmark — message_id SSE 전달, E2004 수정)
-- [ ] 프론트엔드 SSE done 이벤트 수신 및 북마크 연동 (type:"done" → message_id 활용)
-- [ ] 채팅 목록 제목 정책 수립 및 반영 (현재는 첫번째 user message)
-- [ ] 화면 - 채팅 목록 채팅 제목 밑에 No message 왜 뜨는지 확인하고 처리
-- [ ] 요구사항 정리 문서 작성 및 담당자 배정
-- [ ] UI 한글화 — 채팅 표시, 관리자 페이지 등 영문 → 한글
+- [x] PR #27 리뷰 및 merge (fix/chat-bookmark — message_id SSE 전달, E2004 수정)
+- [x] 프론트엔드 SSE done 이벤트 수신 및 북마크 연동 (type:"done" → message_id 활용)
+- [x] 채팅 목록 제목 정책 수립 및 반영 (현재는 첫번째 user message)
+- [x] 화면 - 채팅 목록 채팅 제목 밑에 No message 왜 뜨는지 확인하고 처리
+- [x] 요구사항 정리 문서 작성 및 담당자 배정
 - [ ] 벡터 검색 정확도 개선 — 예상 질문을 컬럼별 아닌 관계(relation) 기준으로 재생성
 - [ ] 테이블 선정 근거 로그 표시 화면 추가 검토
 - [ ] 자동 벡터화 수정 화면 필요 여부 결정 (Qdrant 직접 수정 vs 별도 화면)
