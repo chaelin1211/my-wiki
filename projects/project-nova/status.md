@@ -1,7 +1,7 @@
 ---
 type: project-status
 project: project-nova
-updated: 2026-06-05
+updated: 2026-06-08
 phase: active
 ---
 
@@ -19,13 +19,14 @@ phase: active
 - [x] 2026-05-20(수) 오전 회의 — 접수 문서 최종안 작성
 - [x] 2026-05-22(금) 접수 문서 제출
 - [x] 1차 합격 — 2026-06-01 착수 회의 진행
+- [x] Gmail 연동 알아보기 — 메일 내용·파일 목록 조회 가능, 파일 자체 다운로드는 기본 커넥션으로 불가
+- [x] 진행 부분 skill 초안 작성하기
 
 ## 진행 중
 
 ## 다음 할 일
 
-- [ ] Gmail 연동 알아보기 (전채린)
-- [ ] 진행 부분 skill 초안 작성하기
+- [ ] Skill 고도화
 - [ ] PoC 구현 (Claude API + n8n)
 
 ## 블로커
