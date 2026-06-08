@@ -1,7 +1,7 @@
 ---
 type: project-status
 project: dna-sql-agent
-updated: 2026-05-26
+updated: 2026-06-05
 phase: active
 ---
 
@@ -44,6 +44,21 @@ phase: active
 - [x] 채팅 목록 제목 정책 수립 및 반영 (현재는 첫번째 user message)
 - [x] 화면 - 채팅 목록 채팅 제목 밑에 No message 확인 및 처리
 - [x] 요구사항 정리 문서 작성 및 담당자 배정
+- [x] PR #28 머지 (feat/chat-list-description — last_message 필드 추가, 2026-05-26)
+- [x] feat: refresh token 도입 — access token 30분, refresh token 7일, POST /auth/refresh·/auth/logout 추가
+- [x] 프론트엔드 refresh token 연동 (401 인터셉터, 토큰 갱신 큐잉, 로그아웃 API 호출) — PR #33 생성 (2026-05-27)
+- [x] feat: 시스템 권한 일괄 부여/회수 API — POST/DELETE /admin/systems/{system_id}/users/bulk (2026-05-29)
+- [x] feat: TokenResponse에 expires_in 추가 — 프론트 refresh 타이밍 문제 근본 해결 (2026-05-29)
+- [x] fix: CORS에서 개인 IP 제거 (2026-05-29)
+- [x] fix: sql_examples type 컬럼 반영 — 화면 입력(M)/자동 수집(A) 구분 (2026-06-01)
+- [x] PR #38 생성 (feat/admin-improvements — bulk 권한 API, expires_in, type 컬럼)
+- [x] feat: ECharts 차트 엔진 추가 — EChartsChartGenerator, 동적 스키마, sankey 등 (2026-06-02)
+- [x] PR #39 생성 (feat/echarts-engine)
+- [x] refactor: ECharts scatter/bubble 개선 — visualMap 버블 크기, 툴팁 pre-line 방식 (2026-06-05)
+- [x] refactor: 프론트/백 레이아웃 책임 분리 — color palette, confine, grid 프론트 전담 (2026-06-05)
+- [x] fix: Sankey DAG 사이클 링크 iterative DFS 제거 (2026-06-05)
+- [x] fix: DevExtreme bubble 지원, _label inf 처리, DX bubble x numeric 강제 (2026-06-05)
+- [x] docs: echarts-chart-design.md 섹션 11 추가 (구현 후 개선사항) (2026-06-05)
 
 ## 진행 중
 
@@ -53,6 +68,14 @@ phase: active
 
 ## 다음 할 일
 
+- [x] PR #35 머지 (feat/enhance-report-generation — slide_config.json 분리, 충돌 감지 레이아웃, 동적 폰트)
+- [x] PR #33 머지 (feat/auth — refresh token 도입)
+- [x] feat/admin-improvements PR 생성 및 머지 (PR #38)
+- [ ] PR #39 머지 (feat/echarts-engine → refactor/chart-visualization 브랜치)
+- [ ] CALENDAR_YEAR 연도 정수 → scatter 오선택 버그 수정
+- [ ] SH/HR/OE 스키마 기반 심화 테스트 12개 시나리오 실행
+- [x] 프론트에서 expires_in 활용한 refresh 인터셉터 연동 확인 (2026-06-01)
+- [ ] 인증 개선 2순위 — 토큰 블랙리스트(강제 로그아웃) 검토
 - [ ] 벡터 검색 정확도 개선 — 예상 질문을 컬럼별 아닌 관계(relation) 기준으로 재생성
 - [ ] 테이블 선정 근거 로그 표시 화면 추가 검토
 - [ ] 자동 벡터화 수정 화면 필요 여부 결정 (Qdrant 직접 수정 vs 별도 화면)

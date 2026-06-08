@@ -85,4 +85,6 @@ CORS: 백엔드 `allow_origins`에 프론트엔드 origin 등록 필요.
 
 ## 관련 의사결정
 
-_(ADR 추가 시 갱신)_
+- [[projects/dna-sql-agent-web/decisions/001-admin-auth-guard-in-layout|ADR-001]] — admin 인증 가드 레이아웃 적용
+- [[projects/dna-sql-agent-web/decisions/002-toast-pattern-jsx-icon|ADR-002]] — 토스트 JSX 아이콘 패턴
+- [[projects/dna-sql-agent-web/decisions/003-destructive-color-token-structure|ADR-003]] — destructive 색상 토큰 구조 정의

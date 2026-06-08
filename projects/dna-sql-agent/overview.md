@@ -47,7 +47,12 @@ goal: "자연어 질문을 SQL로 변환하여 Oracle/Postgres DB 결과를 반�
 
 ## 주요 의사결정
 
-_(ADR 추가 시 갱신)_
+| ADR | 제목 | 상태 |
+|-----|------|------|
+| [[decisions/001-pin-timestamp-vs-sn\|001]] | 상단 고정 정렬 — timestamp vs sequence number | accepted |
+| [[decisions/002-bookmark-reference-vs-snapshot\|002]] | 북마크 저장 방식 — 참조 vs 스냅샷 | accepted |
+| [[decisions/003-sse-done-event-message-id\|003]] | SSE 종료 이벤트에 message_id 포함 | accepted |
+| [[decisions/004-refresh-token-auth\|004]] | Refresh Token 도입 및 Access Token 만료 시간 단축 | accepted |
 
 ## 현재 상태
 

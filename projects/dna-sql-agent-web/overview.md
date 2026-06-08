@@ -47,7 +47,9 @@ goal: "dna-sql-agent 백엔드와 SSE로 연동하는 Text-to-SQL AI 챗봇 웹 
 
 ## 주요 의사결정
 
-_(ADR 추가 시 갱신)_
+- [[projects/dna-sql-agent-web/decisions/001-admin-auth-guard-in-layout|ADR-001]] — admin 인증 가드 레이아웃 적용
+- [[projects/dna-sql-agent-web/decisions/002-toast-pattern-jsx-icon|ADR-002]] — 토스트 JSX 아이콘 패턴
+- [[projects/dna-sql-agent-web/decisions/003-destructive-color-token-structure|ADR-003]] — destructive 색상 토큰 구조 정의
 
 ## 현재 상태
 

@@ -192,6 +192,14 @@ phase: active
 - [x] 차트 타입 동적 추출 — 라이브러리별 지원 차트 종류를 공통 목록 대신 현재 라이브러리 기준으로 동적 추출하도록 변경
 - [x] 버그 픽스: 대화 명 변경 후 다시 대화 시 제목 원복 되는 문제
 
+## 완료된 것 (2026-06-08)
+
+- [x] `lib/chart-palette.ts` 공통 컬러 팔렛트(8색) 도입 — ECharts, Plotly, DevExtreme 일괄 적용 — ADR-013
+- [x] ECharts Sankey 높이 계산 개선 (tier별 최대 노드 수 기반, maxTierNodes * 32 + 80)
+- [x] ECharts `visualMap.show !== false` 조건 수정 (gridBottom 80px 여백 조건 정확화)
+- [x] 채팅 창 하단 스크롤 버튼 추가 (입력창 위 중앙, 맨 아래 아닐 때만 표시)
+- [x] PR #37 생성 (feat/chart-palette-sankey)
+
 ## 진행 중
 
 - [ ] 그래프 고도화 — 라이브러리별 시리즈 세팅 문제
@@ -201,6 +209,7 @@ phase: active
 
 ## 다음 할 일
 
+- [ ] PR #37 머지 (feat/chart-palette-sankey)
 - [ ] feat/echarts-rendering-improvements PR 생성 및 머지
 - [ ] style/ui-spacing 브랜치 PR 생성 및 머지
 - [ ] PR #33 머지 (ECharts)
