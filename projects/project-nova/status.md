@@ -1,7 +1,7 @@
 ---
 type: project-status
 project: project-nova
-updated: 2026-06-08
+updated: 2026-06-11
 phase: active
 ---
 
@@ -24,9 +24,9 @@ phase: active
 
 ## 진행 중
 
-## 다음 할 일
-
 - [ ] Skill 고도화
+
+## 다음 할 일
 - [ ] PoC 구현 (Claude API + n8n)
 
 ## 블로커
