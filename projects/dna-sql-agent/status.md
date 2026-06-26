@@ -1,7 +1,7 @@
 ---
 type: project-status
 project: dna-sql-agent
-updated: 2026-06-05
+updated: 2026-06-26
 phase: active
 ---
 
@@ -59,23 +59,109 @@ phase: active
 - [x] fix: Sankey DAG 사이클 링크 iterative DFS 제거 (2026-06-05)
 - [x] fix: DevExtreme bubble 지원, _label inf 처리, DX bubble x numeric 강제 (2026-06-05)
 - [x] docs: echarts-chart-design.md 섹션 11 추가 (구현 후 개선사항) (2026-06-05)
+- [x] feat: ECharts scatter label 파라미터 추가 (per-item 텍스트 라벨) (2026-06-08)
+- [x] feat: ECharts combo 차트 추가 (bar+line 이중 y축) (2026-06-08)
+- [x] fix: Sankey Oracle Decimal 티어 컬럼 오감지 (coerce_numeric=False) (2026-06-08)
+- [x] fix: Sankey BFS 중복 큐 → Kahn's topological sort 교체 (2026-06-08)
+- [x] refactor: 시스템 프롬프트 압축 및 섹션 헤더 영어 통일 (2026-06-08)
+- [x] PR #45 생성 (refactor/chart-visualization) (2026-06-08)
+- [x] refactor: 동기 블로킹 호출 asyncio.to_thread() 래핑 (embedding, Qdrant, psycopg2, oracledb) (2026-06-09)
+- [x] feat: 스트리밍 중단 시 사용자 메시지 DB 저장 — try/finally + stream_completed 패턴 (2026-06-09)
+- [x] feat: 사이드바 스트리밍 배지 — bg-primary 색상, 타이틀 앞 위치 (2026-06-09)
+
+## 완료된 것 (2026-06-10 추가)
+
+- [x] feat: group_table_permissions 테이블 추가 — 그룹 × 시스템 단위 차단/쓰기허용 테이블 관리 (2026-06-10)
+- [x] feat: GET/PUT /admin/groups/{group_id}/table-permissions API 추가 (2026-06-10)
+- [x] refactor: SQL Guard auth → DB 기반 async 조회 전환 (sql_guard.json 폐기) (2026-06-10)
+- [x] feat: SQL Guard schema.table 형식 차단 지원 — 스키마별 동명 테이블 구분 (2026-06-10)
+- [x] fix: 가드레일 차단 시 LLM 재시도 우회 방지 — result_for_llm에 재시도 금지 지시 (2026-06-10)
+- [x] feat: SQL 실행 쿼리 INFO 로그 추가, 차단 시 BLOCKED WARNING 로그 (2026-06-10)
+- [x] feat: group_permissions, group_masking_actions 테이블 추가 — 그룹 권한 DB 통합 (2026-06-10)
+- [x] feat: group-permissions API (tool/ui_feature/masking) 추가 (2026-06-10)
+- [x] refactor: masking.json groups 필드 제거 — 그룹 액션 DB로 완전 이관 (2026-06-10)
+- [x] feat: SecurityTab 마스킹 그룹 처리 방식 → DB 기반 전환 및 SaveBanner 연동 (2026-06-10)
+
+## 완료된 것 (2026-06-11 추가)
+
+- [x] refactor: tool_access.json에서 access_groups 제거 — DB 단일 진실 공급원 원칙 일관 적용 (ADR-013) (2026-06-11)
+- [x] feat: ValidatedRunSqlTool always_enabled 플래그 도입 — 핵심 도구 비활성화 방지 (ADR-014) (2026-06-11)
+- [x] fix: SQL 가드레일 차단 메시지 정제 — 재시도 금지 절대 명령 제거, 우회 금지만 유지 (2026-06-11)
+- [x] feat: 시스템 프롬프트에 현재 차단 테이블 목록 실시간 주입 (DnaSystemPromptBuilder) (2026-06-11)
+
+## 완료된 것 (2026-06-12 추가)
+
+- [x] fix: hot-reload 시 신규 그룹 기본 마스킹 초기화 버그 — get_default() → load() (2026-06-12)
+- [x] feat: 테이블 접근제어 그룹/시스템 전환 시 변경사항 누적 후 한 번에 저장 (pendingChanges 맵) (2026-06-12)
+- [x] fix: 테이블 접근제어 선택 전환 시 깜빡임/꿀렁임 제거 (2026-06-12)
+- [x] PR #50 생성 (refactor/admin-page), PR #42 생성 (feat/group-table-permissions) (2026-06-12)
+
+## 완료된 것 (2026-06-15 추가)
+
+- [x] feat: 북마크 SQL 자동 추출 — messages.tool_calls 파싱으로 query_sql, chart_config 저장 (ADR-015) (2026-06-15)
+- [x] feat: POST /bookmarks/{id}/render — SQL 재실행 + 차트 재렌더 + cached_chart_data 캐싱 (2026-06-15)
+- [x] feat: dashboards 테이블 + dashboard_widgets 테이블 신규 생성 (2026-06-15)
+- [x] feat: Dashboard CRUD + 위젯 추가/삭제/레이아웃 저장 API 8개 (2026-06-15)
+- [x] test: test_dashboards.py 20개 테스트 신규 작성 (2026-06-15)
+- [x] feat: 프론트엔드 대시보드 split-panel 레이아웃 (react-grid-layout 드래그앤드롭) (2026-06-15)
+- [x] fix: widget-add-panel 클릭 불동 — div onClick, ScrollArea 제거, z-10 추가 (2026-06-15)
+
+## 완료된 것 (2026-06-15 추가 — 대시보드 크기 모델)
+
+- [x] feat: 위젯 크기 프리셋 2종(최소 1칸×4행 / 최대 2칸×콘텐츠 높이 스냅), 자유 리사이즈 폐기 (ADR-016) (2026-06-15)
+- [x] feat: 반응형 컬럼(colsForWidth 1200/700 → 4/2/1열), 너비 단위 1칸 (2026-06-15)
+- [x] feat: 비례 높이(rowHeight = clamp(colWidth×0.18, 40, 130)) — 폭 따라 위젯 비율 유지 (2026-06-15)
+- [x] feat: 드래그 격자 스냅(RGL v2 constraints: snapToGrid + gridBounds, /core 서브패스) (2026-06-15)
+- [x] fix: 편집 모드 4열 고정 — 좁은 폭 저장 시 배치 손실 방지 (캐노니컬 좌표 유지) (2026-06-15)
+- [x] fix: 위젯 헤더 고정 37px + 카드 border 반영(WIDGET_CHROME=84)으로 차트 하단 여백 짤림 해결 (2026-06-15)
+- [x] feat: 위젯 푸터 출처 대화 링크 — WidgetResponse conversation_id/title 조인 + onNavigateToConversation 배선 (2026-06-15)
+- [x] refactor: 높이/크기 계산 lib/chart-height.ts로 일원화, echarts 콘텐츠 높이 로직 추출 (2026-06-15)
+- [x] docs: 대시보드 설계서 갱신 — 웹 8장 v2/크기 모델 전면, 백엔드 WidgetResponse 대화 필드 (2026-06-15)
+
+## 완료된 것 (2026-06-16 추가)
+
+- [x] fix: 로그아웃 후 재로그인 시 이전 계정 대화 목록 표시 — useConversations 독립 useAuth() 인스턴스 제거, AppProvider에서 주입 (2026-06-16)
+
+## 완료된 것 (2026-06-17 추가)
+
+- [x] feat: nginx HTTP 28001 포트 추가 — PPT 애드인 webview HTTP 접근 지원 (ADR-015) (2026-06-17)
+- [x] refactor: Next.js 컨테이너 포트 28001 → 3000 변경 (nginx가 28001 소유) (2026-06-17)
+- [x] refactor: 백엔드/웹 워크플로우 전체 --network host 통일 (Docker 커스텀 네트워크 방식 서버 방화벽으로 포기) (2026-06-17)
+- [x] feat: 위젯 추가 패널 이미 추가된 위젯 hover → X 표시 & 클릭 제거 (destructive 스타일) (2026-06-17)
+- [x] feat: 스크롤 그림자 — widget-add-panel, dashboard 그리드, bookmark-view 세 곳 (다크모드 opacity 완화) (2026-06-17)
+- [x] feat: 새로고침 버튼 툴팁에 정확한 로드 시각 표시 (2026-06-17)
+- [x] feat: bookmark/dashboard widget API 응답에 system_display_name 포함 — 프론트 별도 getSystems 조회 제거 (2026-06-17)
+- [x] feat: PPT 애드인 환경에서 대시보드 버튼 숨김 (2026-06-17)
+- [x] fix: git filter-branch로 실수 커밋 파일 제거 및 부작용으로 삭제된 파일 복원 (2026-06-17)
+
+## 완료된 것 (2026-06-23 추가)
+
+- [x] fix: run_sql LIMIT 자동 주입 시 LLM·UI 고지 — 실행 SQL 로그 표시 + result_for_llm 앞에 LIMIT 고지 prepend (시각화 제목 전수 조회 표현 방지) (2026-06-23)
+- [x] fix: 북마크 query_sql에 LIMIT 반영 — create_bookmark 저장 시 _inject_limit 적용, 대시보드 새로고침 전체 조회 부하 해결 (2026-06-23)
+- [x] feat: DataTable 컬럼 헤더 클릭 정렬 (숫자·문자 자동 판별) (2026-06-23)
+- [x] fix: DataTable sticky 헤더 — shadcn Table overflow 래퍼 문제로 plain table 교체, bg-muted 불투명 배경 (2026-06-23)
+- [x] fix: 채팅 table 시각화 높이 개선 (non-flat chartHeight 전달), 북마크 확장/일반 높이 정합, 10행 제한 해제 (2026-06-23)
+- [x] PR #77 생성 (백엔드 — LIMIT 고지·북마크 반영), PR #56 생성 (프론트 — DataTable 정렬·sticky·높이) (2026-06-23)
+
+## 완료된 것 (2026-06-25 추가)
+
+- [x] feat: (#68) 시스템 제외 테이블을 실제 테이블 목록 조회·선택 방식으로 — GET /connections/{id}/tables API + 트랜스퍼 리스트/태그+(+)펼침 UI (2026-06-25)
+- [x] feat: 시스템 스키마 입력을 detect-schemas 기반 드롭다운 체크박스 멀티셀렉트로 교체 (대소문자 무시 매칭·케이스 정규화·직접입력 fallback) (2026-06-25)
+- [x] fix: detect_schemas 조회 범위 확대(all_tables/pg_tables) — list_tables와 동일 소스로 누락 스키마 해결 (2026-06-25)
+- [x] feat: 보안>테이블 접근 제어(차단/쓰기허용)도 동일 테이블 목록 선택 방식 적용 (재사용 컴포넌트 table-transfer-select) (2026-06-25)
+- [x] feat: DB 연결에 version 컬럼 + 연결 테스트 자동 감지, 시스템 프롬프트에 DB 메타(종류·버전) 주입 (2026-06-25)
+- [x] feat: 권한용 available-systems 응답에 connection_id·schemas 추가 + 정렬 시스템 관리와 통일 (2026-06-25)
+- [x] fix: 설정 리셋이 마지막 저장값으로 복원되도록 수정 + 테이블접근제어/인프라 권한 reset 미배선 버그 (2026-06-25)
+- [x] feat: LLM 연결 활성화 즉시 저장 통일 (ADR-017), foundation 탭 SaveBanner→안내문구 (2026-06-25)
+- [x] style: 설정 토스트 공통화·한글화, 아이콘 버튼 호버 색 통일(.icon-btn), 영어 UI 문구 한글화 (2026-06-25)
+- [x] PR 생성: 백엔드 feat/connection-version (Closes #68), 프론트 feat/system (2026-06-25)
 
 ## 진행 중
-
-- [ ] SQL Guard: group 별 테이블 접근 제한 처리 (현재 json 고정 데이터 → DB 연동, 화면·로직 변경 필요)
-- [ ] SQL Guard: 관리자 페이지 수정 기능 연동
+- [ ] SQL Guard: 대화 히스토리 내 차단 테이블 결과 잔류 — 권한 변경 시 이전 대화 비활성화 방식 추가 검토 (보류)
 - [ ] SQL Guard: RAG 테이블 추출 시 프롬프트에 테이블 제약 포함 (top 테이블 사전 필터링)
+- [x] 데이터 위경도 정보 GeoJson 표출 기능 설계 (참고: eCharts 한국 최신 데이터)
 
 ## 다음 할 일
-
-- [x] PR #35 머지 (feat/enhance-report-generation — slide_config.json 분리, 충돌 감지 레이아웃, 동적 폰트)
-- [x] PR #33 머지 (feat/auth — refresh token 도입)
-- [x] feat/admin-improvements PR 생성 및 머지 (PR #38)
-- [ ] PR #39 머지 (feat/echarts-engine → refactor/chart-visualization 브랜치)
-- [ ] CALENDAR_YEAR 연도 정수 → scatter 오선택 버그 수정
-- [ ] SH/HR/OE 스키마 기반 심화 테스트 12개 시나리오 실행
-- [x] 프론트에서 expires_in 활용한 refresh 인터셉터 연동 확인 (2026-06-01)
-- [ ] 인증 개선 2순위 — 토큰 블랙리스트(강제 로그아웃) 검토
 - [ ] 벡터 검색 정확도 개선 — 예상 질문을 컬럼별 아닌 관계(relation) 기준으로 재생성
 - [ ] 테이블 선정 근거 로그 표시 화면 추가 검토
 - [ ] 자동 벡터화 수정 화면 필요 여부 결정 (Qdrant 직접 수정 vs 별도 화면)
@@ -88,6 +174,23 @@ phase: active
 - [ ] SQL reverse engineering: 백엔드 자동 수집 로직 추가
 - [ ] admin example 화면 vectorize 버튼 제거
 - [ ] admin 수정 즉시 반영 항목 검토 및 처리
+
+## 2026-06-26 — GeoJSON 지도 시각화
+
+- [x] feat: visualize 도구 `chart_type='map'` 추가 — 점(point)/지명(choropleth)/흐름(flow) 3형태
+- [x] feat: GeoJSON 변환 서비스 + bbox 필터·줌 격자 클러스터링 API
+- [x] feat: 경계 데이터/지명 매칭 모듈(한국 시도·세계 국가, 한글/영문/ISO3 별칭·레벨 자동판별)
+- [x] feat: 프론트 지도 렌더러(leaflet) — 점·choropleth·흐름선(화살촉), 한글 라벨(polylabel)
+- [x] feat: 좌측 데이터 목록/상세 패널, 우측 범례(고정폭·접기), 다크모드 색 보정, 팔레트 분리
+- [x] feat: 채팅(chart_map)·북마크·대시보드 위젯 연동 + 샘플 페이지(/map-sample)
+- [x] feat: 위젯 헤더/푸터 숨김 시 차트 확대 + hover 오버레이(맵 z-index isolate)
+- [x] fix: 북마크/위젯 새로고침 시 지도 타입 보존 (render_bookmark map 분기) → [[issues/bookmark-refresh-map-type-lost]]
+- [x] fix: 대시보드 삭제 setState-in-render + 전체 새로고침 일부만 → [[issues/dashboard-delete-setstate-in-render]]
+- [x] fix: 위젯 추가 패널 button 중첩 hydration, 지도 컬럼명 대소문자 무시 매칭
+- [x] PR 생성 — 백엔드 #81, 웹 #60
+- [x] ADR: [[decisions/018-geojson-map-visualization]]
+- [ ] PR #81·#60 리뷰·머지, 백엔드 재시작 후 동작 확인
+- [ ] (보류) 대시보드 범례 선택 사용자별 저장 — view_state JSONB 방식 검토만(원복)
 
 ## 블로커
 

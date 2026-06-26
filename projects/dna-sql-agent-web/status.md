@@ -1,7 +1,7 @@
 ---
 type: project-status
 project: dna-sql-agent-web
-updated: 2026-06-12
+updated: 2026-06-17
 phase: active
 ---
 
@@ -226,6 +226,13 @@ phase: active
   - 마스킹 룰: 쿼리 직전 룰 확인으로 비교적 잘 반영됨
   - 도구 접근 제어: 최초 권한 회수 시 즉시 반영되나 재부여 시 컨텍스트 메모리 의존 문제 잔존
   - 그룹별 화면 정보 표시
+
+## 완료된 것 (2026-06-17)
+
+- [x] feat: nginx HTTP 28001 서버 블록 추가 — PPT 애드인 webview HTTP 접근 지원 (ADR-015) (2026-06-17)
+- [x] refactor: Next.js 컨테이너 포트 28001 → 3000 변경 (nginx가 28001 소유) (2026-06-17)
+- [x] refactor: 워크플로우 전체 `--network host` 통일 (Docker 커스텀 네트워크 방식 서버 방화벽으로 포기) (2026-06-17)
+- [x] docs: README 현행화 (nginx 배포 구조, 기능 목록, 환경변수 정리) (2026-06-17)
 
 ## 진행 중
 

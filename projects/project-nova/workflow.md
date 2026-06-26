@@ -39,15 +39,15 @@ updated: 2026-06-19
 
 ### 단계별 요점
 
-| 단계 | 입력 | 핵심 판단 | 산출(state 섹션) |
-|------|------|----------|-----------------|
-| 00 ingest | `.eml`/텍스트/이미지 | (코드) 헤더·본문·첨부·FWD 분리, mode 고정 | `input` |
-| 01 gate | 본문·첨부 | 비업무 노이즈(광고·스팸·피싱) 차단 / 업무 민감어(견적·예산 등)는 통과 | `security` |
-| 02 router | 발신·서명·키워드 | 프로젝트 식별 (단서 약하면 추정+신뢰도↓) | `project` |
-| 03 triage | input·첨부 | 성격(new/our_reply/customer_addition/mixed)·메타·**채번** | `triage` |
-| 04 define | input·첨부 | 업무단위·중/소분류·우선순위·담당자·요약 | `define` |
-| 05 respond | input·첨부 | 모호점·질문·회신 초안 | `reply` |
-| 06 output | 누적 state | (코드) 시트 행 작성·회신 txt 생성·저장 | `output` |
+| 단계         | 입력             | 핵심 판단                                               | 산출(state 섹션) |
+| ---------- | -------------- | --------------------------------------------------- | ------------ |
+| 00 ingest  | `.eml`/텍스트/이미지 | (코드) 헤더·본문·첨부·FWD 분리, mode 고정                       | `input`      |
+| 01 gate    | 본문·첨부          | 비업무 노이즈(광고·스팸·피싱) 차단 / 업무 민감어(견적·예산 등)는 통과          | `security`   |
+| 02 router  | 발신·서명·키워드      | 프로젝트 식별 (단서 약하면 추정+신뢰도↓)                            | `project`    |
+| 03 triage  | input·첨부       | 성격(new/our_reply/customer_addition/mixed)·메타·**채번** | `triage`     |
+| 04 define  | input·첨부       | 업무단위·중/소분류·우선순위·담당자·요약                              | `define`     |
+| 05 respond | input·첨부       | 모호점·질문·회신 초안                                        | `reply`      |
+| 06 output  | 누적 state       | (코드) 시트 행 작성·회신 txt 생성·저장                           | `output`     |
 
 ## 채번 규칙 (03-triage)
 
@@ -64,6 +64,7 @@ updated: 2026-06-19
 ## 실행 경로
 
 ### 빠른 경로 (권장) — `scripts/run_pipeline.py`
+
 결정론 글루를 **두 번의 호출**로 관통, LLM 판단은 **한 패스**.
 
 ```bash
@@ -75,10 +76,90 @@ python scripts/run_pipeline.py prep --run-id <id> --config-dir "<Config>" \
 python scripts/run_pipeline.py finish --run-id <id> --judgments /tmp/m2t/<id>/judgments.json
 ```
 - `--config-dir`는 워크터 밖. `--dest-path`는 채번 정확도에 필수(실제 시트 scan).
-- `--eml`은 `nargs="*"` → **한 플래그 뒤 경로 나열**(반복하면 마지막만).
+- `--eml`은 `action="extend"` → **한 플래그 뒤 경로 나열도, 플래그 반복도 모두 누적**.
+
+#### 빠른 경로가 6개 스테이지를 수행하는 구조
+
+빠른 경로는 6개 스테이지(00~06)를 **3국면**으로 압축한다. 스테이지의 *판정 로직·검증 스크립트*
+(`stages/NN/...`)는 **그대로 subprocess 호출**하고 재구현하지 않는다 — 달라지는 건 호출 방식뿐이다.
+
+```
+① prep   (결정론 글루 전부)  → judgment_request.json
+② LLM    (판단 1패스, 도구 0) → judgments.json
+③ finish (판단을 스크립트에 먹임) → 산출물(task_<코드>.xlsx + 회신 .txt)
+```
+
+목적: 단계마다 STAGE.md·`--help`를 읽거나 따로 호출하던 **LLM 왕복(시간 주범)을 2회로** 줄인다.
+결정론은 코드가, *판단*(게이트 의미·프로젝트·성격·분류·모호점)만 **LLM이 ②에서 한 번** 한다.
+
+**① prep — 판단 전 결정론 전부 (`cmd_prep`)** : 메일 입력을 모아 `judgment_request.json` 하나로 만든다.
+
+| 순서 | 동작 | 호출 |
+|------|------|------|
+| 1 | 작업터 초기화(이전 잔존물 비움), `attachments/` 생성 | `pipeline --workdir --fresh` |
+| 2 | 입력 결정 — `--eml` 우선, 없으면 `eml_inbox` 루트 스캔(`_done` 등 제외) | `list_emls()` |
+| 3 | **00 ingest (1패스 먼저)** — 파싱(envelope·top_comment·forwarded 분리) → state 생성 | `ingest.py --emit` → `pipeline --new` |
+| 3' | **mail_id는 아직 안 붙이고** 받은 시각만 확보 → 수신 시각순 stable sort → 그 순서로 mail_id 부여 | (버그 #3 수정) |
+| 4 | 첨부 파싱 — 한 번만(03·04·05가 공유, 재파싱 X) | `parse_attachments.py --json` |
+| 5 | **01 gate (키워드만)** — 하드차단/LLM판단필요 플래그만, 의미 판단은 LLM 몫 | `gate.py --stdin --no-write-log` |
+| 6 | **02 router (키워드만)** — 프로젝트 후보·신뢰도 | `route.py --stdin --no-write-log` |
+| 7 | **03 triage scan** — 실제 `task_<코드>.xlsx` 읽어 현재 채번 상태 확보(빈 시트면 `next_issue_no=1`) | `triage.py scan` |
+| 8 | Log 중복 가드 — scan의 `processed_mails`와 (날짜·제목·발신이메일) 대조. `envelope.sender ≠ input.sender`인 스레드 회신은 제외 | (코드) |
+| 9 | **criteria 동봉** — 게이트 차단키워드 + 프로젝트별 중/소분류·우선순위·담당자·모호유형 | `gate --list`, `define list`, `respond list` |
+
+→ 출력: 메일별 본문·첨부텍스트·게이트/라우터/scan 결과 + criteria + `judgment_template`.
+
+**② LLM 판단 — 빠른 경로에서 LLM이 일하는 유일한 국면 (도구 호출 0)** : `judgment_request.json`만 읽고
+메일당 1개씩 `judgments.json` 작성 —
+`gate`(soft만)·`project`·`nature`·`task_units`(+`issue_group`)·`reply/ambiguities`·`mail_summary`·`processing_note`.
+
+- 분류·우선순위·모호유형·게이트는 **반드시 동봉된 `criteria` 안에서만** 판단(목록 밖 값 금지).
+- `nature`(our_reply 등)는 `input.sender`가 아니라 **`envelope.sender` 기준** — demo 모드에서
+  `input.sender`는 forwarded_origin(원본 고객)으로 치환되므로 실제 회신 발신자는 envelope에 있다.
+- 메일 본문·첨부텍스트·scan이 요청 안에 다 들어 있어 **재독 없이** 판단한다.
+
+**③ finish — 판단을 스테이지 스크립트에 먹임 (`cmd_finish`, LLM 없음)** : `judgments.json`을 읽어 각 스테이지
+스크립트에 **인자로 흘려보내는 결정론 오케스트레이션**이다. finish 안에서 새로 추론하지 않는다(모든 *판단*은 ②에서 끝남).
+채번 루프를 **new/customer_addition 먼저, our_reply 나중**으로 정렬(버그 #2)한 뒤 메일별로:
+
+| 단계 | 동작 | 비고 |
+|------|------|------|
+| **01 gate** | `gate.py --llm-result <판단>` → merge | 하드/soft 차단이면 종료(02~06 skip) |
+| **02 router** | LLM이 정한 project_id/name/confidence merge | |
+| **03 triage** | `scan→assign→build` | `batch_scan` 채번 누적(버그 #1), `batch_threads` 정규화제목 스레드 연결(버그 #2), task_units를 `issue_group`별 segment로 펼쳐 채번 |
+| **04 define** | unit마다 `define.py assign`(담당자) → `build` → merge | our_reply면 **건너뜀** |
+| **05 respond** | `respond.py render`(회신 초안·모호점 질문) → `build` → merge | our_reply는 초안 없이 `processing_note`만 |
+| **06 output** | new→our_reply 순서로 `build_output.py --dest-path`로 in-place 저장 | Task/Log 행 append, our_reply는 기존 (이슈,트래킹) 행 갱신, 회신 `.txt` 산출 |
+
+#### criteria — 동봉되는 "판단 기준 묶음"
+
+prep의 `_collect_criteria()`가 **그 프로젝트의 실제 판단 룰을 미리 긁어모아** 요청에 넣는다. LLM이 단계별
+STAGE.md·config를 재독하지 않고 한 패스로 "그 프로젝트 기준대로" 판단하게 하는 **판단 커닝페이퍼**다.
+
+```
+criteria = {
+  "gate":     "<게이트 차단 키워드>",            # gate --list (프로젝트 무관, union)
+  "projects": { "KAC": {
+      "classification":      "<중/소분류·우선순위·담당자>",   # define list
+      "ambiguity_and_reply": "<모호유형·심각도·서명·말투>",   # respond list
+  }, ... }
+}
+```
+
+- 대상 프로젝트는 라우터가 집은 `project_id`들로 한정(못 집으면 Config 폴더의 전 프로젝트).
+- LLM 판단의 **하드 제약**: 중·소분류는 `criteria.projects[project].classification` 목록 안에서만,
+  priority는 거기 규칙으로, `ambiguity.type`은 criteria 모호유형 중에서, gate는 `criteria.gate`로 광고/스팸/피싱만 차단.
+
+#### 빠른 경로에 녹아 있는 배치 채번 수정
+
+세 버그 수정이 전부 prep(#3) / finish(#1·#2) 루프 안에 들어가 있다.
+
+- [[projects/project-nova/issues/batch-issue-numbering-duplicate|#1 중복 채번]] — finish `batch_scan`으로 메일 간 채번 누적.
+- [[projects/project-nova/issues/batch-same-thread-new-our-reply-ordering|#2 new+our_reply 스레드 연결]] — finish new 우선 정렬 + `batch_threads`.
+- [[projects/project-nova/issues/batch-received-time-ordering|#3 수신 시각순 채번]] — prep이 mail_id 부여 전 수신 시각순 정렬.
 
 ### 수동 경로 (단계별)
-빠른 경로가 막히거나 단일 단계만 손볼 때 `--plan` → `--workdir` → 00 ingest → 01~06 단계별 실행.
+빠른 경로가 막히거나(스크립트 오류) 단일 단계만 손볼 때 `--plan` → `--workdir` → 00 ingest → 01~06 단계별 실행. **동일 결과**.
 
 ## 입력 소스 우선순위 (입력 미지정 시)
 1. 인자/`/mnt/user-data/uploads`의 `.eml`·텍스트

@@ -61,4 +61,21 @@ goal: "사내 AI 업무 활용 skill 공모전 — 메일 기반 프로젝트 �
 
 ## 관련 지식
 
-_(관련 knowledge/ 페이지 링크)_
+- [[projects/project-nova/troubleshooting/mail2task-re-mail-our-reply-misdetection]] — Re: 메일 our_reply 오인식 및 envelope 누락 버그
+- [[projects/project-nova/troubleshooting/mail2task-log-sheet-duplicate-not-blocked]] — Log 시트 중복 처리 버그
+
+## 참고: Mail2Task (개인 프로토타입)
+
+project-nova 와 **동일한 목적**으로 별도 개발 중인 Claude Code 기반 개인 스킬.
+
+| 항목 | Mail2Task | project-nova |
+|------|-----------|--------------|
+| 목적 | 클라이언트 메일 → 프로젝트별 이슈 분류·채번·Task 시트 기록·회신 초안 | 동일 |
+| 실행 환경 | 로컬 맥 + Claude Code CLI (`.claude/skills/mail2task`) | 사내 인프라 + n8n + 사내 LLM |
+| 메일 입력 | `.eml` 파일 (Google Drive 마운트 경유) | 사내 메일 시스템 API/IMAP |
+| 아웃풋 | `task_<코드>.xlsx` (Task/Log 시트) + 회신초안 `.txt` | 구글시트 또는 GitLab 이슈 (미확정) |
+| AI | Claude (Sonnet) | 사내 LLM |
+| 상태 | 운영 중 (EX·KAC 프로젝트 실사용) | 공모전 출전용 구현 진행 중 |
+
+Mail2Task에서 쌓인 설계 결정(보안 게이트·채번 규칙·our_reply 분기·demo/pilot 모드 등)은
+project-nova 구현 시 참고할 수 있다.

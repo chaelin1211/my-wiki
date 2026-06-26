@@ -90,11 +90,13 @@ for seg in assign["segments"]:
 ## 예방책 · 주의
 
 - **prep 1회 + finish 1회**가 정상 흐름. finish는 재스캔 안 하고 prep scan을 시드로만 쓴다.
-- **same-batch our_reply:** 같은 배치에 `new`와 그 `new`를 참조하는 `our_reply`가 함께 있으면 그 our_reply의 `matched_issue_no`를 미리 알 수 없으니 그 경우만 결과 점검.
+- **same-batch our_reply:** ~~그 our_reply의 `matched_issue_no`를 미리 알 수 없으니 결과 점검~~ → 후속 버그 #2로 실제 어긋남이 확인돼 **코드로 해결**됨(new 우선 정렬 + 정규화 제목 스레드 자동 연결). [[projects/project-nova/issues/batch-same-thread-new-our-reply-ordering|버그 #2 문서]] 참조.
 - **prep `--eml` 인자:** `nargs="*"` → 한 플래그 뒤에 경로 **나열**(`--eml a.eml b.eml`). 플래그를 반복하면 마지막 값만 남는다.
 - **회신 초안 `recipient_title`:** 템플릿이 이름 뒤 "님"을 자동 추가 → `judgments.json`의 `recipient_title`에 "님"을 쓰면 "윤혜영님님" 중복. 비우거나 직책("대리"/"책임")만 입력.
 
 ## 관련 페이지
 
+- [[projects/project-nova/issues/batch-same-thread-new-our-reply-ordering|같은 배치 new+our_reply 스레드 채번 (버그 #2)]]
+- [[projects/project-nova/issues/batch-received-time-ordering|배치 채번 수신 시각순 정렬 (버그 #3)]]
 - [[projects/project-nova/decisions/002-공통경로-로컬클라우드-타입|ADR-002 공통 경로 타입]]
 - [[projects/project-nova/status|project NOVA 상태]]

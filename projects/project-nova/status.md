@@ -37,3 +37,8 @@ _(없음)_
 ## 메모
 
 - 미팅: [[projects/project-nova/meetings/2026-05-18 주제 선정]]
+- 문서: [[projects/project-nova/workflow|현재 워크플로우]] (2026-06-22, 빠른 경로 prep/LLM/finish 3국면이 00~06을 어떻게 수행하는지 포함)
+- **설계 결정:** [[projects/project-nova/decisions/003-fwd-두턴-보존-최신턴-기준|ADR-003 FWD 두 턴 보존 + 최신 턴 기준]] (2026-06-19, **구현 완료** — demo FWD가 회신·전달요청에서 top_comment를 버려 꼬이던 구조적 원인 해결. ingest/rules/pipeline/run_pipeline 4파일 수정·검증)
+- 트러블슈팅: [[projects/project-nova/issues/fwd-sender-our-reply-misclassification|FWD 회신을 고객 요청으로 오인]] (2026-06-19, 성격 판정에 서명 우선 규칙 추가 — ADR-003이 데이터 레이어로 흡수 예정)
+- 트러블슈팅: [[projects/project-nova/issues/batch-same-thread-new-our-reply-ordering|같은 배치 new+our_reply 스레드 채번 어긋남]] (2026-06-19, finish 채번 루프 new 우선 정렬 + 정규화 제목 스레드 자동 연결)
+- 트러블슈팅: [[projects/project-nova/issues/batch-received-time-ordering|배치 채번이 파일명순으로 매겨짐]] (2026-06-19, prep이 mail_id 부여 전 수신 시각순 정렬)

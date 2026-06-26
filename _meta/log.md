@@ -142,3 +142,77 @@ type: log
 ## [2026-06-08] session | dna-sql-agent-web — 차트 팔렛트 통합 및 Sankey/채팅 UX 개선
 
 ## [2026-06-08] decision | dna-sql-agent-web — ADR-013 차트 공통 컬러 팔렛트 정적 상수 파일로 관리
+
+## [2026-06-08] session | dna-sql-agent — ECharts combo/scatter label 추가, Sankey 버그 수정, 시스템 프롬프트 개선
+
+## [2026-06-08] decision | dna-sql-agent — ADR-008 Sankey 컬럼 순서 기반 흐름 방향 아키텍처
+
+## [2026-06-08] issue | dna-sql-agent — Sankey Oracle Decimal 티어 컬럼 오감지 (coerce_numeric)
+
+## [2026-06-09] session | dna-sql-agent — asyncio 블로킹 해소 + 스트리밍 중단 시 사용자 메시지 저장
+
+## [2026-06-09] decision | dna-sql-agent — ADR-009 동기 블로킹 호출에 asyncio.to_thread() 사용
+
+## [2026-06-09] pattern | knowledge — SSE 스트리밍 중단 시 사용자 메시지 저장 패턴 (try/finally + stream_completed)
+
+## [2026-06-09] issue | dna-sql-agent-web — 스트리밍 중단 메시지 차트 북마크 버튼 활성화 (isAborted 플래그로 해결)
+
+## [2026-06-09] issue | dna-sql-agent-web — 새 대화 제목 변경·삭제·핀 시 로컬 UUID로 API 호출 → 404 (backendConversationId 사용으로 해결)
+
+## [2026-06-09] issue | dna-sql-agent-web — 대화 메시지 로드 일시 실패 시 대화 목록 삭제 (404만 삭제하도록 수정)
+
+## [2026-06-09] knowledge | troubleshooting — 프론트엔드 로컬 ID vs 백엔드 ID 불일치 패턴 문서화
+
+## [2026-06-10] session | dna-sql-agent — SQL Guard DB 기반 전환 + 그룹×시스템 테이블 접근 제어 + LLM 재시도 방지
+
+## [2026-06-10] decision | dna-sql-agent — ADR-010: SQL Guard schema.table 차단 지원
+
+## [2026-06-10] decision | dna-sql-agent — ADR-011: 가드레일 차단 시 LLM 재시도 방지 전략
+
+## [2026-06-10] session | dna-sql-agent — 마스킹 그룹 권한 DB 기반 전환
+
+## [2026-06-10] decision | dna-sql-agent — ADR-012: 마스킹 그룹 액션 DB 이관 + 초기값 없음
+
+## [2026-06-12] session | dna-sql-agent — 관리자 페이지 PR #50/#42 생성, 보고서 브랜치 환경 수정
+
+## [2026-06-15] session | dna-sql-agent — 북마크 기반 대시보드 기능 백엔드+프론트엔드 전체 구현
+
+## [2026-06-15] decision | dna-sql-agent — ADR-015: 북마크 SQL 추출 시점 + 캐시 전략
+
+## [2026-06-15] issue | dna-sql-agent-web — widget-add-panel 클릭 불동 (ScrollArea 제거, z-10, div onClick으로 해결)
+
+## [2026-06-15] session | dna-sql-agent — 대시보드 위젯 크기 모델 (프리셋·반응형 컬럼·비례 높이·푸터 대화 링크)
+
+## [2026-06-15] decision | dna-sql-agent — ADR-016: 대시보드 위젯 크기 모델 (고정 프리셋 + 반응형 컬럼 + 비례 높이)
+
+## [2026-06-15] knowledge | troubleshooting — 고정 높이 셀 안 차트 짤림 (border-box 카드 테두리까지 크롬 차감)
+
+## [2026-06-16] session | dna-sql-agent — 로그아웃 후 이전 계정 대화 목록 표시 버그 수정 (useAuth 이중 인스턴스 → 단일 주입)
+
+## [2026-06-17] session | dna-sql-agent — PPT 애드인 HTTP 28001 지원 & Docker 네트워크 구조 탐색/롤백
+
+## [2026-06-17] decision | dna-sql-agent-web — ADR-015 nginx HTTP 28001 포트로 PPT 애드인 지원
+
+## [2026-06-17] issue | dna-sql-agent — Docker 커스텀 네트워크 컨테이너 간 통신 불가 (iptables FORWARD DROP → --network host 롤백)
+
+## [2026-06-17] knowledge | troubleshooting — Docker 커스텀 네트워크 iptables FORWARD DROP 문제 및 --network host 대안
+
+## [2026-06-17] knowledge | troubleshooting — Docker --publish 127.0.0.1:port:port 로 외부 직접 접근 차단
+
+## [2026-06-17] session | dna-sql-agent — 대시보드 UI 개선 (위젯 제거/스크롤 그림자/system_display_name 백엔드 통합), git filter-branch 히스토리 수정
+
+## [2026-06-23] session | dna-sql-agent — run_sql LIMIT 자동 주입 고지 및 DataTable 정렬·sticky 헤더
+
+## [2026-06-23] issue | dna-sql-agent — 북마크 query_sql에 LIMIT 미반영 (tool_calls는 도구 실행 전 저장 → create_bookmark에서 _inject_limit)
+
+## [2026-06-23] knowledge | troubleshooting — shadcn/ui Table sticky 헤더가 overflow 래퍼 때문에 고정 안 됨 (plain table 교체)
+
+## [2026-06-25] session | dna-sql-agent — 시스템 제외 테이블·테이블 접근 제어 목록 선택 UI (#68), DB 연결 버전, 설정 화면 정리
+
+## [2026-06-25] decision | dna-sql-agent — ADR-017 LLM 연결 관리는 즉시 저장으로 통일 (dirty-save 폐기)
+
+## [2026-06-25] issue | dna-sql-agent — 설정 리셋이 저장값 복원 안 됨 (ctx.reset 공장초기화 + 권한 카드 resetRef 미배선)
+
+## [2026-06-25] knowledge | patterns — 요청 토큰(reqRef)으로 stale 비동기 응답 무시 (다이얼로그/탭 전환 race 방지)
+
+## [2026-06-26] session | dna-sql-agent — GeoJSON 지도 시각화 (점·지명 색칠·흐름) + 대시보드 개선
