@@ -1,7 +1,7 @@
 ---
 type: project-status
 project: dna-sql-agent
-updated: 2026-06-26
+updated: 2026-07-20
 phase: active
 ---
 
@@ -189,8 +189,119 @@ phase: active
 - [x] fix: 위젯 추가 패널 button 중첩 hydration, 지도 컬럼명 대소문자 무시 매칭
 - [x] PR 생성 — 백엔드 #81, 웹 #60
 - [x] ADR: [[decisions/018-geojson-map-visualization]]
-- [ ] PR #81·#60 리뷰·머지, 백엔드 재시작 후 동작 확인
+- [x] PR #81·#60 머지 (origin/main 반영 확인)
 - [ ] (보류) 대시보드 범례 선택 사용자별 저장 — view_state JSONB 방식 검토만(원복)
+
+## 2026-06-30 — 북마크 표시 누락 + 지도(flow/point) 시각화·목록 개선
+
+- [x] fix: 채팅 북마크 표시 누락 — 대화별 경량 refs 조회 `GET /api/v1/bookmarks/refs` + 진입 시 전체 로드 → [[issues/bookmark-display-missing-on-chat-entry]]
+- [x] fix: flow map 범례 누락(회귀) — color가 from_label과 같아 display_cols에서 빠지던 것 보강 → [[issues/flowmap-legend-color-equals-from-label]]
+- [x] fix: 점 지도 datetime이 epoch 숫자로 뜨던 것 ISO 직렬화 → [[knowledge/troubleshooting/pandas-to-json-datetime-epoch]]
+- [x] fix: 라벨 미지정 점이 '(점)'으로 뜨던 것 — 첫 식별 컬럼 자동 라벨 + 점 폴백 시 from_label 라벨
+- [x] feat: 지도 데이터 목록 from/id 그룹핑(접기/펼치기), from==to 기준 분류, 선택 묶음 강조 → [[decisions/019-flowmap-list-grouping]]
+- [x] fix: 흐름 화살촉 화면 길이 기준 보정(짧으면 축소/생략) + `_mapPane` 가드로 `_leaflet_pos` 크래시 방지
+- [x] feat: 포인트 지도 클러스터링 활성화(mapType==='point'), 높은 줌(maxZoom-2)에서 해제
+- [x] feat: 지도 범주 팔레트 5→10색 확장·순서 교차 + 다크모드 전용 비비드 팔레트
+- [x] feat: flow 부가 컬럼(시간대·모드 등) 툴팁/상세 표시 + 표시 순서 조회 컬럼 순
+- [x] docs: map color/범례 도구 설명 보강(FLOW에 color=category 안내, Avoid ID/code 제거)
+- [x] refactor: LIMIT 자동 적용 시 화면 안내 제거(실행·LLM 인지·북마크 저장 유지)
+- [x] PR 생성 — 백엔드 #90, 프론트 #64 (브랜치 `refactor/bookmark_map`)
+- [x] PR #90·#64 리뷰·머지 확인
+- [ ] (별개 조사, 이월) 다중 쿼리 수행 내역이 reload/대화전환 시 사라짐 — components 영속화 경합(SaveComponentsMiddleware ↔ ChatSaveHook), build-steps가 components 컬럼만 의존
+
+## 2026-07-03 — 사이드바/헤더 구조 개편 및 대시보드 안정화
+
+- [x] refactor: 대시보드 화면 사이드바를 대화 목록 자리로 승격 — `ConversationList` ↔ `DashboardPanel` 라우트 기반 교체 → [[decisions/020-context-sensitive-sidebar-swap]]
+- [x] feat: 공용 `SidebarTopbar`(로고·버전·연결 상태·다크모드 토글·접기), `SidebarUserMenu`(관리자 링크+프로필 팝업) 신설, 전역 `MainHeader`/`AppHeader` 삭제
+- [x] refactor: 대시보드 상태를 `dashboard-view.tsx` 루트 컴포넌트 → `hooks/use-dashboards.ts` + `AppContext`로 이전
+- [x] fix: 로그아웃 후 재로그인 시 대시보드/북마크 이전 계정 데이터 잔존 + 재로드 안 되던 2단계 버그 → [[issues/dashboard-account-switch-stale-state]]
+- [x] fix: 대시보드 전환 시 화면 깜빡임(불필요한 리마운트) + 스크롤 불가(h-full 체인 끊김) → [[issues/dashboard-transition-height-chain-flicker]]
+- [x] feat: 대시보드 "전체 새로고침" 시 위젯별 개별 스피너 표시(`forceRefreshing`)
+- [x] docs: `dashboard-design.md`/`chat-design.md` 구조 변경 반영, 실제 코드와 어긋난 옛 서술 정정
+- [x] feat(백엔드): 서비스 사용 매뉴얼 도구(`get_app_manual`) + `GET /api/v1/manual` 조회 API — 화면·LLM 단일 출처 공유, 이슈 #67 해결
+- [x] docs(백엔드): 프론트 헤더 개편에 맞춰 매뉴얼 로그아웃/설정/관리자 진입 경로 설명 수정
+- [x] knowledge: flex `h-full` 체인 누락 시 overflow-hidden 클리핑 트러블슈팅 문서화 → [[knowledge/troubleshooting/flex-height-chain-broken-by-missing-h-full]]
+- [x] PR 생성·머지 — 프론트 [#66](https://github.com/DnA-Platform-Development-Team/dna-sql-agent-web/pull/66), 백엔드 [#96](https://github.com/DnA-Platform-Development-Team/dna-sql-agent/pull/96)(Closes #67)
+
+## 2026-07-06 — 관리자 페이징, 다이얼로그 정리, 대화 제목 버그, 시스템 목록 성능 개선
+
+- [x] fix: 새 대화 생성 시 첫 사용자 메시지로 제목 자동 갱신되던 규칙 복원(빈 문자열 센티널 회귀 수정) → [[issues/conversation-title-empty-string-sentinel-broken-by-default]]
+- [x] feat: 관리자 목록(연결/시스템/사용자/그룹) 서버사이드 페이징 적용, 공통 페이지네이션 UI 통일 → [[decisions/021-admin-list-server-side-pagination]]
+- [x] fix: 시스템 목록 API(`/systems`, `/systems/paged`) 응답 지연 — N+1 배치화 + `table_relation_info` 대용량 JSON 컬럼 SQL 단 축소 → [[issues/systems-list-api-slow-n-plus-one-and-heavy-json-column]]
+- [x] fix: 설정 화면 슬라이더 소수점 입력 버그(즉시 반올림·DOM 미갱신·false dirty) 3종 수정 및 3개 탭 중복 구현 공통 컴포넌트로 통합 → [[knowledge/troubleshooting/react-controlled-number-input-same-numeric-value-no-dom-update]]
+- [x] refactor: 죽은 `SchemaDetector` 컴포넌트 제거, DB 연결 저장 후 시스템 바로 생성 confirm 플로우 추가
+- [x] refactor: 사용자/그룹 관리 화면 정리 — 미시행 `allowed_tables` UI 제거(프론트만, 백엔드 데이터/API는 유지), 중복 권한 상세 다이얼로그 제거
+- [x] style: 채팅 전송 버튼 비활성 시 커서/한글화 정리, 커넥션 다이얼로그 풀 설정 라벨 줄바꿈 수정, 잔여 영어 tooltip/toast/title 한글화
+- [x] PR 생성 — 프론트 [#67](https://github.com/DnA-Platform-Development-Team/dna-sql-agent-web/pull/67), 백엔드 [#99](https://github.com/DnA-Platform-Development-Team/dna-sql-agent/pull/99)
+- [ ] (이월) 백엔드 `main` 브랜치 보호 확인됨 — 기존 "브랜치 없이 main에서 바로 작업" 메모리 재검토 필요
+- [ ] (이월) PR #67·#99 리뷰/머지 대기
+- [ ] (이월) 백엔드 `user_table_permissions`(테이블 단위 허용) 기능 완전 구현 여부 vs 완전 제거 여부 결정 필요
+
+## 2026-07-09 — 채팅 북마크 이동, 지도 선택 중복 수정, 대시보드 고정 날짜·드래그 성능
+
+- [x] feat: 채팅방 안에서 북마크된 카드로 바로 이동하는 네비게이터 — 검색 결과 이동 인프라 재사용, 헤더 토글·원형 순환 이전/다음, 검색 중 비활성화
+- [x] fix: 지도 point 시각화 좌표+속성 완전 동일 행에서 다중 선택되던 문제 — 서버가 행 위치 기반 Feature.id 부여 → [[issues/map-point-duplicate-selection-same-coords-and-properties]]
+- [x] feat+fix: 상대 날짜(오늘/최근 N일) SQL이 리터럴로 고정되어 저장 쿼리 갱신이 무의미해지던 문제 — 프롬프트 지시 변경(DB 동적 함수) + 대시보드 위젯 고정 날짜 감지·경고 UI 병행 → [[decisions/022-relative-date-dynamic-sql-and-fixed-date-detection]]
+- [x] fix: 북마크 삭제해도 열려있는 대시보드에서 위젯이 안 사라지던 문제 — 삭제 성공 시 활성 대시보드 재조회 → [[issues/dashboard-widget-stale-after-bookmark-deleted]]
+- [x] perf: 대시보드 편집 모드 드래그·드롭 시 지도 등 무거운 위젯 버벅임 개선 — React.memo/useCallback, will-change: transform, 그리드 설정 props 메모이제이션 → [[issues/dashboard-drag-drop-jank-heavy-widgets]]
+- [x] knowledge: 드래그앤드롭 그리드 무거운 자식 리렌더 최적화 패턴 문서화 → [[knowledge/patterns/react-grid-drag-memoize-heavy-children]]
+- [x] PR 생성 — 백엔드 [#104](https://github.com/DnA-Platform-Development-Team/dna-sql-agent/pull/104), 프론트 [#69](https://github.com/DnA-Platform-Development-Team/dna-sql-agent-web/pull/69)
+- [ ] (이월) PR #104·#69 리뷰/머지 대기
+- [ ] (이월) 대시보드 드래그 성능 — 사용자 체감상 개선됐으나 "완전히는 아님", 추가 여지 있으면 재검토
+
+## 2026-07-16 — 그룹 관리자(Group Admin) 기능 정책 설계 + 백엔드 구현
+
+- [x] docs: `docs/group-admin-design.md` 정책 문서 작성 (v0.1 → v0.3) — 그룹 관리자 역할,
+      이중 레이어 권한 모델(그룹↔시스템 매핑 vs 사용자 권한), 커넥션 단독소유 편집 제한,
+      그룹 이동 시 권한 전량회수 등 확정 → [[decisions/023-group-admin-role-and-permission-model]]
+- [x] feat: 그룹 관리자 백엔드 구현 — 스키마(`group_system_mappings`, `group_admins`,
+      `groups.is_default`), `require_group_admin`(DB 조회 기반) 인가 의존성, 신규
+      `dna.group_admin` 모듈(CRUD + 라우터 28개 엔드포인트, 기존 `database/routes.py`
+      핸들러 위임 재사용), `update_user`/`register` 정책 반영 버그 수정 겸함
+- [x] test: `tests/test_group_admin.py` 16건 신규 (그룹 이동 권한 전량회수, 매핑삭제
+      자동회수, 비활성화 시 즉시 역할해제, 단독소유 커넥션 판정, 대화이력 보존 회귀),
+      기존 45건 회귀 없음 확인
+- [ ] (이월) 백엔드 커밋 및 PR 생성
+- [ ] (이월) `docs/group-admin-design.md` §7에 남은 세부 구현 판단 배포 전 최종 리뷰
+
+## 2026-07-20 — 그룹 관리자 DB 관리 API 공용화, 권한 감사, 커넥션 정책 재조정
+
+- [x] feat: `/group-admin/connections/paged`, `/group-admin/systems/paged` 신설 —
+      admin과 동일한 서버 페이지네이션, 전체 목록을 클라이언트에서 자르던 방식 제거
+- [x] fix: `SystemScopeResponse` pydantic 스키마 빌드 실패 — forward-ref가 서브클래스
+      모듈 네임스페이스에서 해석되는 문제 → [[knowledge/troubleshooting/pydantic-forward-ref-resolved-in-subclass-module]]
+- [x] security: 그룹 관리자 API 권한 체크 전수 감사 — `POST /group-admin/systems`가
+      body의 `connection_id` 스코프를 검증 안 하던 구멍 발견
+- [x] feat→revert: 커넥션 접근 정책 "생성자만 편집"(`created_by` 컬럼) 설계 후 보류,
+      "임시로 시스템 관리자와 동일하게 전체 개방"으로 축소 — `_require_connection_visible`
+      등 스코프 체크 코드 제거, `docs/group-admin-design.md` §4.1은 한 버전 전 상태로 남음
+- [x] 백엔드 커밋 3건 (프론트엔드 세션은 [[projects/dna-sql-agent-web/sessions/2026-07-20-group-admin-db-tabs-unification]])
+- [ ] (이월) PR 생성 (백엔드/프론트 둘 다 미생성)
+
+## 2026-07-20 — 그룹 관리자 정책 v0.5: 커넥션 접근을 "위임" 모델로 확정
+
+바로 위 이월 항목("커넥션 접근 최종 정책 결정", "§4.1 재갱신") 해결.
+
+- [x] docs: `docs/group-admin-design.md` v0.4 → v0.5 — 커넥션 CRUD는 시스템 관리자
+      전용으로 되돌리고("생성자만 편집"/"공유 여부 무관 전체 편집 가능" 둘 다 폐기),
+      대신 시스템 관리자가 그룹에 **커넥션을 위임**(N:M)하면 그 범위 내 시스템
+      관리(생성·수정·삭제·지식화·SQL예제)를 그룹 관리자가 하는 구조로 확정
+      → [[decisions/024-connection-delegation-model]]
+- [x] 정책: `group_system_mappings`가 시스템 관리자가 수동 편집하던 기능에서, 커넥션
+      위임으로부터 **자동 파생**되는 내부 상태로 전환 — 그룹 관리자가 만든 시스템은
+      자기 그룹에만, 시스템 관리자가 만든 시스템은 위임받은 모든 그룹에 자동 매핑
+- [x] 정책: 위임 해제 시 매핑 자동 해제 + 그룹 생성 시스템은 미사용(inactive) 전환 +
+      해당 그룹 사용자의 `user_system_permissions`도 자동 회수 (기존 §4.1 회수 규칙
+      연장 적용)
+- [x] 그룹 관리자 기능이 아직 미출시라 소급 마이그레이션 없이 강제 적용하기로 결정
+- [ ] (이월) 구현 착수 필요 — `group_connection_mappings` 신규 테이블/CRUD API,
+      기존 "임시 전체 개방"이던 그룹 관리자용 커넥션 CRUD 엔드포인트 제거·조회 전용화,
+      시스템 생성 시 자동 매핑 로직, 위임 해제 시 캐스케이드(매핑 해제·미사용 전환·
+      권한 회수) 트랜잭션
+- [ ] (이월) 프론트엔드: 그룹 관리자 화면의 연결 관리에서 등록/수정/삭제 UI 제거
+      (현재는 admin과 동일하게 전체 CRUD 노출된 상태, [[projects/dna-sql-agent-web/sessions/2026-07-20-group-admin-db-tabs-unification]] 참고)
+- [ ] (이월) wiki: 구현 착수 시 `docs/group-admin-design.md` §6 개발 범위 표를 실제
+      커밋과 대조해 갱신
 
 ## 블로커
 
