@@ -300,8 +300,32 @@ phase: active
       권한 회수) 트랜잭션
 - [ ] (이월) 프론트엔드: 그룹 관리자 화면의 연결 관리에서 등록/수정/삭제 UI 제거
       (현재는 admin과 동일하게 전체 CRUD 노출된 상태, [[projects/dna-sql-agent-web/sessions/2026-07-20-group-admin-db-tabs-unification]] 참고)
-- [ ] (이월) wiki: 구현 착수 시 `docs/group-admin-design.md` §6 개발 범위 표를 실제
-      커밋과 대조해 갱신
+- [x] (이월) wiki: 구현 착수 시 `docs/group-admin-design.md` §6 개발 범위 표를 실제
+      커밋과 대조해 갱신 — 아래 2026-07-21 섹션에서 해소
+
+## 2026-07-21 — 그룹↔커넥션 위임 구현 완료, 기본 그룹 접근 버그 수정
+
+바로 위 2026-07-20 이월 항목(구현 착수, 프론트 CRUD UI 제거) 전부 해소.
+
+- [x] feat: `group_connection_mappings` 테이블 + CRUD API 신설
+      (`GET/POST/DELETE /admin/groups/{id}/connections`, 역조회
+      `GET /admin/connections/{id}/groups`) → `63268d6`
+- [x] feat: 레거시 그룹↔시스템 수동 매핑 관리자 API 4개 제거 — 매핑은 이제
+      위임에서 전부 자동 파생 → `63268d6`
+- [x] feat: 그룹 관리 다이얼로그용 서버 페이징+정렬(이미 선택된 항목 우선) API
+      3종 추가 — 커넥션 후보, 그룹 관리자 후보, 멤버 후보 → `4d96be0`
+- [x] fix: `move_user_group()`이 대상 그룹과 무관하게 `default_grant` 매핑만
+      보던 버그 수정 — 기본 그룹(그룹 관리자 없음)으로 이동/재편입 시에는
+      `register()`와 동일하게 `systems.default_accessible` 기준으로 재부여.
+      실제로는 기본 그룹 재진입 시 권한이 0개로 초기화되던 버그였음
+      → [[decisions/025-default-group-access-initialization]], `a70bbe7`
+- [x] feat: 기본 그룹에는 그룹 관리자 지정/커넥션 위임 자체를 서버에서 거부
+      (422) → `a70bbe7`
+- [x] test: `test_group_admin.py` 보강, 17건 전부 통과 확인 (`PYTHONPATH=src` +
+      더미 `DB_ENCRYPTION_KEY` 필요 — 로컬 환경에 두 값 다 안 잡혀 있어 첫 실행
+      시 `ModuleNotFoundError`/`KeyError`로 헷갈릴 수 있음)
+- [x] docs: `group-admin-design.md` v0.5 → v0.6 (§4.3 예외 조항, §7 #11,
+      변경로그)
 
 ## 블로커
 

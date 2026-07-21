@@ -1,7 +1,7 @@
 ---
 type: project-status
 project: dna-sql-agent-web
-updated: 2026-06-17
+updated: 2026-07-20
 phase: active
 ---
 
@@ -234,12 +234,73 @@ phase: active
 - [x] refactor: 워크플로우 전체 `--network host` 통일 (Docker 커스텀 네트워크 방식 서버 방화벽으로 포기) (2026-06-17)
 - [x] docs: README 현행화 (nginx 배포 구조, 기능 목록, 환경변수 정리) (2026-06-17)
 
+## 완료된 것 (2026-07-16 — 그룹 관리자 기능)
+
+- [x] feat: Auth 상태 확장 — `isGroupAdmin`/`groupAdminGroupId` 추가, `refreshRole()` +
+      `auth-role-changed` 이벤트로 세션 중 역할 재검증 지원
+- [x] feat: `/admin/group-manage` 4탭 페이지 신규 (데이터베이스 관리/사용자 권한/
+      기본 권한 설정/그룹원 관리), 시스템관리자용 그룹 매핑·관리자 지정 다이얼로그 2개
+- [x] feat: `lib/group-admin-api.ts` 신규 (그룹관리자 셀프서비스 API 클라이언트)
+- [x] fix: 그룹 관리자 지정해도 관리자 페이지 진입 링크가 안 보이던 버그 —
+      `admin/layout.tsx` 진입 시 서버 재검증 + `sidebar-user-menu.tsx` 진입 버튼
+      조건에 `isGroupAdmin` 누락 → [[issues/group-admin-entry-point-missing]]
+- [x] knowledge: 권한 라우트 진입 시 서버 재검증 패턴 문서화 →
+      [[knowledge/patterns/reverify-role-on-privileged-route-entry]]
+
+## 완료된 것 (2026-07-20 — 그룹 관리자 DB 관리 화면 공용화)
+
+- [x] feat: `ConnectionList`를 props 기반으로 리팩터링해 admin/group-manage 공용화,
+      `useGroupDbConnections` 신설 — 서버 페이지네이션 적용
+- [x] feat: admin `SystemList` 테이블을 제네릭 `SystemTable`로 분리해 공용화,
+      `useGroupDbSystems` 신설 — 그룹 쪽 중복 "지식화 트리거" 버튼 제거
+- [x] fix: 그룹 관리자 커넥션 접근 정책 변경 2회 반영 — 공유 제한 제거 → 경고
+      문구 대체 → 전면 개방(정책 확정 전 임시)에 맞춰 UI(자물쇠 아이콘, 경고
+      문구, 커넥션 필터, 생성 버튼 비활성화) 순차 제거
+      → [[sessions/2026-07-20-group-admin-db-tabs-unification]]
+- [x] knowledge: `npx tsc`가 로컬 tsc 해석 실패 시 exit 0으로 조용히 통과하는 함정
+      확인 — `./node_modules/.bin/tsc` 직접 호출로 우회
+
+## 완료된 것 (2026-07-21 — DB 연결 권한 UI + 그룹 관리 다이얼로그 통합)
+
+바로 위 "그룹 관리자 커넥션 접근 정책 최종 확정 대기" 이월 항목 해소 —
+정책 확정([[projects/dna-sql-agent/decisions/024-connection-delegation-model]])
+후 화면까지 반영 완료.
+
+- [x] feat: `ConnectionDialog`에 시스템 관리자 전용 "권한" 탭 추가 — 그룹별로
+      해당 커넥션의 조회·시스템 관리 권한을 부여 (그룹 검색+체크리스트)
+- [x] feat: 그룹 관리자 지정 / DB 연결 권한 다이얼로그를 각각 따로 열던 방식을
+      버리고 그룹 수정 다이얼로그의 탭(기본 정보/그룹 관리자/DB 연결 권한)으로
+      통합. 두 탭 다 토글 즉시 반영이 아니라 다이얼로그 저장 버튼을 눌러야
+      커밋됨 (add/remove diff)
+- [x] refactor: 그룹 관리자 지정 / DB 연결 권한 / 멤버 관리 세 목록을 전체
+      로드+클라이언트 필터링에서 **서버 페이징 + 스크롤 시 다음 페이지
+      로드**로 통일. 공용 훅 `useInfiniteScrollList` + 컴포넌트
+      `InfiniteScrollList`로 중복 제거 (하단 페이지 버튼 없이 스크롤만 —
+      버튼+스크롤 동시 노출이 UX상 안 좋다는 피드백으로 무한스크롤 채택)
+- [x] fix: roster(페이징 없는 전체 유저 목록) 방식을 쓰던 곳이 다 사라지면서
+      미사용 `useUsersRoster`/`getUsersRoster` 훅·API·백엔드 라우트까지 연쇄
+      제거
+- [x] feat: 그룹 목록에 기본 그룹(`is_default`) 표시 — 그룹명 배지 앞 회색 점
+      + 툴팁. 처음엔 별 아이콘으로 했다가 "유치하다"는 피드백으로 교체
+- [x] fix: 기본 그룹 수정 다이얼로그에서 그룹 관리자/DB 연결 권한 탭 숨김
+      (서버 차단은 백엔드에서, 상세는
+      [[projects/dna-sql-agent/decisions/025-default-group-access-initialization]])
+- [x] knowledge: Radix `Tabs`는 `display: grid` 기본값을 갖는 `DialogContent`에
+      `flex flex-col max-h-[Nvh]` 클래스를 얹어도(twMerge가 grid→flex로
+      치환) 문제없이 동작 — 다만 스크롤 카드에 `rounded-lg border`와
+      `overflow-y-auto`를 같은 엘리먼트에 주면 스크롤바가 모서리 radius를
+      가려서 잘려 보임. 바깥 div(`rounded-lg border overflow-hidden`) +
+      안쪽 div(`overflow-y-auto`, radius 없음) 이중 구조로 분리해야 함
+
 ## 진행 중
 
 - [ ] 바로 반영/적용 반영 구분 (SQL Guardrail: 즉시 / 마스킹 룰: 저장 후 적용)
 
 ## 다음 할 일
 
+- [x] (이월, 부분완료) 그룹 관리자 기능 프론트엔드 커밋 — 2026-07-20까지 다수 커밋
+      완료, PR 생성은 아직 (이월)
+- [ ] (이월) 시스템관리자/그룹관리자 두 세션으로 전체 플로우 실사용 재확인
 - [ ] PR #37 머지 (feat/chart-palette-sankey)
 - [ ] feat/echarts-rendering-improvements PR 생성 및 머지
 - [ ] style/ui-spacing 브랜치 PR 생성 및 머지
@@ -250,7 +311,13 @@ phase: active
 - [ ] 권한 취소 AlertDialog "취소" 버튼 문구 중복 검토
 - [ ] 데이터 위경도 정보 GeoJson 표출 기능 설계 (eCharts 한국 최신 데이터 참고)
 - [ ] Connections status 토글 깜빡임 수정 (옵티미스틱 업데이트)
-- [ ] 백엔드 어드민 API 권한 체크 확인
+- [x] 백엔드 어드민 API 권한 체크 확인 (2026-07-20 감사 완료, 구멍 1건 발견·정책으로
+      해소 — 상세는 [[projects/dna-sql-agent/status]] 2026-07-20 섹션)
+- [ ] (신규 2026-07-20) `useDbConnections`/`useGroupDbConnections`,
+      `useDbSystems`/`useGroupDbSystems`를 `useSqlExamples` 패턴(단일 훅 + `api`
+      파라미터)으로 통일
+- [x] (신규 2026-07-20) 그룹 관리자 커넥션 접근 정책 최종 확정 대기 — 2026-07-21
+      섹션에서 해소 (위임 모델 확정 + 화면 반영 완료)
 
 ## 블로커
 
