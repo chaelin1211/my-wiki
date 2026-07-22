@@ -261,8 +261,8 @@ phase: active
 - [x] test: `tests/test_group_admin.py` 16건 신규 (그룹 이동 권한 전량회수, 매핑삭제
       자동회수, 비활성화 시 즉시 역할해제, 단독소유 커넥션 판정, 대화이력 보존 회귀),
       기존 45건 회귀 없음 확인
-- [ ] (이월) 백엔드 커밋 및 PR 생성
-- [ ] (이월) `docs/group-admin-design.md` §7에 남은 세부 구현 판단 배포 전 최종 리뷰
+- [x] (이월) 백엔드 커밋 및 PR 생성 — 2026-07-22 PR #117로 해소
+- [x] (이월) `docs/group-admin-design.md` §7에 남은 세부 구현 판단 배포 전 최종 리뷰 — v0.9로 해소
 
 ## 2026-07-20 — 그룹 관리자 DB 관리 API 공용화, 권한 감사, 커넥션 정책 재조정
 
@@ -276,7 +276,7 @@ phase: active
       "임시로 시스템 관리자와 동일하게 전체 개방"으로 축소 — `_require_connection_visible`
       등 스코프 체크 코드 제거, `docs/group-admin-design.md` §4.1은 한 버전 전 상태로 남음
 - [x] 백엔드 커밋 3건 (프론트엔드 세션은 [[projects/dna-sql-agent-web/sessions/2026-07-20-group-admin-db-tabs-unification]])
-- [ ] (이월) PR 생성 (백엔드/프론트 둘 다 미생성)
+- [x] (이월) PR 생성 (백엔드/프론트 둘 다 미생성) — 2026-07-22 PR #117/#72로 해소
 
 ## 2026-07-20 — 그룹 관리자 정책 v0.5: 커넥션 접근을 "위임" 모델로 확정
 
@@ -326,6 +326,26 @@ phase: active
       시 `ModuleNotFoundError`/`KeyError`로 헷갈릴 수 있음)
 - [x] docs: `group-admin-design.md` v0.5 → v0.6 (§4.3 예외 조항, §7 #11,
       변경로그)
+
+## 2026-07-22 — 그룹 관리자 기능 마무리, PR #117 머지
+
+바로 위 2026-07-21 이월 항목("PR 생성", "docs §7 최종 리뷰" 관련) 대부분 해소.
+
+- [x] feat: 커넥션 위임 시 `default_grant` 자동 시딩(`default_accessible`
+      시스템 최초 1회) → [[decisions/026-group-admin-v0.9-refinements]]
+- [x] feat: 사용자별 권한 매트릭스 그룹 선택 필수화 + 컬럼 그룹 스코프 제한
+      (admin/기본 그룹 예외)
+- [x] feat: 벌크 그룹 이동 `POST /admin/users/bulk-move` (단일 트랜잭션)
+- [x] feat: 그룹 편입 후보 페이징 전환, 연결/시스템 이름 검색+정렬 추가
+- [x] fix: `/me` JWT 스탈 그룹명 → DB 조회 전환, 멤버 다이얼로그 `is_admin`
+      스코프 오류, 커넥션 위임 해제 캐스케이드, 다수 정렬 버그
+      (`COLLATE "und-x-icu"`) → [[knowledge/troubleshooting/postgres-collate-korean-english-mixed-sort]]
+- [x] docs: `group-admin-design.md` v0.9, 그룹 관리자 전용 매뉴얼 신설
+- [x] test: `test_group_admin.py` 9건 추가, 총 19건 전부 통과
+- [x] PR #117 생성·머지 (백엔드), 프론트 PR #72도 동일 세션에 머지
+      ([[projects/dna-sql-agent-web/sessions/2026-07-22-group-admin-hardening-and-pr72]])
+- [ ] (이월) `app_manual_group_admin.md` 소제목 중복 정리 (의도적 보류)
+- [ ] (이월) 챗봇 `AppManualTool`이 그룹 관리자 인지 못함 — 범위 밖으로 남김
 
 ## 블로커
 
