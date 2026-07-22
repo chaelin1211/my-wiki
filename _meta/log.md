@@ -216,3 +216,73 @@ type: log
 ## [2026-06-25] knowledge | patterns — 요청 토큰(reqRef)으로 stale 비동기 응답 무시 (다이얼로그/탭 전환 race 방지)
 
 ## [2026-06-26] session | dna-sql-agent — GeoJSON 지도 시각화 (점·지명 색칠·흐름) + 대시보드 개선
+
+## [2026-06-30] session | dna-sql-agent — 북마크 표시 누락 수정 + 지도(flow/point) 시각화·데이터 목록 개선
+
+## [2026-06-30] issue | dna-sql-agent — flow map 범례 누락 (color==from_label일 때 display_cols 제외 회귀)
+
+## [2026-06-30] issue | dna-sql-agent — 채팅 북마크 표시 누락 (진입 시 미로드 + 페이지네이션) → 대화별 refs 조회
+
+## [2026-06-30] decision | dna-sql-agent — ADR-019 지도 목록을 from==to 기준 분류·from/id 그룹핑
+
+## [2026-06-30] knowledge | troubleshooting — pandas df.to_json()이 datetime을 epoch 밀리초(숫자)로 직렬화 (date_format="iso")
+
+## [2026-07-03] session | dna-sql-agent — 사이드바/헤더 구조 개편(대시보드 사이드바 승격), 대시보드 안정화, 서비스 매뉴얼 백엔드 연동
+
+## [2026-07-03] decision | dna-sql-agent — ADR-020 라우트에 따라 사이드바 컴포넌트 자체를 교체(숨김 대신 스왑)
+
+## [2026-07-03] issue | dna-sql-agent — 로그아웃 후 재로그인 시 대시보드/북마크 상태 잔존 → 재로드 안 됨(2단계 버그)
+
+## [2026-07-03] issue | dna-sql-agent — 대시보드 전환 시 화면 깜빡임 + 스크롤 불가(리마운트 + h-full 체인 끊김)
+
+## [2026-07-03] knowledge | troubleshooting — overflow-y-auto가 안 먹힘 — 스크롤이 아니라 조상 h-full 누락으로 클리핑되는 것
+
+## [2026-07-06] session | dna-sql-agent — 관리자 페이징·다이얼로그 정리, 대화 제목 버그, 시스템 목록 성능 개선
+
+## [2026-07-06] decision | dna-sql-agent — ADR-021: 관리자 목록 서버사이드 페이징 (페이징 API + 무페이징 roster API 병행)
+
+## [2026-07-06] issue | dna-sql-agent — 새 대화 제목 빈 문자열 센티널이 기본값 변경으로 깨짐 (첫 메시지 자동 갱신 불가)
+
+## [2026-07-06] issue | dna-sql-agent — 시스템 목록 API 응답 지연 — N+1 쿼리 + table_relation_info 대용량 JSON 컬럼 전체 조회
+
+## [2026-07-06] knowledge | troubleshooting — React 컨트롤드 number input, 같은 숫자값이면 DOM 미갱신 (ref로 직접 커밋 필요)
+
+## [2026-07-09] session | dna-sql-agent — 채팅 북마크 이동, 지도 선택 중복 수정, 대시보드 고정 날짜·드래그 성능
+
+## [2026-07-09] decision | dna-sql-agent — ADR-022: 상대 날짜는 DB 동적 함수로 생성 + 대시보드 고정 날짜 감지·경고 병행
+
+## [2026-07-09] issue | dna-sql-agent — 지도 point 좌표+속성 완전 동일 행에서 다중 선택 (Feature.id 부재)
+
+## [2026-07-09] issue | dna-sql-agent — 북마크 삭제해도 열려있는 대시보드 위젯 안 사라짐 (activeId 불변 가드로 재조회 누락)
+
+## [2026-07-09] issue | dna-sql-agent — 대시보드 드래그·드롭 시 무거운 위젯(지도) 버벅임 (리렌더 + GPU 레이어 미승격 + props 참조 불안정)
+
+## [2026-07-09] knowledge | patterns — 드래그앤드롭 그리드 무거운 자식 리렌더 최적화 체크리스트 (React.memo + will-change + props 참조 안정성)
+
+## [2026-07-15] session | kacportal — 스마트기기 이용통계 엑셀 다운로드 sheetName 버그 수정 + 로컬 Tomcat 디버그 환경 구축
+
+## [2026-07-15] issue | kacportal — 엑셀 다운로드 버튼 무반응 — xl.sheetName 누락으로 makeXl() TypeError
+
+## [2026-07-15] issue | kacportal — 로컬 Tomcat(cargo-maven3-plugin) 실행 전면 실패 — pom.xml 문법 오류 + war 패키징 누락 + Altibase 드라이버 비활성화 3단 연쇄
+
+## [2026-07-15] knowledge | troubleshooting — cargo-maven3-plugin "Cannot find 'property' in class Configuration" — <property> 단수 문법 대신 <properties> Map 바인딩 필요
+
+## [2026-07-15] knowledge | patterns — 정적 HTML 하니스로 DB/백엔드 없이 프론트 로직만 실제 라이브러리로 검증하기
+
+## [2026-07-16] session | dna-sql-agent — 그룹 관리자(Group Admin) 기능 정책 설계 + 백엔드 구현
+
+## [2026-07-16] decision | dna-sql-agent — ADR-023: 그룹 관리자 역할과 이중 레이어 권한 모델(그룹↔시스템 매핑 vs 사용자 권한)
+
+## [2026-07-16] session | dna-sql-agent-web — 그룹 관리자(Group Admin) 기능 프론트엔드 구현
+
+## [2026-07-16] issue | dna-sql-agent-web — 그룹 관리자 지정해도 관리자 페이지 진입 방법 없음 (역할 캐시 미재검증 + 진입 버튼 조건 누락)
+
+## [2026-07-16] knowledge | patterns — 권한 라우트 진입 시 서버 재검증 — 로그인 시점 캐시만 믿지 않기
+
+## [2026-07-22] session | dna-sql-agent — 그룹 관리자 기능 마무리(default_grant 시딩, 권한 매트릭스 스코프, 벌크 이동), PR #117 머지
+
+## [2026-07-22] decision | dna-sql-agent — ADR-026: 그룹 관리자 정책 v0.9 refinements
+
+## [2026-07-22] session | dna-sql-agent-web — 그룹 관리자 화면 마무리(그룹원 관리 다이얼로그 재설계), PR #72 머지
+
+## [2026-07-22] knowledge | troubleshooting — PostgreSQL COLLATE "und-x-icu"로 한글/영문 혼용 정렬 문제 해결
