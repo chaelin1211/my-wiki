@@ -20,27 +20,47 @@ LLM이 위키를 생성·관리하고, 인간은 소싱·탐색·의사결정에
 ```yaml
 ---
 type: <페이지 유형>        # 필수
-created: YYYY-MM-DD       # 필수
-updated: YYYY-MM-DD       # 필수
-project: <프로젝트명>      # 프로젝트 관련 페이지만
+project: <프로젝트명>      # 프로젝트 관련 페이지는 필수
+date: YYYY-MM-DD          # 필수 — 기록 대상 시점 (세션일, 회의일, 이슈 발생일)
 tags: []                   # 선택
-sources: []                # 근거 소스 링크
+related: []                # 선택 — 관련 페이지 링크
 status: draft | stable     # 선택
 confidence: high | medium | low  # 선택
 ---
 ```
 
+`date` 는 "그 일이 있었던 날"이다. 세션 로그·회의록·이슈처럼 **시점이 곧 정체성인
+페이지**가 대부분이므로 이 하나로 충분하다.
+
+`created`/`updated` 는 **계속 갱신되는 살아있는 문서에만** 쓴다 —
+`overview.md`, `architecture.md`, `status.md`, `_meta/index.md`.
+이런 문서를 고칠 때는 `updated` 를 반드시 함께 갱신한다.
+
 ### 페이지 유형 (type)
 
-- `project-overview` : 프로젝트 개요 (진입점)
+프로젝트 페이지:
+
+- `project-overview` : 프로젝트 개요 (진입점) — `created`/`updated` 사용
+- `architecture` : 기술 스택·구조 종합 — `created`/`updated` 사용
+- `project-status` : 현재 상태·다음 할 일 — `created`/`updated` 사용
 - `session-log` : Claude Code 작업 세션 기록
 - `decision-record` : 아키텍처/기술 의사결정 (ADR)
-- `troubleshooting` : 문제 해결 기록
+- `meeting` : 회의록 (`attendees` 필드 추가)
+- `troubleshooting` : 문제 해결 기록 (`resolved`, `root-cause` 필드 추가)
+- `issue-log` : 별도 파일로 승격할 정도가 아닌 사소한 문제 모음 (프로젝트당 1개)
+
+Knowledge 페이지:
+
 - `tool` : 도구·라이브러리 지식
 - `pattern` : 재사용 가능한 패턴·기법
+- `troubleshooting` : 프로젝트 횡단 문제 해결
 - `source-summary` : 소스 요약
 - `synthesis` : 주제별 종합 분석
 - `query-result` : 질의 결과 보존
+
+> [!warning] 어휘 고정
+> 위 목록에 없는 `type` 값을 새로 만들지 말 것. `issue`, `issue-record`, `decision`
+> 처럼 비슷하지만 다른 값이 섞이면 type 기준 질의가 조용히 누락된다.
 
 ## 디렉토리 규약
 
@@ -112,7 +132,8 @@ knowledge/
 
 ## 소스 신뢰성 규칙
 
-- 모든 위키 페이지의 `sources` 필드 필수
+- `raw/` 소스에서 파생된 페이지는 `sources` 필드로 원문을 가리킨다.
+  작업 중 직접 관찰한 내용(세션·이슈·ADR)은 본문에 파일 경로·PR 번호를 남기는 것으로 갈음
 - 소스에 명시적으로 나온 내용만 위키에 작성
 - 추론/해석은 `> [!note] 해석` 콜아웃으로 구분
 - `confidence` 필드로 확신 수준 표시

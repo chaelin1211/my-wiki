@@ -1,6 +1,6 @@
 ---
 type: index
-updated: 2026-07-16
+updated: 2026-08-26
 ---
 
 # my-wiki — Index
@@ -11,20 +11,37 @@ updated: 2026-07-16
 
 | 프로젝트 | 상태 | 스택 | 마지막 갱신 |
 |---------|------|------|-----------|
-| [[projects/kacportal/overview\|kacportal]] | active | java, spring, egovframe, oracle, altibase, tomcat | 2026-07-15 |
-| [[projects/kac-idp-noti/overview\|kac-idp-noti]] | active | java, spring, kafka, hibernate, tibero, altibase, mysql, docker | 2026-04-21 |
-| [[projects/dna-sql-agent/overview\|dna-sql-agent]] | active | python, fastapi, vanna, vllm, ollama, oracle, postgres, qdrant, docker | 2026-07-16 |
-| [[projects/dna-sql-agent-web/overview\|dna-sql-agent-web]] | active | nextjs, typescript, tailwindcss, shadcn-ui, plotly, docker | 2026-07-16 |
+| [[../projects/2026/kacportal/overview\|kacportal]] | active | java, spring, egovframe, oracle, altibase, tibero, tomcat, elasticsearch, devextreme | 2026-08-12 |
+| [[../projects/2026/kac-idp-noti/overview\|kac-idp-noti]] | active | java, spring, kafka, hibernate, tibero, altibase, mysql, docker | 2026-04-21 |
+| [[projects/dna-sql-agent/overview\|dna-sql-agent]] | active | python, fastapi, vanna, vllm, ollama, oracle, postgres, qdrant, docker, nuitka | 2026-08-25 |
+| [[projects/dna-sql-agent-web/overview\|dna-sql-agent-web]] | active | nextjs, typescript, tailwindcss, shadcn-ui, plotly, docker | 2026-08-28 |
+| [[projects/dna-sql-agent-deploy/overview\|dna-sql-agent-deploy]] | active | bash, docker, docker-compose, github-actions, nginx, postgres, qdrant | 2026-08-28 |
 
 ## Knowledge Base
 
 ### 도구 & 기술
 - [[knowledge/tools/echarts-tooltip-json-patterns|ECharts Tooltip — JSON 환경 포맷터 패턴 ({b}, pre-line, visualMap)]]
+- [[knowledge/tools/colima|Colima — macOS Docker 데몬 (바인드 마운트 권한 미강제 → 리눅스 전용 버그 재현 불가)]]
+- [[knowledge/tools/tailwind-shadcn-theming|Tailwind CSS v4 + shadcn/ui 테마 구조]]
+- [[knowledge/tools/keyless-map-tile-providers|키 없이 쓸 수 있는 지도 타일 제공처 — 래스터/벡터 선택지와 함정]]
+
+### 작업 규칙
+- [[knowledge/pr-rule|PR 작성 규칙]]
 
 ### 패턴
+- [[knowledge/patterns/cross-worker-settings-signal-on-apply|멀티 워커 설정 전파 — 신호는 "적용" 시점에만, 신호 종류는 목적별로]]
+- [[knowledge/patterns/hf-model-ship-local-dir-not-hub-cache|폐쇄망에 모델 넣기 — HF 캐시가 아니라 flat 디렉터리로]]
+- [[knowledge/patterns/empty-state-ambiguity-record-dont-infer|"비어 있음"을 신호로 쓰지 않기 — 추론하지 말고 기록한다]]
+- [[knowledge/patterns/nuitka-no-pyi-file-prevents-stub-leak|Nuitka --no-pyi-file — .pyi 스텁을 통한 소스 유출 차단]]
+- [[knowledge/patterns/single-auth-source-of-truth|인증 상태 단일 진실 공급원 패턴 (React)]]
+- [[knowledge/patterns/typed-error-expected-states|예상 가능한 실패 상태는 타입이 있는 에러로 — Typed Error]]
+- [[knowledge/patterns/ime-composition-enter-guard|IME 조합 중 Enter 가드 — 한글 입력 + Enter 제출 폭주 방지]]
+- [[knowledge/patterns/dark-mode-lightness-hierarchy|다크모드 명도 계층 패턴]]
+- [[knowledge/patterns/docker-multistage-context-stage-strip-secrets|Docker 멀티스테이지 — 버려지는 컨텍스트 스테이지로 민감 파일 완전 제거]]
 - [[knowledge/patterns/static-html-harness-bypass-missing-db|정적 HTML 하니스로 DB/백엔드 없이 프론트 로직만 실제 라이브러리로 검증하기]]
 - [[knowledge/patterns/sse-post-completion-patch|SSE 완료 후 최소 패치 패턴 — 스트리밍 state 보존]]
 - [[knowledge/patterns/postgres-lateral-latest-row-per-group|PostgreSQL LATERAL JOIN — 그룹별 최신 1건 조회]]
+- [[knowledge/patterns/defer-destructive-toggle-until-save|파괴적 토글은 저장 전까지 보류 — 대기 상태 + 일괄 저장 + 이동 가드]]
 - [[knowledge/patterns/optimistic-update-table-toggle|테이블 토글 셀 옵티미스틱 업데이트 — Set 기반 롤백 패턴]]
 - [[knowledge/patterns/refresh-token-rotation-axios-interceptor|Refresh Token Rotation — axios 401 인터셉터 + 큐 패턴]]
 - [[knowledge/patterns/401-interceptor-queue-pattern|401 인터셉터 큐 패턴 — native fetch refresh token 자동 갱신]]
@@ -33,12 +50,57 @@ updated: 2026-07-16
 - [[knowledge/patterns/request-token-stale-response-guard|요청 토큰(reqRef)으로 stale 비동기 응답 무시 — 다이얼로그/탭 전환 race 방지]]
 - [[knowledge/patterns/react-grid-drag-memoize-heavy-children|드래그앤드롭 그리드 무거운 자식 리렌더 최적화 — React.memo + will-change + props 참조 안정성]]
 - [[knowledge/patterns/reverify-role-on-privileged-route-entry|권한 라우트 진입 시 서버 재검증 — 로그인 시점 캐시만 믿지 않기]]
+- [[knowledge/patterns/prism-tokenize-to-react-elements-no-dangerously-set-inner-html|Prism 토큰을 dangerouslySetInnerHTML 없이 React 엘리먼트로 렌더링]]
+- [[knowledge/patterns/server-derives-scope-from-record-not-client-input|조회 대상(스코프)은 클라이언트 입력이 아니라 서버가 레코드에서 확정]]
+- [[knowledge/patterns/request-scoped-cache-with-contextvars|ContextVar 요청 단위 캐시 — 수명은 "요청"이 아니라 "태스크"다]]
+- [[knowledge/patterns/symmetric-mac-verifier-can-forge|대칭 MAC(HMAC)은 검증 주체가 곧 위조 주체 — 라이선스는 Ed25519 비대칭으로]]
+- [[knowledge/patterns/defaults-file-as-validation-spec|기본값 파일을 검증 스펙으로 겸용 — `_` 접두 사이드카 메타 키와 스펙 린터]]
+- [[knowledge/patterns/llm-tool-schema-mirrors-implementation|LLM 도구 스키마가 구현을 그대로 비추게 하기 — 능력이 조건부일 때 양방향 어긋남 막기]]
+- [[knowledge/patterns/runtime-config-via-server-route|배포처마다 다른 화면 설정은 빌드가 아니라 서버 라우트에서 — NEXT_PUBLIC_ 은 빌드에 박힌다]]
 
 ### 트러블슈팅
+- [[knowledge/troubleshooting/sqlite-connection-shared-across-asyncio-threads|asyncio 에서 SQLite 연결을 보조 스레드로 넘길 때 — check_same_thread 와 progress handler 타임아웃]]
+- [[knowledge/troubleshooting/merge-keep-ours-silently-reverts-other-features|오래된 브랜치 머지에서 다른 기능이 조용히 되돌아간다 — keep ours 와 git log -m]]
+- [[projects/dna-sql-agent/issues/relation-faq-sqlite-cross-thread|dna-sql-agent: 관계 FAQ 생성 시 SQLite 스레드 오류 (해결)]]
+- [[projects/dna-sql-agent/issues/stale-relation-info-cancel-flag-on-upload-rebuild|dna-sql-agent: 취소 후 업로드 재구축 시 관계 정보 즉시 실패 — 남은 취소 플래그 (해결)]]
+- [[projects/dna-sql-agent/issues/settings-auto-applied-on-save|dna-sql-agent: 관리자 설정이 저장만 해도 자동 적용 (해결)]]
+- [[projects/dna-sql-agent/issues/admin-list-search-sort-lost-in-merge|dna-sql-agent: 관리자 목록 검색·정렬 미동작 — PR #160 머지에서 유실 (해결)]]
+- [[projects/dna-sql-agent-web/issues/chat-header-bookmark-shifted-by-dataset-pr|dna-sql-agent-web: 채팅 헤더 북마크 버튼이 제목 옆으로 밀림 — PR #96 사이드이펙트 (해결)]]
+- [[projects/dna-sql-agent/issues/carto-basemap-api-key-watermark|dna-sql-agent: 지도 배경에 API KEY REQUIRED — CARTO 무료 정책 변경, 워터마크가 타일 그림 안에 인쇄 (해결)]]
+- [[knowledge/troubleshooting/rootless-docker-uid-mapping-inverted|rootless Docker 에서는 UID 상식이 반대 — 호스트 소유권은 --user 0:0 으로 맞춘다]]
+- [[knowledge/troubleshooting/docker-vfs-storage-driver-extreme-slowness|도커가 비정상적으로 느리면 스토리지 드라이버(vfs)부터 본다]]
+- [[knowledge/troubleshooting/vpn-subnet-collision-blocks-routing|VPN 은 붙었는데 사내 서버에 못 감 — 로컬 LAN 과 대역 충돌]]
+- [[projects/dna-sql-agent-deploy/issues/embedding-model-not-found-despite-correct-mount|dna-sql-agent-deploy: 마운트·파일 다 정상인데 임베딩 모델 미탐지 — 모델 700 + :ro 라 chown 자가치유 제외 (해결)]]
+- [[projects/dna-sql-agent-web/issues/admin-button-hidden-when-office-js-blocked|dna-sql-agent-web: 폐쇄망에서 관리자·대시보드 버튼 미표시 — office.js 실패로 판정이 null 고정 (미해결)]]
+- [[knowledge/troubleshooting/docker-restart-always-state-is-restarting|restart always 컨테이너는 exited 가 아니라 restarting]]
+- [[knowledge/troubleshooting/docker-compose-logs-since-timezone|docker compose logs --since 가 옛 로그를 반복 출력]]
+- [[knowledge/troubleshooting/absence-of-log-is-not-evidence|로그가 안 찍힌 것을 근거로 쓰기 전에, 그 로그가 찍히는지부터 확인]]
+- [[projects/dna-sql-agent/issues/license-key-file-not-reapplied-when-config-present|dna-sql-agent: 라이선스 키 파일 교체로는 갱신·만료 복구 안 됨 — config가 단일 검증 소스, 키파일은 not_activated일 때만 부트스트랩]]
+- [[projects/dna-sql-agent/issues/masking-group-action-lost-on-settings-reload|dna-sql-agent: 설정 리로드하면 마스킹 그룹 액션이 옛 값으로 되돌아감 — DB와 config 파일 두 곳에 있던 사본]]
+- [[projects/dna-sql-agent/issues/tool-permission-revoke-all-becomes-allow-all|dna-sql-agent: 도구 권한을 전부 해제하면 오히려 전원 허용이 됨 (fail-open, 미해결)]]
+- [[projects/dna-sql-agent-web/issues/agent-config-page-open-to-group-admin|dna-sql-agent-web: 그룹 관리자가 URL로 에이전트 설정 화면에 진입 가능 (미해결)]]
+- [[projects/dna-sql-agent/issues/sql-guard-max-query-length-not-passed-to-inspector|dna-sql-agent: `max_query_length` 를 바꿔도 안 걸림 — 소비처 생성자에 인자 누락, 기본값으로 조용히 동작]]
+- [[projects/dna-sql-agent/issues/sql-guard-fail-open-when-scope-absent|dna-sql-agent: 시스템 스코프 없으면 테이블 접근 제한이 사라짐 (fail-open, 미해결·정책 대기)]]
+- [[projects/dna-sql-agent/issues/conversation-history-retains-revoked-system-tables|dna-sql-agent: 권한 회수 후에도 대화 이력의 이전 시스템 테이블명이 LLM 문맥에 남음 (미해결·정책 대기)]]
+- [[projects/dna-sql-agent/issues/chat-url-conversation-id-decorative|dna-sql-agent-web: /chat/[id] 의 conversation_id 가 동작하지 않던 문제 — 라우트 제거, 세션 인증 후 재도입]]
+- [[knowledge/troubleshooting/git-diff-stale-local-branch-shows-merged-commits-as-new|stale 로컬 브랜치 기준 git diff가 이미 머지된 커밋을 새 변경사항으로 보여줌]]
+- [[projects/dna-sql-agent/issues/jwt-secret-key-hardcoded-fallback-default|dna-sql-agent: JWT 서명키가 소스에 하드코딩 — 2026-08-19 이후 환경변수 경로마저 사라짐 (미해결)]]
+- [[knowledge/troubleshooting/docker-buildx-cache-unbounded-growth-fills-disk|docker buildx 캐시 무제한 누적 → 디스크 풀]]
+- [[projects/dna-sql-agent/issues/self-hosted-runner-disk-full-buildx-cache|dna-sql-agent: self-hosted 러너(sdn04) 디스크 풀 — buildx 캐시 149.7GB 누적]]
+- [[projects/dna-sql-agent/issues/same-tag-image-load-skipped|dna-sql-agent: 새 패키지를 설치했는데 옛 이미지가 계속 도는 문제 — init.sh 가 태그만 보고 docker load 건너뜀]]
 - [[knowledge/troubleshooting/cargo-maven3-plugin-property-vs-properties-syntax|cargo-maven3-plugin "Cannot find 'property' in class Configuration" — <property> 단수 문법 대신 <properties> Map 바인딩 필요]]
-- [[projects/kacportal/issues/smdevc-smart-statistics-excel-download-sheetname-missing|kacportal: 엑셀 다운로드 버튼 무반응 — xl.sheetName 누락으로 makeXl() TypeError]]
-- [[projects/kacportal/issues/local-tomcat-cargo-run-setup-broken|kacportal: 로컬 Tomcat(cargo-maven3-plugin) 실행 전면 실패 — pom.xml 문법 오류 + war 패키징 누락 + Altibase 드라이버 비활성화 3단 연쇄]]
+- [[../projects/2026/kacportal/issues/smdevc-smart-statistics-excel-download-sheetname-missing|kacportal: 엑셀 다운로드 버튼 무반응 — xl.sheetName 누락으로 makeXl() TypeError]]
+- [[../projects/2026/kacportal/issues/local-tomcat-cargo-run-setup-broken|kacportal: 로컬 Tomcat(cargo-maven3-plugin) 실행 전면 실패 — pom.xml 문법 오류 + war 패키징 누락 + Altibase 드라이버 비활성화 3단 연쇄]]
+- [[../projects/2026/kacportal/issues/media-chart-x-axis-order|kacportal: 기사 수집 건수 차트 x축이 기간 순서로 표시되지 않음 — 클라이언트/자바 경로 배제, 근본 원인 미확인(화면단 방어 적용)]]
 - [[knowledge/troubleshooting/overflow-y-auto-focus-ring-clip|overflow-y-auto — 자식 input focus ring 좌측 클리핑 (pl-[3px] 해결)]]
+- [[projects/dna-sql-agent/issues/chart-combo-duplicate-column-crash|dna-sql-agent: plotly combo 라인 컬럼 폴백이 막대 컬럼과 겹쳐 DuplicateError (미해결·미검증)]]
+- [[projects/dna-sql-agent/issues/echarts-sankey-value-not-resolved|dna-sql-agent: ECharts sankey 만 resolve_column 누락 — value 대소문자 다르면 KeyError (미해결·미검증)]]
+- [[projects/dna-sql-agent/issues/chart-preprocess-ignores-multi-column-y|dna-sql-agent: 쉼표 y 를 주면 agg·sort_by 가 조용히 무시됨 — 틀린 값이 그대로 그려짐 (미해결·미검증)]]
+- [[projects/dna-sql-agent/issues/chart-validate-splits-single-column-fields|dna-sql-agent: x·color 까지 쉼표 분리해 잘못된 입력이 검증 통과, LLM 자기수정 단서 소실 (미해결·미검증)]]
+- [[projects/dna-sql-agent/issues/echarts-combo-duplicate-series|dna-sql-agent: ECharts combo 가 같은 컬럼을 막대와 선으로 중복 표시 (미해결·미검증)]]
+- [[projects/dna-sql-agent-web/issues/docker-arm64-build-hardcoded-x64-native-binary|dna-sql-agent-web: arm64 맥에서 도커 빌드 EBADPLATFORM — x64 네이티브 패키지 하드코딩, 지금은 npm ci 만으로 충분 (미해결)]]
+- [[projects/dna-sql-agent/issues/backend-image-size-models-baked-and-cuda-torch|dna-sql-agent: 백엔드 이미지 10GB — models/ 가 .dockerignore 에 없어 구워짐 + CUDA torch (미해결)]]
+- [[projects/dna-sql-agent/issues/license-linux-binding-ignores-hostname|dna-sql-agent: 라이선스 Linux 판정은 hostname 미검사 — machine_id + (cpu 또는 mem), 로컬 재발급 절차]]
 - [[knowledge/troubleshooting/spring-url-double-encoding|Spring — 외부 API URL 더블 인코딩/프리픽스 방지]]
 - [[knowledge/troubleshooting/message-rendering-heuristic-pitfall|메시지 렌더링 휴리스틱의 함정 — 단순 텍스트 드랍 안티패턴]]
 - [[knowledge/troubleshooting/sticky-column-offset-mismatch|HTML Table sticky 컬럼 두 번째 열 left 오프셋 틀어짐 — w+min-w+max-w 고정]]
@@ -84,18 +146,52 @@ updated: 2026-07-16
 - [[projects/dna-sql-agent/issues/dashboard-drag-drop-jank-heavy-widgets|대시보드 드래그·드롭 시 무거운 위젯 버벅임 — 리렌더 + GPU 레이어 미승격 + props 참조 불안정]]
 - [[projects/dna-sql-agent-web/issues/group-admin-entry-point-missing|그룹 관리자 지정해도 관리자 페이지 진입 방법 없음 — 역할 캐시 미재검증 + 사이드바 진입 버튼 조건 누락]]
 - [[projects/dna-sql-agent/decisions/026-group-admin-v0.9-refinements|그룹 관리자 정책 v0.9 — default_grant 자동 시딩, 권한 매트릭스 스코프 제한, 벌크 그룹 이동]]
+- [[projects/dna-sql-agent/decisions/030-deploy-package-separate-repo|고객사 배포 패키지를 별도 저장소로 분리 — 소스와 전달물의 경계를 물리적으로 고정]]
+- [[projects/dna-sql-agent/decisions/031-container-mount-ownership-entrypoint|마운트 폴더 소유권을 엔트리포인트에서 처리 — 설치자 chown·sudo 불필요]]
+- [[projects/dna-sql-agent/decisions/032-connection-info-env-single-source|접속정보의 출처를 .env 하나로 고정 — config 로 굳으면 재기동해도 반영 안 됨, 설정 API 평문 노출]]
+- [[projects/dna-sql-agent/decisions/037-engine-capability-gating-in-tool-schema|엔진별 차트 능력 차이를 도구 스키마에서 흡수 — 비노출·사유 있는 실패, 임의 대체 금지]]
+- [[projects/dna-sql-agent/decisions/038-chart-shape-by-type-not-by-argument|차트 형태는 타입으로 정하고 인자로 바꾸지 않음 — 이중 축은 combo 전용]]
+- [[projects/dna-sql-agent/decisions/039-runtime-config-via-server-route|배포처마다 다른 화면 설정은 서버 라우트 런타임 조회로 — 폐쇄망 지도 타일 전환]]
+- [[projects/dna-sql-agent/issues/llm-denies-capability-missing-from-tool-schema|dna-sql-agent: LLM 이 구현된 기능을 "지원되지 않는다"고 답함 — 스키마에 없으면 없는 기능]]
 - [[knowledge/troubleshooting/postgres-collate-korean-english-mixed-sort|PostgreSQL 한글/영문 혼용 정렬 깨짐 — COLLATE "und-x-icu"로 해결]]
+- [[knowledge/troubleshooting/next-dev-overhead-masks-real-bottleneck|"느려 보인다" 진단은 API 시간보다 next dev/prod 여부부터 확인]]
+- [[knowledge/troubleshooting/docker-bind-mount-uid-mismatch|바인드 마운트 폴더에 컨테이너가 쓰지 못할 때 — uid 불일치 해결 3가지]]
+- [[knowledge/troubleshooting/exists-check-masks-permission-denied|존재 확인 API 가 권한 오류를 "없음" 으로 뭉갠다 — os.path.isfile 은 EACCES 에도 False]]
+- [[projects/dna-sql-agent-deploy/issues/embedding-model-not-found-despite-correct-mount|dna-sql-agent-deploy: 마운트·파일 다 정상인데 임베딩 모델 미탐지 — 앱 UID 권한 유력, :ro 라 entrypoint chown 사각지대 (미해결)]]
+- [[knowledge/troubleshooting/github-actions-boolean-input-string-truthy|GitHub Actions — type: boolean 입력은 표현식에서 문자열이라 "false" 도 참]]
+- [[projects/dna-sql-agent/issues/github-actions-boolean-input-always-truthy|dna-sql-agent: 워크플로 boolean 입력을 껐는데도 스텝이 실행됨 — 부정 조건은 반대로 항상 건너뜀]]
+- [[projects/dna-sql-agent/issues/bookmark-component-row-mismatch-404|dna-sql-agent: 차트 북마크 등록 404 — 컴포넌트 저장 행과 메시지 id 불일치]]
+- [[knowledge/troubleshooting/merged-rows-single-id-loses-child-location|여러 저장 행을 한 화면 항목으로 합치면 id 하나로는 하위 항목 위치를 못 가리킨다]]
+- [[knowledge/troubleshooting/sql-history-collection-prerequisites|DB 쿼리 이력 수집 전제 조건 — pg_stat_statements·performance_schema]]
+- [[projects/dna-sql-agent/issues/workflow-short-circuit-components-attach-to-previous-answer|dna-sql-agent: LLM을 건너뛴 커맨드 응답의 컴포넌트가 직전 답변에 붙음 — 사용자 행 미저장]]
+- [[knowledge/troubleshooting/docker-build-context-sent-from-client|도커 빌드 컨텍스트는 클라이언트가 읽어 전송 — 원격 데몬이어도 소스는 로컬에 필요]]
+- [[knowledge/troubleshooting/git-filter-branch-remove-committed-files|git filter-branch 로 커밋된 파일 제거 — 범위는 커밋이 아니라 커밋 "구간"이다]]
+- [[knowledge/troubleshooting/pydantic-forward-ref-resolved-in-subclass-module|Pydantic v2 — 부모의 forward-ref 필드를 타 모듈 서브클래스가 상속하면 스키마 빌드 실패]]
+- [[knowledge/troubleshooting/frontend-local-id-vs-backend-id|프론트엔드 로컬 ID vs 백엔드 ID 불일치로 인한 API 404]]
+- [[knowledge/troubleshooting/react-grid-layout-typescript-setup|react-grid-layout TypeScript 설정 트러블슈팅]]
+- [[knowledge/troubleshooting/shadcn-destructive-foreground-color-mismatch|shadcn — destructive-foreground 오설정 시 레드 on 레드]]
 
-### 패턴
+### 주요 결정 (ADR)
+- [[projects/dna-sql-agent/decisions/045-connections-owner-user-id-personal-dataset|개인 데이터셋 구분은 connections.owner_user_id — 이름 prefix 는 공용 sqlite 연결과 충돌]]
+- [[projects/dna-sql-agent/decisions/046-settings-reload-signal-on-apply-only|설정 리로드 신호는 "설정 적용" 시점에만 — 저장=적용 방지, 표식은 공유 파일]]
+- [[projects/dna-sql-agent-web/decisions/017-settings-banner-global-save-and-apply-hint|관리자 설정 배너 — 전체 탭 기준 단일 저장 + 반영 방식 안내]]
+- [[projects/dna-sql-agent/decisions/040-keyless-raster-basemap|기본 지도 배경은 키 없는 래스터(Esri) — 납품 제품의 기본값은 계정에 묶이지 않게]]
+- [[projects/dna-sql-agent/decisions/041-slash-commands-db-registry|슬래시 커맨드 정의는 DB에, 실행 로직만 코드에 — builtin·text·skill, public·admin]]
+- [[projects/dna-sql-agent/decisions/042-skill-turn-snapshot-and-llm-expansion|스킬 턴은 원문 저장 + 지시문 스냅샷, LLM 직전에만 블록으로 펼침]]
+- [[projects/dna-sql-agent/decisions/043-command-result-dedicated-component|항목별 동작이 있는 커맨드 결과는 전용 컴포넌트(item_list)로]]
+- [[projects/dna-sql-agent/decisions/044-bookmark-page-deferred-remove|북마크 페이지의 해제는 저장 전까지 보류 — 대시보드 위젯 연쇄 삭제 방지]]
+- [[projects/dna-sql-agent-deploy/decisions/001-offline-embedding-model|폐쇄망 임베딩 모델 공급 — 설정엔 모델 "이름", 로딩 직전에 로컬/다운로드 해석]]
 - [[projects/dna-sql-agent-web/decisions/014-multi-server-nginx-reverse-proxy|다중 서버 배포 — nginx 리버스 프록시로 API URL 통일 (CORS 자동 해결)]]
 - [[projects/dna-sql-agent-web/decisions/015-http-addin-nginx-28001|PPT 애드인 HTTP 지원 — nginx 28001 포트 프록시 (same-origin 유지)]]
 - [[projects/dna-sql-agent-web/decisions/013-chart-palette-shared-constant|차트 공통 컬러 팔렛트 — 정적 상수 파일로 다중 엔진 통일 관리]]
 - [[projects/dna-sql-agent-web/decisions/002-toast-pattern-jsx-icon|Toast JSX 아이콘 패턴 (shadcn)]]
 - [[projects/dna-sql-agent-web/decisions/004-sse-done-event-message-id|SSE done 이벤트에서 필요 ID 직접 수신 (타이밍 레이스 제거)]]
 - [[projects/dna-sql-agent-web/decisions/006-optimistic-update-permission-matrix|권한 매트릭스 셀 토글 옵티미스틱 업데이트]]
+- [[projects/dna-sql-agent-web/decisions/016-sql-block-keep-dual-parse-prism-sql-formatter|SQL 카드 하이라이팅 — Prism+sql-formatter 이중 파싱 구조 유지 (파싱 1회 최적화보다 안정성 우선)]]
 
 ### 프롬프팅
 - [[knowledge/prompting/effective-instructions|Claude Code 효과적 지시법]]
+- [[knowledge/prompting/llm-copies-template-placeholders|LLM은 프롬프트 템플릿의 모양을 그대로 베낀다 — 예시·자리표시자·금지 예시]]
 
 ## 소스
 - _(소스 추가 시 갱신)_
