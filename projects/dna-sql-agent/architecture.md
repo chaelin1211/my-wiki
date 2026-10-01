@@ -2,7 +2,7 @@
 type: architecture
 project: dna-sql-agent
 created: 2026-04-20
-updated: 2026-04-20
+updated: 2026-09-22
 ---
 
 # dna-sql-agent — 아키텍처
@@ -25,13 +25,16 @@ FastAPI + Vanna 2.0 기반의 Text-to-SQL 에이전트 서버. 사용자 메시�
 | DB (대안) | PostgreSQL | psycopg2 | 개발/테스트 환경 |
 | 관찰성 | Langfuse | — | 트레이싱, 대화 로그 |
 | 배포 | Docker + GitHub Actions | — | self-hosted runner, 수동 트리거 |
+| 소스 보호 | Nuitka | — | `dna`/`vanna` 자체 코드만 파일 단위 `.py`→`.so` 컴파일 (ADR-027) |
 
 ## 디렉토리 구조
 
 ```
 src/
-├── main.py                      # FastAPI 서버 진입점
+├── main.py                      # 진입 shim (실제 부트스트랩은 dna/app)
 ├── dna/                         # DNA 커스텀 레이어
+│   ├── app/                     # 서버 부트스트랩 (CLI, 팩토리) — 컴파일 대상
+│   ├── settings/                # 설정 로드·검증 (defaults/*.json = 초기값 겸 스펙)
 │   ├── agent_service.py         # Agent 초기화, 도구/미들웨어 등록
 │   ├── integrations/            # LLM & DB 연동 팩토리
 │   ├── enhancers/               # LLM 컨텍스트 강화 (벡터 검색)
@@ -41,10 +44,12 @@ src/
 │   ├── middlewares/             # 요청/응답 처리 (로깅, Langfuse, 정제)
 │   ├── hooks/                   # 라이프사이클 훅 (파일 로그, Langfuse)
 │   ├── filters/                 # 대화 필터
-│   ├── workflow_handlers/       # 특수 메시지 처리
+│   ├── workflow_handlers/       # LLM 호출 전 메시지 가로채기 (슬래시 커맨드 분기)
+│   ├── commands/                # 슬래시 커맨드 — DB 정의 조회·권한·실행, 조회·관리 API
+│   ├── components/              # DnA 전용 응답 컴포넌트 (명확화 카드, item_list)
 │   ├── loggers/                 # 감사 로그 (audit.log)
 │   └── utils/                   # 마스킹, SQL 가드레일, 추정기
-└── vanna/                       # Vanna 프레임워크 코어 (수정 버전)
+└── dadap/                       # 에이전트 프레임워크 코어 (구 vanna, 2026-09 리네임)
     ├── core/                    # Agent, LLM 인터페이스, 메모리
     └── servers/fastapi/         # FastAPI 라우트 정의
 ```
@@ -55,6 +60,10 @@ src/
 사용자 메시지 (POST /api/vanna/v2/chat_sse)
   │
   ├─ 1. 유저 해석 (이메일 쿠키 → admin/user 역할)
+  │
+  ├─ 1-1. 슬래시 커맨드 해석 (첫 글자 `/`)
+  │     ├─ builtin·text: LLM 없이 응답하고 턴 저장 → 종료
+  │     └─ skill: 지시문 스냅샷을 메타데이터로 붙여 아래 LLM 경로로 진행 ([[042-skill-turn-snapshot-and-llm-expansion]])
   │
   ├─ 2. 벡터 검색 (Qdrant)
   │     └─ 메시지 임베딩 → FAQ / 테이블 / 컬럼 메타데이터 검색
@@ -69,7 +78,7 @@ src/
   │     ├─ SQL 가드레일 검사 (SELECT 전용, ROWNUM 제한)
   │     ├─ 데이터 마스킹
   │     ├─ Oracle/Postgres 실행 → DataFrame
-  │     └─ Plotly 시각화 (옵션)
+  │     └─ 차트 시각화 (옵션) — ECharts / DevExtreme / Plotly
   │
   ├─ 6. Qdrant 메모리 저장 (질문-SQL-결과 쌍)
   │
@@ -84,6 +93,8 @@ src/
 | POST | `/api/vanna/v2/chat_sse` | SSE 스트리밍 채팅 |
 | WebSocket | `/api/vanna/v2/chat_websocket` | WebSocket 채팅 |
 | GET | `/health` | 헬스체크 |
+| GET | `/api/v1/commands` | 사용자가 쓸 수 있는 슬래시 커맨드 목록 |
+| GET·POST·PATCH·DELETE | `/api/v1/commands/admin` | 슬래시 커맨드 관리 (관리자) |
 
 외부 포트: **18000** (Docker) → 내부 8000 (FastAPI)
 
@@ -109,4 +120,7 @@ src/
 
 ## 관련 의사결정
 
-_(ADR 추가 시 갱신)_
+- [[027-nuitka-source-compilation]] — 배포 이미지 소스 보호, Nuitka로 자체 코드만 파일 단위 컴파일
+- [[034-defaults-as-config-validation-spec]] — `defaults/*.json` 이 초기값이자 `config/*.json` 검증 스펙, 기동 시 대조해 불일치면 중단
+- [[041-slash-commands-db-registry]] — 슬래시 커맨드 정의는 DB에, 실행 로직만 코드에
+- [[043-command-result-dedicated-component]] — 항목별 동작이 있는 커맨드 결과는 전용 컴포넌트로

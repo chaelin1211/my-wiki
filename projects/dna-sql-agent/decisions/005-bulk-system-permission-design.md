@@ -1,5 +1,5 @@
 ---
-type: decision
+type: decision-record
 project: dna-sql-agent
 date: 2026-05-29
 status: accepted

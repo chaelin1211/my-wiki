@@ -1,7 +1,8 @@
 ---
 type: project-status
 project: dna-sql-agent
-updated: 2026-07-20
+created: 2026-04-20
+updated: 2026-09-22
 phase: active
 ---
 
@@ -9,7 +10,7 @@ phase: active
 
 ## 현재 단계
 
-🔧 **초기 설정** 단계
+🚀 **배포·납품 준비** 단계 — v0.9 그룹 관리자 기능 완료, 고객사 배포 패키지(별도 저장소·Nuitka 컴파일·이미지 전달) 구축 중
 
 ## 완료된 것
 
@@ -165,7 +166,8 @@ phase: active
 - [ ] 벡터 검색 정확도 개선 — 예상 질문을 컬럼별 아닌 관계(relation) 기준으로 재생성
 - [ ] 테이블 선정 근거 로그 표시 화면 추가 검토
 - [ ] 자동 벡터화 수정 화면 필요 여부 결정 (Qdrant 직접 수정 vs 별도 화면)
-- [ ] office.js 기반 PPT 추가기능 개발 방안 검토
+- [x] office.js 기반 PPT 추가기능 개발 방안 검토 — 서버 데이터 생성 + 프론트 렌더링으로 확정
+      (아래 2026-08-03 오피스 기능 고도화 참고)
 - [ ] 네트워크 공유 기반 추가기능 배포 방식 확인
 - [ ] 슬라이드 삽입 요청 처리 흐름 구체화 (tool 호출 → 화면 감지 → 삽입)
 - [ ] 발표 일정 확정 — 우선순위 1순위 수정·테스트 완료 후 fix (2026-05-25 주간 예정)
@@ -173,7 +175,8 @@ phase: active
 - [ ] SQL reverse engineering: admin example 등록 화면에 수집 UI 추가
 - [ ] SQL reverse engineering: 백엔드 자동 수집 로직 추가
 - [ ] admin example 화면 vectorize 버튼 제거
-- [ ] admin 수정 즉시 반영 항목 검토 및 처리
+- [x] admin 수정 즉시 반영 항목 검토 및 처리 — 섹션별 `ApplyMode` 선언 + 미반영 배너
+      (아래 2026-08-14 참고)
 
 ## 2026-06-26 — GeoJSON 지도 시각화
 
@@ -347,6 +350,572 @@ phase: active
 - [ ] (이월) `app_manual_group_admin.md` 소제목 중복 정리 (의도적 보류)
 - [ ] (이월) 챗봇 `AppManualTool`이 그룹 관리자 인지 못함 — 범위 밖으로 남김
 
+## 2026-07-24 — 배포 이미지 소스 보호 (Nuitka 컴파일)
+
+- [x] feat: `Dockerfile` 멀티스테이지 전환 — `dna`, 로컬 `vanna` 포크를 Nuitka로 파일 단위
+      컴파일(`.py`→`.so`), 원본 `.py`/`.pyc` 이미지에서 제거 → [[decisions/027-nuitka-source-compilation]]
+- [x] fix(시행착오): 서드파티(torch 등) 포함 전체 standalone 컴파일 OOM 반복 실패 →
+      자체 코드만 컴파일하는 방식으로 전환
+- [x] fix(시행착오): 패키지 단위 컴파일 시 파일 하나로 뭉쳐져 데이터 파일 경로(`Path(__file__)`)
+      깨짐 → 파일 단위 컴파일로 전환
+- [x] fix(시행착오): rsync 필터 순서 실수로 `__pycache__/.pyc`가 최종 이미지에 유출(디컴파일
+      가능한 구멍) → 필터 순서 수정
+- [x] docs: `docs/nuitka-build-design.md` 신설(상세 설계·시행착오 전체 기록), `architecture.md`
+      기술 스택 표·관련 의사결정 갱신
+- [x] 로컬 검증: `.env` 기반 컨테이너 기동 → `Application startup complete`, `/docs`·
+      `/openapi.json` HTTP 200 확인
+- [x] Colima 트러블슈팅: VM `vz` 드라이버 disk lock 문제(`colima delete` 재생성으로 해결),
+      메모리 부족(2GiB→8GiB) → [[knowledge/tools/colima]] 신설
+- [x] 커밋 `f3abe40` (`feat/nuitka` 브랜치), 원격 push는 아직 안 함
+- [ ] (이월) `main.py`도 컴파일 범위에 포함할지 결정
+
+## 2026-07-28 — self-hosted 러너 디스크 풀 대응 + 이미지 빌드 컨텍스트 보안 강화
+
+- [x] self-hosted 러너(`sdn04`) `No space left on device` 장애 원인 규명 — `docker buildx`
+      캐시 149.7GB 무제한 누적 → [[issues/self-hosted-runner-disk-full-buildx-cache]]
+- [x] `docker buildx prune -af` 안내로 디스크 회수 (self-hosted 러너에서 실제 빌드 검증 이월
+      항목이 막혀있던 원인 해소)
+- [x] `Dockerfile`에 `.dockerignore` 부재 확인 → 신설(`docs`, `.git`, `.github`, `.claude`,
+      `venv`, `__pycache__`, `tests` 등 제외), 커밋(`08a57bb`) 후 `feat/nuitka` push
+      → [[decisions/028-image-build-context-minimization]]
+- [x] `requirements.txt` 등 레이어 히스토리까지 완전 제거가 필요한 파일 처리 패턴 설계
+      (버려지는 `context` 스테이지) → [[knowledge/patterns/docker-multistage-context-stage-strip-secrets]]
+- [x] `requirements.txt`용 `context` 스테이지 반영 여부 재검토 — **적용 안 하기로 결정 (2026-07-29)**.
+      실제 확인 결과 `requirements.txt`엔 자격증명 없이 패키지명+버전만 있어 노출 리스크가
+      낮고, 얻는 보안 이득 대비 Dockerfile 복잡도 비용이 안 맞음 → 보류
+- [ ] (이월) self-hosted 러너에서 실제 빌드 검증 — 디스크 공간은 확보했으니 재시도 가능
+- [ ] (이월) buildx 캐시 자동 정리(cron 또는 buildkitd `gcpolicy`) 설정 — 재발 방지
+- [ ] (이월) `.env`가 컨테이너 런타임에 파일로 직접 읽히는지 확인 후 `.dockerignore`
+      `.env` 제외 여부 재검토
+
+## 2026-07-29 — `.pyi` 유출 실제 수정 + 시크릿 관리 점검
+
+- [x] `.pyi` 유출 위험 패턴(함수 기본값/모듈·클래스 상수) AST 정밀 스캔 — `schema.py`,
+      `vectorization/prompts.py`, `sql_collectors/summarizer.py`, `bi_slide/template_selector.py`,
+      `relation_info_generator.py` 확인
+- [x] Nuitka `--no-pyi-file` 옵션 발견·적용 — `.pyi` 생성 자체 차단, `Dockerfile`·
+      `docs/nuitka-build-design.md` §3.4 반영 → [[decisions/027-nuitka-source-compilation]],
+      [[knowledge/patterns/nuitka-no-pyi-file-prevents-stub-leak]]
+- [x] PR #125 생성 (feat/nuitka → main). 로컬 `main` stale 상태로 diff를 잘못 설명한 실수
+      발생, 사용자가 직접 정정 → [[knowledge/troubleshooting/git-diff-stale-local-branch-shows-merged-commits-as-new]]
+- [x] `JWT_SECRET_KEY` 하드코딩 기본값 fallback 발견 (`jwt_utils.py:15`) → [[issues/jwt-secret-key-hardcoded-fallback-default]]
+- [x] `.env`가 origin에 커밋된 것 확인 — 처음엔 유출로 오판했으나, private 레포 내 팀 공유
+      목적의 의도된 관례임을 사용자 확인으로 정정 (문제 아님)
+- [ ] (이월) `JWT_SECRET_KEY` fallback 기본값 제거 (없으면 기동 실패시키는 방향)
+- [ ] (이월) `schema.py`/`prompts.py` 등 모듈 상수 데이터 파일 분리·암호화 여부 결정 (PR #125 논의)
+- [ ] (이월) PR #125 정리 — 사용자가 직접 처리하겠다고 함
+
+## 2026-07-31 — 대화 시스템 권한 우회 취약점 수정
+
+- [x] 취약점 분석 — 클라이언트가 요청 `metadata` 로 보낸 `system_name`/`connection_name`/
+      `database_id` 를 서버가 검증 없이 사용. 조작 시 권한 없는 System 조회 가능.
+      `chat_sse` 외 `chat_websocket`, `chat_poll` 도 동일 경로
+      → [[decisions/029-conversation-system-scope-server-side]]
+- [x] `crud.get_authorized_system_scope` / `get_authorized_scope_for_conversation` 추가 —
+      스코프 조회와 권한 검증을 단일 쿼리로 묶어 호출부의 체크 누락 차단
+- [x] 대화 생성 API 를 `system_id`(UUID) 기반 + 권한 체크로 전환 (없으면 403).
+      `system_name` 은 커넥션 단위로만 유일해 이름 단독 조회 시 동명 시스템 오선택 발생했음
+- [x] 채팅 엔드포인트 3곳 — 클라이언트 `metadata` 미사용, `conversation_id` 로 대화
+      레코드에서 스코프 확정 후 주입. 매 요청 권한 재확인(회수 즉시 반영)
+- [x] 우회로 차단 — 스코프 덮어쓰기 경로 2곳 제거, DB 에 없는 `conversation_id` 거부
+- [x] fix: 권한 회수 상태에서 메시지 저장 시 대화의 시스템 정보가 NULL 로 덮어써져
+      영구 유실되던 버그 (`ChatSaveHook` 의 `ON CONFLICT DO UPDATE`)
+- [x] fix: 삭제된 시스템의 대화가 동명의 다른 커넥션 시스템으로 표시되던 문제 —
+      `(connection_name, system_name)` 쌍 매칭으로 변경
+- [x] fix: 접근 불가 대화를 403 으로 응답하고 프론트가 안내 후 홈으로 이동
+- [x] refactor: `database_id` 가 `connection_name` 의 레거시 별칭임을 확인, 저장 대신
+      파생으로 통일 (`COALESCE`)
+- [x] refactor: 대화 URL 에서 `conversation_id` 제거 — localStorage 인증이라 서버가
+      검증할 수 없어 사실상 장식이었음 → [[issues/chat-url-conversation-id-decorative]]
+- [x] docs: `multi-db-design.md`, `user-management-design.md` 갱신
+- [x] PR #127(백엔드 8커밋), PR #75(프론트 7커밋) 생성·머지 (2026-08-03)
+- [x] fix: 대시보드 → 대화목록 이동이 삭제된 `/chat/[id]` 라우트로 향하던 문제 (2026-08-03)
+- [ ] **백엔드·프론트 동시 배포** — `POST /api/v1/chat` 계약 변경(`system_id` 필수)
+- [ ] 기본 DB(`.env` `"default"` runner) 접근 정책 결정 — 아래 두 이슈가 여기 걸려 있음
+- [ ] (미해결) 스코프 없으면 테이블 접근 제한이 사라짐(fail-open)
+      → [[issues/sql-guard-fail-open-when-scope-absent]]
+- [ ] (미해결) 권한 회수 후 대화 이력의 이전 시스템 테이블명이 LLM 문맥에 남음
+      → [[issues/conversation-history-retains-revoked-system-tables]]
+- [ ] 예외 원문이 클라이언트로 노출되는 문제 — `except Exception` 이 `str(e)` 를 전달하고
+      프론트가 채팅창에 렌더. DB 에러 원문으로 스키마 탐색 가능
+- [ ] `conversations.database_id` 컬럼 DROP + 응답 필드 제거
+- [ ] conversation id 엔트로피 — `conv_{hex[:8]}` = 32비트, 8만 건에서 충돌 확률 50%
+- [ ] (장기) vanna 코어에 System 개념 추가해 `user.metadata` 에서 스코프 분리 —
+      `SystemPromptBuilder`/`LlmContextEnhancer`/`ToolContext` 인터페이스 변경 필요
+- [ ] (장기) 세션(httpOnly 쿠키) 인증 전환 후 `/chat/[id]` 서버 검증과 함께 재도입
+
+## 2026-08-03 — 채팅 요청 경로의 중복 DB 조회 정리
+
+- [x] 중복 실측 — `chat_sse` 1건당 고정 8회 + SQL 실행 횟수. 스코프 확정 쿼리와
+      `get_conversation` 이 같은 대화 행을 두 번 읽고, 프롬프트 빌더와 SQL 가드가 같은
+      그룹 권한을 각각 조회, 가드는 SQL 실행마다 반복
+- [x] `get_conversation` 의 존재 확인·소유권 확인을 한 쿼리로 통합, 죽은 스코프 컬럼 제거
+- [x] 그룹 테이블 권한을 프롬프트 빌더·SQL 가드가 공유 — 프롬프트에 알리는 정책과 실제
+      차단 기준이 같은 소스가 되는 효과도 있음
+- [x] 스코프 확정 쿼리에서 `system_prompt`/`dialect`/`version` 을 함께 읽어 재사용.
+      `RequestContext.metadata` 로 나르면 로그에 프롬프트 본문이 통째로 찍혀 요청 단위 캐시 사용
+- [x] `request_scope` 모듈 — 캐시 생성·일괄 초기화. 여기서 만든 것만 초기화 대상이라
+      캐시 추가 시 WebSocket 초기화를 빠뜨릴 수 없음
+      → [[knowledge/patterns/request-scoped-cache-with-contextvars]]
+- [x] WebSocket 루프 시작 시 캐시 초기화 — 연결 하나가 여러 메시지를 처리해 컨텍스트가
+      이어지므로 비우지 않으면 권한 회수가 반영되지 않음 (현재 프론트는 WS 미사용, 사전 차단)
+- [x] fix: `get_conversation` 소유자 비교를 UUID 로 — SQL `WHERE` 를 파이썬 문자열 비교로
+      옮기며 Postgres 정규화가 사라져 JWT `sub` 표기가 다르면 소유자가 거부될 수 있었음
+- [x] `crud._authorized_scope` → `_scope_from_row` 개명 (routes 의 동명 판정 함수와 혼동)
+- [x] `tests/test_request_scoped_cache.py` 6건 추가 — 요청 내 재사용, 요청 간 격리,
+      한 태스크가 여러 메시지 처리 시 격리(WS 회귀 방지), 그룹별 키 분리, 신규 캐시 등록
+- **결과: 고정 8회 → 5회** (SQL 3회 실행 시 11회 → 5회). 실서버 로그로 캐시 HIT 확인
+- [ ] `refactor/chat-request-query-dedup` PR 생성 — 커밋 1건, 푸시 완료, PR 미생성
+- [ ] `conversations` 헤더도 캐시에 담으면 5회 → 4회. 캐시 대상이 늘수록 수명 관리 실수
+      여지도 커져 보류
+- [ ] (사소) 병렬 태스크에서 캐시 히트율 저하 — 자식이 `set()` 한 값이 부모로 안 돌아옴.
+      정확성 무관
+- [ ] remote URL 에 PAT 평문 노출 — credential helper 나 SSH 로 전환, 토큰 rotate 권장
+
+## 2026-08-03 — 오피스 기능 고도화 착수 (기한: ~08/31 1차 프리징)
+
+착수 시점: 2026-08-10 주. 기한: 2026-08-31 1차 프리징.
+
+**지금까지**
+- [x] 서버에서 PPT 슬라이드를 생성하고 프론트가 반영하는 기능 — 팀장님 개발 완료
+- [x] 설계 변경 — 서버는 데이터만 생성하고 화면 구성은 프론트가 담당하는 구조로
+      실장님 재개발 완료. 슬라이드 렌더링 책임이 서버에서 프론트로 이동
+      (ADR-007 의 "레이아웃은 프론트 소유" 방향과 같은 계열)
+- [x] LLM 역할 분리 — 데이터 추출(LLM API) / 화면 레이아웃 생성(LLM API)
+- [x] 스타일 레이아웃 5종 중 사용자가 고르면 LLM 이 다시 그리는 흐름
+
+**현재 상태**
+- 구현 디자인이 전부 미완이고 오류가 남아 있는 상태. 동작 확인 가능한 수준이 아님
+
+**참고 — 2026-08-05 에 정리된 것 (고도화 착수 전 발판)**
+- 보고서용 LLM 접속정보의 출처가 `.env` 하나로 확정됨. 고도화하면서 설정 위치를
+  다시 고민할 필요 없음. 질의응답 LLM(`llm_connections` 테이블)과 완전히 분리
+- 보고서 API 실패 경로가 상태 코드로 구분됨 → 프론트가 상황별 안내를 띄울 수 있음
+  - `503` 보고서용 LLM 미설정 / `500` 생성 실패 / `404` 대상 대화 없음
+- 예외 원문이 화면으로 나가던 것을 막음. 원인은 로그에만 남으므로,
+  고도화 중 디버깅은 `agent.log` 를 봐야 함
+
+**할 일**
+- [ ] 실장님 설계대로 기능 고도화
+- [ ] 디자인 미완 항목 정리 + 오류 목록화 → 우선순위 확정 (프리징 범위 산정의 전제)
+- [ ] excel, word 에서도 특화 기능 제공하도록 개발
+- [ ] 설계 변경 경위·현재 구조를 ADR 로 분리 기록 (status.md 메모의 "PPT 추가기능 동작 흐름" 대체)
+
+## 2026-08-04 — 고객사 배포 패키지 구축
+
+소스 접근 없이 타 사이트에 전달할 수 있는 배포 체계를 만들었다.
+→ 세션: [[projects/dna-sql-agent/sessions/2026-08-04-customer-delivery-package]]
+
+- [x] 배포 전용 저장소 신설 — `dna-sql-agent-deploy` (private)
+      → ADR: [[projects/dna-sql-agent/decisions/030-deploy-package-separate-repo]]
+- [x] `package.sh` — 빌드 → `docker save` → 시크릿 검사 → zip, 사이트·버전·일시별 산출물
+- [x] `init.sh` / `start.sh` — 키 생성·이미지 로드·웹서버 선택·관리자 계정 발급·기동 대기
+- [x] `INSTALL.txt` — 터미널에서 읽는 평문 설치 안내서
+- [x] 시크릿을 패키지에 넣지 않고 고객사에서 생성 (gitleaks + 자체 검사로 차단)
+- [x] `.dockerignore` 정리 — 빌드 컨텍스트 114MB → 10.7MB
+- [x] 마운트 폴더 소유권을 엔트리포인트에서 처리 (설치자 `sudo` 불필요)
+      → ADR: [[projects/dna-sql-agent/decisions/031-container-mount-ownership-entrypoint]]
+- [x] `DB_MODE`/`VECTOR_MODE` — 내장·외부를 명시하고 외부면 컨테이너 미기동
+- [x] 웹: `allowedDevOrigins` 가 프로덕션 빌드에 남지 않도록 분기
+
+**현재 상태**
+- 로컬 리허설로 5개 컨테이너 기동·`/health` 200 확인
+- `chore/deploy-hardening` 은 push 완료, PR 은 아직 없음 (2026-08-05 기준 ahead 15)
+
+**할 일 (배포 전 필수 — 폐쇄망인 경우)**
+- [ ] 임베딩 모델을 이미지에 번들링 — 현재 런타임에 HuggingFace 에서 받아 폐쇄망 기동 불가
+- [ ] Qdrant 서버 버전을 클라이언트(1.17)에 맞추기 (현재 1.12.4)
+
+**할 일 (소스 정리)**
+- [x] `qdrant`·`database` 를 `.env` 직독으로 변경 (2026-08-05 완료)
+      → 아래 2026-08-05 항목 참고
+- [ ] 관리자 부트스트랩 — 가입자가 전부 일반 그룹이라 DB 를 직접 고치지 않으면
+      아무도 관리자가 될 수 없음
+- [ ] LLM 미등록 시 명확한 안내 (현재는 로그인은 되고 답변만 안 됨)
+- [x] dev 워크플로 체크아웃 브랜치를 `main` 으로 복구
+
+**할 일 (개선)**
+- [ ] CPU 전용 torch 로 이미지 축소 (16.3GB → 6~7GB 예상)
+- [ ] `upgrade.sh`, `pigz` 병렬 압축, `pv` 진행률
+
+## 2026-08-05 — 설정 출처 일원화, 배포 패키지 워크플로
+
+같은 값이 `.env` 와 `config/*.json` 양쪽에 있어 한쪽만 고치면 조용히 갈라지던
+구조를 정리하고, 패키지 생성을 워크플로로 옮겼다.
+→ 세션: [[projects/dna-sql-agent/sessions/2026-08-05-config-source-unification-and-package-workflow]]
+→ ADR: [[projects/dna-sql-agent/decisions/032-connection-info-env-single-source]]
+
+**계기가 된 사고**
+- `start.sh` 로 기동했는데 `asyncpg InvalidPasswordError` 로 죽음.
+  `.env` 는 맞았는데 앱이 첫 기동 때 만들어진 `config/database.json` 의
+  옛 비밀번호를 읽고 있었다. Qdrant 도 같은 이유로 닫힌 포트를 물고 있었음
+- **`.env` 는 최초 기동 시 config 를 만드는 씨앗일 뿐**이라는 구조가 원인.
+  설치 중 접속정보를 바로잡아도 반영되지 않는다
+
+**접속정보를 `.env` 직독으로**
+- [x] `dna/settings/env_config.py` 신설 — DB·Qdrant·보고서 LLM 을 환경변수에서 직접 읽음
+- [x] 기본값을 코드에 두지 않음. 값이 비면 기동을 중단하고 무엇이 비었는지 알림
+      (예전 `defaults/database.json` 은 내부 IP `192.168.101.129` 로 조용히 폴백했음)
+- [x] `SECTIONS` 에서 `database`·`qdrant`·`llm` 제외 → 설정 API 의 DB 비밀번호·
+      api_key 평문 노출 해소. 기존 설치본의 해당 파일은 기동 시 삭제
+- [x] DSN 조립에 `quote()` 적용 — 비밀번호에 `@ : /` 가 있으면 깨지던 문제
+
+**설정 초기값 출처를 기본값 하나로**
+- [x] `rag`·`embedding` — `.env` 덮어쓰기 제거. `_migrate_embedding` 은 `.env` 가
+      비면 `model: ""` 을 저장해 모델을 못 여는 버그가 있었음
+- [x] `masking` — 레거시 `masking_rules.json` 삭제. `defaults/masking.json` 과
+      규칙은 같은데 `default_group_action` 만 달랐다(`none` vs `mask`)
+- [x] 마스킹 기본 동작을 `mask`(fail-closed)로 통일 — 전략에 없는 그룹이
+      개인정보 원본을 보던 상태였음. 정의가 세 곳(defaults·레거시·스키마)이었다
+- [x] `observability` — 자격증명을 설정 파일에서 제거(평문 `secret_key` 저장됨).
+      켜짐 판정을 `dna/observability/enablement.py` 로 일원화. 예전에는
+      `agent_service` 가 `.env` 키만 있으면 화면 설정을 무시하고 강제로 켰음
+- [x] `.env` 에서 더 이상 읽지 않는 12줄 제거
+
+**보고서 API**
+- [x] 보고서용 LLM 을 `.env` 직독으로. 질의응답 LLM(`llm_connections` 테이블)과
+      역할이 완전히 분리됨. `config/llm.json` 을 읽던 곳은 `ppt_slide_service` 한 곳뿐이었다
+- [x] 예외 원문이 클라이언트로 나가던 것 일반화 (`0ede9b1` 이 대화 API 에
+      적용한 것과 같은 조치). DSN 이 그대로 응답에 실릴 수 있었음
+
+**배포 스크립트 (dna-sql-agent-deploy)**
+- [x] `init.sh` 가 외부 DB 사용 시 `DB_ENCRYPTION_KEY` 를 새로 만들지 않도록 수정.
+      기존 데이터를 복호화하지 못하는데 **기동은 성공하고 `/health` 도 200** 이라
+      "설치 완료" 로 안내된 뒤 운영 중에야 드러나던 문제
+- [x] `start.sh` 가 복호화 실패를 성공으로 보고하지 않도록 검사 추가
+
+**배포 스크립트 (dna-sql-agent-deploy)**
+- [x] `init.sh` 가 외부 DB 사용 시 `DB_ENCRYPTION_KEY` 를 새로 만들지 않도록 수정.
+      기존 데이터를 복호화하지 못하는데 **기동은 성공하고 `/health` 도 200** 이라
+      "설치 완료" 로 안내된 뒤 운영 중에야 드러나던 문제
+- [x] `start.sh` 가 복호화 실패를 성공으로 보고하지 않도록 검사 추가
+- [x] 같은 태그 이미지로 로드를 건너뛸 때 교체 절차 안내 (조용히 넘어가던 것)
+      → 이슈: [[projects/dna-sql-agent/issues/same-tag-image-load-skipped]]
+- [x] 산출물 경로 단순화 — 버전 폴더 제거, 이름 하나에 사이트·버전·일시를 담음
+      `dist/<사이트>/dadap_<사이트>_<버전>_<yyyyMMddHHmmss>/`
+- [x] `DIST_DIR`·`MIN_FREE_GB` 추가. 여유 공간이 부족하면 빌드 전에 중단.
+      오래된 산출물은 자동 삭제하지 않고 목록만 보여 줌 (전달한 zip 이 곧 기록)
+- [x] `pigz` 지원 — 있으면 병렬 압축, 없으면 `gzip` 폴백
+- [x] `INSTALL.txt` 에서 운영·문제 해결을 `README.txt` 로 분리
+- [x] 웹 컨테이너의 호스트 포트를 닫아 nginx 우회 접속 차단
+
+**배포 패키지 생성 워크플로 (신규)**
+- [x] `dna-sql-agent-deploy/.github/workflows/package.yml`
+- [x] 빌드 서버 러너에서 실행, 산출물은 그 서버(`/DATA/dadap-packages`)에 남김
+      — 한 벌이 4GB 이상이라 GitHub 아티팩트로 왕복시키지 않음
+- [x] 기본은 **빌드하지 않고** 서버의 `latest` 이미지를 묶음.
+      `rebuild` 를 켤 때만 소스 저장소를 체크아웃
+- [x] 버저닝은 도입하지 않음 — 기존 배포 방식에 없으므로. `version` 은 패키지
+      파일 이름에 붙는 라벨이며 이미지 태그 체계가 아니다
+- [x] 도구·권한·이미지 확인을 앞단에 배치 (수 분 뒤 실패 방지)
+- [x] 첫 실행으로 검증 — `gitleaks` 미설치가 잡혔고, 설치 후 패키징 성공
+
+**문서**
+- [x] `docs/configuration-reference.md` 신설 — `.env` 와 `config/*.json` 의 정본.
+      각 값의 목적·구성·왜 그 자리인지
+- [x] 폐기된 `llm.json`·`masking_rules.json` 참조를 전 문서에서 제거
+
+**남은 것**
+- [ ] `chore/deploy-hardening` PR 생성 → main 머지
+- [ ] 서버 `latest` 이미지가 커진 원인 확인 — 로컬 tar 3.8GiB vs 서버 6.6GB+
+      (`docker history dna-sql-agent:latest` 로 큰 레이어 확인)
+- [ ] 빌드 서버에 `pigz` 설치 — gzip 이 코어 하나만 쓰는 것을 `top` 으로 확인함
+      (전체 CPU 13.8%, gzip 100%)
+- [ ] 웹 저장소 `chore/deploy-hardening` 브랜치 push (원격에 없음)
+- [ ] 3개 배포 워크플로 트리거가 `workflow_dispatch` 전용으로 바뀐 것이 의도인지 확인
+- [ ] 스키마 기본값 ↔ `defaults/*.json` 불일치 정리 (아래 분석 참고)
+- [ ] 설정 API 의 `ValidationError` 를 400/422 로 변환 — 지금은 CORS 헤더 없는
+      500 이 되어 화면에 사유가 전혀 안 보임
+
+### 분석 — 스키마 기본값과 `defaults/*.json` 의 이중 출처 (2026-08-05 조사)
+
+같은 설정의 "기본값"이 두 곳에 있고 값이 다르다. `defaults/*.json` 은 실제로
+`config/*.json` 을 만들 때 쓰는 값이고, `schemas.py` 의 Pydantic 필드 기본값은
+검증용 모델에 붙어 있는 값이다.
+
+| 섹션 | 항목 | `defaults/*.json` | `schemas.py` |
+|---|---|---|---|
+| `rag` | `mode` | `"tool"` | `"enhancer"` |
+| `rag` | `system_classification.default_systems` | `["IFIS"]` | `["IF"]` |
+| `agent` | `max_conversation_messages` | `50` | `20` |
+| `audit` | `include_full_ai_responses` | `true` | `false` |
+| `embedding` | `model` | `upskyy/bge-m3-korean` | `""` |
+| `masking` | `strategies` | 규칙 8종 | `{}` |
+| `tool_access` | `tools` | 도구 목록 | `[]` |
+| `audit` | `ui_features` | 4개 항목 | `[]` |
+
+**지금은 문제가 없다.** 스키마 기본값이 어느 경로로도 저장되지 않기 때문이다.
+
+- `routes.py` 의 `put_section`·`patch_section` 이 `validate_section()` 의 반환값을
+  **버리고** 원본 body 를 저장한다. 기본값이 채워진 결과는 쓰이지 않는다
+- `GET` 은 `load()` → `config/*.json` 또는 `defaults/*.json` 이라 스키마를 안 거친다
+- `/settings/{id}/schema` 엔드포인트는 프론트가 호출하지 않는다
+
+**언제 위험해지나.** `validate_section()` 의 반환값을 저장하도록 바꾸는 순간
+데이터 손실이 된다. 부분 PUT 에서 `masking.strategies` → `{}`,
+`tool_access.tools` → `[]` 로 덮여 규칙·도구 목록이 통째로 사라진다.
+실제로 2026-08-05 에 "부분 PUT 이 나머지 설정을 지운다"는 버그를 그 방식으로
+고쳤다가, 이 불일치 때문에 방향을 바꿨다.
+
+**왜 기본값이 붙어 있나.** 프론트가 `deepDiff` 로 바뀐 필드만 PATCH 하는데,
+그 부분 body 를 그대로 `model_validate()` 에 넣기 때문이다. 기본값이 없으면
+누락 필드로 검증에 실패한다. 즉 **검증을 통과시키기 위한 장치**이지 값으로
+의도된 것이 아니다.
+
+**고칠 방향 — 검증 시점을 병합 뒤로.** 지금은 병합 전에 부분 body 를 검증한다.
+병합 후 완전한 설정을 검증하면 모든 필드가 채워져 있어 기본값이 발동하지 않고,
+클래스에서 지워도 된다. 값의 출처가 `defaults/*.json` 하나로 확정된다.
+제약(`gt=0`, `pattern`)은 그대로 살아 있고, 오히려 병합 결과의 유효성까지
+확인할 수 있어 검증이 더 정확해진다.
+
+같이 처리해야 할 것:
+- `ValidationError` 를 400/422 로 변환. 지금은 그대로 올라가 **CORS 헤더 없는
+  500** 이 되고 브라우저가 `TypeError: Failed to fetch` 로 막아, 화면에 사유가
+  전혀 표시되지 않는다 (2026-08-05 에 실제로 이것 때문에 원인 추적이 오래 걸림)
+- 부분 PUT 이 나머지를 지우는 문제. 프론트는 `PUT` 을 쓰지 않아(`patchSection`
+  만 사용) 실사용 경로로는 노출되지 않지만, API 직접 호출·파일 수동 편집 시 발생
+
+**컬렉션 필드는 값을 맞추는 방식으로 풀 수 없다.** `strategies`·`tools`·
+`ui_features` 의 내용을 `schemas.py` 에 넣으면 마스킹 규칙 8종을 파이썬 코드에
+한 벌 더 복제하는 셈이라, 이번에 없앤 이중 출처를 다시 만든다. 스칼라 값
+(`rag.mode`, `agent.max_conversation_messages` 등)만 맞추고, 나머지는 위 구조
+변경으로 푸는 것이 맞다.
+
+**참고**
+- `collection_runner` 는 9개 필드가 스키마에서 `null` 이지만 `DEFAULT_ONLY_SECTIONS`
+  라 `load()` 가 항상 defaults 를 반환한다. 영향 없음
+- `sql_guard.groups` 는 스키마에만 남은 잔재. 그룹별 테이블 권한은 DB 로 이관됨
+- `rag.system_classification.default_systems` 의 `IFIS` vs `IF` 는 어느 쪽이
+  맞는지 확인 필요
+
+## 2026-08-06 — 임베딩 모델 폐쇄망 조사 + 배포 하드닝 1차 마무리
+
+세션 로그: [[projects/dna-sql-agent/sessions/2026-08-06-embedding-bundling-research-and-deploy-prs]]
+
+### 완료
+
+- [x] `chore/deploy-hardening` PR 생성 — 백엔드 `#131`(24커밋), 웹 `#76`(3커밋)
+- [x] 웹 저장소 `chore/deploy-hardening` 브랜치 push (원격에 없던 것)
+- [x] 머지 전 정리 — `dna-sql-agent_dev.yml` 의 `ref` 하드코딩을 `main` 으로 되돌림(`ad39d1d`).
+      안 되돌리면 머지 후 브랜치 삭제 시 DEV 배포가 깨진다
+- [x] 웹 `172.16.1.7` 제거 — 출처 불명. `addin.dnadev.com` 만 남김(`daaa173`)
+- [x] 배포 저장소 커밋 4건 main 푸시 — pigz 압축, 워크플로 옵션, `site` 입력 주석,
+      **boolean 조건 버그 수정**(`86e96ff`)
+- [x] 서버 `latest` 이미지가 커진 원인 확인 — 아래
+- [x] 검증 — 백엔드 `pytest` 56개 통과, 웹 프로덕션 빌드 + 산출물에 사내 주소 없음
+
+### 이미지 용량 실측 — 콘텐츠 8.08GB 중 4.2GB 가 미사용 CUDA
+
+| 항목 | 크기 |
+|---|---|
+| `nvidia-*-cu12` | 2.8GB |
+| `triton` | 419MB |
+| `torch/lib/libtorch_cuda*.so` + `libcusparseLt` | 931MB |
+| `chromadb` 계열 (onnxruntime·kubernetes·rust_bindings) | ~200MB |
+| 빌드 전용 도구 (nuitka·mypy·pytest·zstandard) | ~110MB |
+
+휠 실측: `torch-2.2.2+cpu` **178MB** vs `+cu118` **781MB**.
+
+`requirements.txt` 의 `--find-links .../cu118` 은 **동작하지 않고 있었다** —
+설치된 것은 PyPI 기본 cu121 휠(`nvidia-*-cu12`). `--find-links` 는 우선순위를
+강제하지 않는다. `--index-url` 이어야 한다.
+
+`chromadb` 는 `src/dna/` 어디서도 import 하지 않는다(pip `vanna` 도 요구 안 함).
+
+### 임베딩 모델 폐쇄망 — 조사 결과
+
+대상은 `upskyy/bge-m3-korean` 하나(2.1GB safetensors). **색인과 질의 양쪽**에
+쓰이므로 없으면 RAG 가 동작하지 않는다. 로드는 세 곳이며 셋 다 HF repo id 를
+`SentenceTransformer` 에 그대로 넘긴다. `orchestrator.py:54` 는 config 를 무시하고
+모델명·device 를 하드코딩한다.
+
+**다운로드 시점은 "최초 검색"이 아니라 "기동"이다** — `agent_service.py:136` 이
+모듈 레벨이라 앱이 뜨면서 로드한다. 배포 `README.txt` 의 "최초 검색 시 내려받습니다"
+는 사실과 다르며, 폐쇄망에서는 기동 자체가 막힌다.
+
+**방향 전환:** CPU 전용 단일 이미지로 4.2GB 를 줄이려 했으나, **원격 배포가
+`device: cuda` 로 실사용 중**임을 확인. `.env.template`·`README.txt` 에 GPU 전환이
+이미 문서화되어 있어 CPU 전용은 약속을 깨는 것이 된다. **CPU/GPU 두 벌 빌드**로 간다.
+
+### 다음 할 일
+
+- [ ] PR #131 제목·본문 보강 — "배포 경로 하드닝" 이 모호. 엔트리포인트 항목 설명 확장,
+      "관측 접속정보" → `LANGFUSE_*` 구체화, 예외 원문 노출의 잔존 범위 명시
+- [ ] 임베딩 모델 이미지 번들링 (CPU/GPU 두 벌) + 배포 문서의 다운로드 안내 정정
+- [ ] `requirements.txt` 3분할 + Dockerfile `TORCH_VARIANT` ARG
+- [ ] `chromadb` 제거 — Nuitka 가 `vanna/legacy/chromadb` 컴파일 시 경고 확인 필요
+- [ ] 빌드 전용 도구를 런타임 venv 에서 분리
+- [ ] `orchestrator.py` 의 모델명·device 하드코딩 → config 사용
+- [ ] `sites/*/env.overlay` 를 `.gitignore` 에 추가 — 시크릿이 든 채 untracked 로 방치됨
+- [ ] `SOURCE_REPOS_TOKEN` 등록 또는 패키징 워크플로의 빌드 경로 제거
+- [ ] pigz 로컬 판정/원격 실행 불일치 (`--remote-compress`)
+- [ ] 예외 원문 노출 잔존 — `bookmarks/routes.py:485,515,583`, `auth` 5곳, `group_admin` 5곳
+- [ ] 웹 타입 오류 11건 (`components/bi-slide/*`) — `ignoreBuildErrors: true` 로 가려져 있음
+- [ ] 빌드 서버에 `pigz` 설치
+
+## 2026-08-10 — 라이선스 위조 위협모델 + 부트스트랩 난독화
+
+- [x] 라이선스 위조 가능성 분석 — HMAC 대칭키(`DNA_LICENSE_SECRET`)라 시크릿 쥔 고객이 자가 서명 가능. 소스 은닉과 무관 → [[knowledge/patterns/symmetric-mac-verifier-can-forge]]
+- [x] `license.key` 최신 스키마(`hostname`+`machine_id`)로 재발급
+- [x] 검증 출처 규명 — 런타임은 `config/license.json`만 봄, 키 파일은 `not_activated`일 때만 부트스트랩 → [[issues/license-key-file-not-reapplied-when-config-present]]
+- [x] refactor: `main.py`(1592줄) → `src/dna/app/` 패키지 분리, `main.py`는 shim. Nuitka 난독화 범위 포함 → [[decisions/033-bootstrap-logic-into-compiled-package]]
+- [x] PR #138 생성 (chore/dockerfile-permission-hardening → main)
+- [ ] (권고) 라이선스 서명 HMAC → Ed25519 비대칭 전환 검토
+- [ ] (권고) 갱신 footgun 완화 — 자동활성화 게이트를 "유효 active 아니면 키파일 재검토"로 확장
+- [ ] `get_status()`가 구 스키마 캐시의 `ValidationError`를 못 잡아 기동 크래시 → `invalid` 폴백 처리
+- [ ] PR #138 리뷰·머지
+
+## 2026-08-13 — 설정 스펙 검증 + 설정/RAG 문서 정본화 (`feat/config`)
+
+- [x] `tool_access`·`ui_features` 설정을 키 기반 객체 구조로 전환, `ui_features` defaults 분리
+- [x] 기동 시 설정 파일 검증 추가 — `defaults/*.json` 을 스펙으로 `config/*.json` 대조, 없는 키·타입 불일치는 기동 중단, 모르는 키는 경고 → [[decisions/034-defaults-as-config-validation-spec]]
+- [x] 메타 키를 `_` 접두 사이드카로 통일 (`_required`/`_type`/`_item`), 회귀 테스트 61건
+- [x] `collection_runner` 를 설정 API 노출 대상에서 제외 (기본값 전용 섹션)
+- [x] defaults 스펙 린터 `scripts/check_default_config.py` — 짝 없는 사이드카·`_type` 불일치·`_item` 누락 등 검출, 배포 이미지에서는 제외 → [[knowledge/patterns/defaults-file-as-validation-spec]]
+- [x] fix: `sql_guard.max_query_length` 가 `SQLInspector` 에 전달되지 않던 문제 → [[issues/sql-guard-max-query-length-not-passed-to-inspector]]
+- [x] fix: 설정 리로드 시 마스킹 그룹 액션이 파일 사본으로 되돌아가던 문제 → [[issues/masking-group-action-lost-on-settings-reload]]
+- [x] fix: 마스킹 기본 그룹 액션 폴백 `none` → `mask` (fail-closed)
+- [x] docs: 설정 문서 재편 — `server-settings-design` 1251→464줄, `settings-ui-design` 867→726줄, RAG 파이프라인은 `rag-architecture` 로 통합. 값 목록·엔드포인트 표는 정본 하나만 두고 링크
+- [x] PR 생성 — 서버 [#140](https://github.com/DnA-Platform-Development-Team/dna-sql-agent/pull/140), 웹 [#82](https://github.com/DnA-Platform-Development-Team/dna-sql-agent-web/pull/82)
+- [x] `origin/main` 병합 (질의 명확화 기능 26커밋) — `tool_access` 구조 충돌을 키 기반으로 해소
+- [x] 설정 API 관리자 전용화 · 설정 정의를 `API_SECTIONS` 하나로 통합
+- [ ] PR #140 리뷰·머지 (웹 #82 는 서버 머지 후)
+- [ ] `masking.json` 의 `strategies.*.columns` 8곳에 `_item` 추가 (린터 WARN 8건)
+- [ ] `check_default_config.py` CI 연결 여부 결정
+- [ ] `settings-ui-design.md` Tab 6(Foundation/llm) 이 폐기된 섹션 기준 — 화면 실제 구성과 대조 필요
+- [x] 도구 권한 fail-open 정리 — 빈 목록을 거부로 뒤집고 전 도구 전환 시딩 → [[issues/tool-permission-revoke-all-becomes-allow-all]]
+- [ ] `origin/main` 병합(ac6d29b) 후속 — `docs/clarification-design.md` 의 "tool_access 에서 접근 그룹 관리" 서술이 우리 구조와 어긋남
+
+## 2026-08-14 — 도구 권한 fail-open 정리 + 설정 미반영 표시 (`fix/tool-access-apply`)
+
+- [x] fix: 빈 허용 그룹을 거부로 변경 — 판정 3벌(실행·스키마 노출·결과 출력)을 `registry.has_tool_access()` 로 통합
+- [x] fix: 권한 해제가 반영되지 않던 문제 — `_apply_tool_permissions()` 를 레지스트리 전체 순회로, 미등록 DB 키는 경고
+- [x] feat: 도구 on/off 를 재기동 없이 설정 적용으로 반영 — `unregister_local_tool()` + `sync_registered_tools()` 를 hot_reload 에 편입 (`vector_search` 내려가면 `clarify_request` 도 함께)
+- [x] fix: 최초 설치에서 도구 권한이 시딩되지 않던 문제 — 설정 파일 생성 전에 판단해 전 도구에 표식, 추측 기반 `seed_from_json_if_empty()` 삭제
+- [x] fix: estimator 설정이 실행에 반영되지 않던 문제 — `apply_config()` 추가, pool 생성·호출 양쪽 적용
+- [x] feat: 반영되지 않은 설정 조회 API — `ApplyMode` 선언 + `GET /api/v1/settings/pending`
+- [x] feat: 설정 화면 헤더에 미반영 배너 (웹) — 라벨은 설정 섹션 헤더와 일치, 재시작이 필요하면 문구 하나에 목록만 합침
+- [x] fix: 기동 중 설정 파일 쓰기가 미반영으로 잡히던 문제 — `mark_started()` 로 기준 시각 이동
+- [x] fix: 금액 `$` 가 수식으로 렌더링되던 문제 (웹) — `singleDollarTextMath: false`
+- [x] docs: `server-settings-design.md` §9 정본 표를 실제 동작에 맞춰 정정, 상단 다이어그램 중복 목록 제거
+- [x] ADR: [[decisions/035-empty-access-groups-means-deny]], [[decisions/036-apply-mode-declaration-and-pending-notice]]
+- [ ] 테스트가 `src/vanna` 를 보도록 경로 정리 — 정리하면 `test_tool_permissions.py` 11건 실패 (옛 동작 단언 2, 메시지 문구 3, transform_args 6)
+- [ ] `origin/main` 최신화 후 PR — `registry.py`·`agent.py` 충돌 가능
+- [ ] DB에 남은 미등록 도구 권한 6건 처리 방침 (일부러 남긴 것이라 삭제 보류)
+- [ ] 권한 적용 실패 시 기동 중단 여부 결정 — 거부 기준이라 DB 장애 시 도구가 전부 막힘
+- [ ] `RELOAD` 선언 섹션이 실제 `hot_reload()` 단계에 있는지 검사 (`scripts/check_default_config.py` 확장)
+
+## 2026-08-20 — 차트 다중 시리즈 + 엔진별 지원 타입 정리 (`feat/chart-generate`)
+
+- [x] feat: `y` 에 쉼표로 여러 컬럼을 주면 다중 시리즈로 표시 — 새 타입 대신 기존 `bar`/`line`/`area` 에 얹음, 컬럼 해석은 `chart_columns.resolve_columns()` 하나로 세 생성기 공유
+- [x] feat: devextreme 노출 목록에 `area`/`stackedBar`/`stackedArea`/`spline` 추가 — 생성기는 처음부터 매핑했는데 목록에 없어 LLM 이 고를 수 없던 상태
+- [x] fix: 쉼표 목록이 렌더러까지 전달되던 버그 — `bar`/`line` 외 분기(기본값 `auto`·scatter·pie·histogram·heatmap)가 `"A,B"` 를 컬럼명으로 넘겨 예외, echarts pie/scatter/heatmap 도 동일 보완
+- [x] refactor: 도구 설명을 엔진 지원 타입으로 조립 — `CHART_TYPE_AXIS_HINTS` 테이블에서 `x`/`y`/`value`/`color` 설명 생성, 같은 문구는 렌더링 단계에서 합침
+- [x] refactor: 지원 밖 타입은 `Literal` 검증 대신 사유·선택지를 담은 오류로 반환 — 도구가 근사 타입으로 대신 그리지 않음
+- [x] feat: plotly `combo` 추가 — `y` 주축 막대, `value` 보조축 선
+- [x] style(웹): 드롭다운 focus 시 글자·아이콘 색 고정, 항목 4종 반응 통일, 모서리 6px
+- [x] fix(웹): 다크모드 `--popover` 가 `--background` 보다 어두워 메뉴가 떠 보이지 않던 문제
+- [x] docs(웹): `dual-axis-chart-design.md` → `combo-chart-design.md` 현행 기준 재작성, `CLAUDE.md` 에 PR 양식 절 추가(백엔드와 동일화)
+- [x] ADR: [[decisions/037-engine-capability-gating-in-tool-schema]], [[decisions/038-chart-shape-by-type-not-by-argument]]
+- [x] PR: 서버 #154 · 웹 #88 머지
+
+## 2026-08-25 — 폐쇄망 지도 타일 런타임 설정 (`feat/offline-map-tiles`)
+
+- [x] 폐쇄망 미지원 항목 전수조사(백엔드·웹) — 런타임 차단 4건 확인: Plotly CDN, 지도 타일, Office.js, Vercel Analytics
+- [x] 백엔드 제품 코드에 CDN 하드코딩 없음 확인 — GeoJSON 자체 서빙, vanna legacy(ask.vanna.ai 등)는 죽은 코드, 텔레메트리 없음
+- [x] feat(웹): `/map-config` 라우트가 요청 시점 env 를 읽어 타일 설정을 내려주도록 전환 — 이미지 재빌드 없이 `.env` 만으로 사내 타일 서버 전환
+- [x] feat(웹): 지정한 모드만 배경 선택 버튼에 노출, 남은 모드가 하나면 버튼 감춤. 미지정 시 종전대로 공개 서버 사용
+- [x] refactor(웹): 변수를 화면 용어에 맞춰 셋으로 확정 — `MAP_TILE_URL` / `MAP_TILE_URL_SIMPLE` / `MAP_TILE_URL_SIMPLE_DARK`
+- [x] refactor(웹): 화면에서 고를 수 없던 프리셋(Voyager·위성·지형)과 미사용 라벨 타일·타입 정리
+- [x] docs(웹): `docs/offline-map-tiles.md` 추가
+- [x] feat(deploy): compose 가 타일 env 를 web 컨테이너로 전달, `.env.template` 지도 배경 절 추가
+- [x] docs(deploy): `README.txt` `[지도 배경]` 절 · `INSTALL.txt` `.env` 확인 항목 추가
+- [x] ADR: [[decisions/039-runtime-config-via-server-route]]
+- [x] 배포 패키지를 맥에서 기동해 검증 — 백엔드 `/health` 200, 화면 접속 확인
+- [x] PR: 웹 #89 (deploy 는 커밋만, PR 미생성)
+
+### 이 과정에서 드러난 것 (미해결)
+
+- [ ] arm64 맥에서 웹 도커 빌드 실패 — `Dockerfile:15` 의 x64 네이티브 패키지 하드코딩. 지금은 `npm ci` 만으로 musl 이 들어오므로 그 줄 삭제로 해결
+      → [[projects/dna-sql-agent-web/issues/docker-arm64-build-hardcoded-x64-native-binary]]
+- [ ] 백엔드 이미지 10.4GB — `models/` 가 `.dockerignore` 에 없어 2.2GB 가 구워짐(compose 가 어차피 마운트) + CUDA torch 의 `nvidia/` 2.8GB
+      → [[issues/backend-image-size-models-baked-and-cuda-torch]]
+- [x] 라이선스 머신 바인딩 규명 — Linux 경로는 hostname 을 보지 않고 `machine_id` + (`cpu_model` 또는 `mem_total`) 로 판정
+      → [[issues/license-linux-binding-ignores-hostname]]
+- [ ] 저장소 remote URL 에 PAT 평문 노출 — 폐기·교체 필요
+- [ ] 차트 다중 시리즈·combo 도입분(PR #154) 코드 리뷰 지적 5건 — 기록만, 재현·수정 미착수
+
+### 다음
+
+- [ ] deploy 저장소 PR 생성
+- [ ] Plotly CDN 제거 — `plotly.js` 가 의존성에 있으나 import 하지 않아 번들에 없음. 폐쇄망에서 차트가 `Loading chart...` 로 멈춤
+- [ ] Office.js · Vercel Analytics 스크립트 제거
+- [ ] 배포 이미지에 `HF_HUB_OFFLINE=1` 검토
+
+## 2026-09-16 — 지도 배경 CARTO 워터마크 대응 (`fix/map-simple-tiles`)
+
+- [x] 원인 규명 — 환경변수 추가가 아니라 **CARTO 의 무료 베이스맵 정책 변경**. 키 없는 요청에 `API KEY REQUIRED` 를 인쇄한 타일을 HTTP 200 으로 반환
+- [x] 대안 실측 비교 — CARTO 키 발급(상업적 사용은 엔터프라이즈 논의 대상·키 노출) / OpenFreeMap 벡터(maplibre gzip 293KB·WebGL 필수·지도 다중 표시 시 컨텍스트 상한) / Esri 래스터
+- [x] ADR: [[decisions/040-keyless-raster-basemap]]
+- [x] fix(웹): 심플 모드 기본 타일을 Esri 회색 캔버스로 교체, `Tile` 에 `labelUrl`·`maxNativeZoom` 추가
+- [x] fix(웹): 지명 라벨 타일 레이어 추가 — `map-labels` pane(z-index 250, 클릭 통과), 배경 위·데이터 아래
+- [x] fix(웹): 한국 타일 커버리지(밝은 z13·어두운 z16)를 `maxNativeZoom` 으로 흡수 — 그 이상 확대 시 "Map data not yet available" 회피
+- [x] style(웹): 출처 문구를 `© Esri | © OpenStreetMap` 두 링크로 축약 (원문 전체는 모드 토글과 겹침)
+- [x] docs(웹): 가이드의 기본 제공처 표기를 Esri 로 정정
+- [x] 검증 — 빌드 통과·지도 파일 타입 오류 0건, `/map-config` env 조합 4가지 확인, 어두운 테마 실화면에서 워터마크 없음·로드 실패 0·줌 상한 동작 확인
+- [x] 이슈: [[issues/carto-basemap-api-key-watermark]] / 범용: [[knowledge/tools/keyless-map-tile-providers]]
+- [x] PR: 웹 #90 (커밋 3개)
+
+### 이 과정에서 드러난 것
+
+- [ ] CI 워크플로 3개(dev·linko·mobigen)에 **env·시크릿 주입 지점이 전혀 없음** — `docker run` 에 `-e` 도 `--env-file` 도 없어 런타임 설정 통로가 이미지에 구워지는 `.env.production` 뿐. 설치 패키지(compose)만 env 로 바꿀 수 있음
+- [ ] 가이드에 "사내 타일에는 지명이 그림에 포함돼 있어야 한다" 설명 없음 — 이번엔 추가하지 않기로 함
+
+### 다음
+
+- [ ] PR #90 머지 후 `dna-sql-agent-web_dev.yml` 수동 실행으로 dev 반영, 이어서 linko·mobigen
+- [ ] 밝은 테마 z13 이상 화면·기본 모드 전환 육안 확인 (브라우저 자동화 실패로 미확인)
+- [ ] 설치 패키지 고객사는 이미지 재배포 필요 — 배포 시점 결정
+
+## 2026-09-22 — 슬래시 커맨드 (`feat/slash-command`)
+
+- [x] 현재 구조 분석 — 커맨드가 `DefaultWorkflowHandler` 조건문에 하드코딩, 별칭이 일반 질문을 가로채고 미등록 커맨드는 LLM으로 넘어가는 상태
+- [x] 설계 문서 `docs/design/chat/slash-command-design.md` 작성·구현과 동기화 (모순 점검 포함)
+- [x] feat(백엔드): `slash_commands` 테이블·기본 커맨드 4종, 해석·권한·실행 서비스, 조회 API·관리자 CRUD API
+- [x] feat(백엔드): 커맨드 턴 이력 저장, 스킬 스냅샷과 LLM 직전 블록 펼침, 대화 요약·메모리 검색어 처리, 커맨드 감사 이벤트
+- [x] feat(백엔드): `/help`(예시 질문 버튼)·`/status`(도구 설정 기준 표)·`/memories`(목록 컴포넌트)·`/delete` 한글화
+- [x] feat(웹): 입력창 커맨드 목록(문장 중간 `/`, 맨 앞 이동, 일치 없으면 닫기), `item_list` 표시, 버튼 분류·새로고침 순서 보정, 후속 질문 `→` 목록
+- [x] fix: 답변 HTML 태그 금지 규칙, 후속 질문 템플릿 중괄호 자리표시자 제거
+- [x] ADR: [[decisions/041-slash-commands-db-registry]], [[decisions/042-skill-turn-snapshot-and-llm-expansion]], [[decisions/043-command-result-dedicated-component]]
+- [x] 이슈: [[issues/workflow-short-circuit-components-attach-to-previous-answer]] / 범용: [[knowledge/prompting/llm-copies-template-placeholders]]
+- [x] PR: 백엔드 #162, 웹 #93 (테스트 백엔드 85건·웹 8건 통과)
+
+### 다음
+
+- [x] PR #162·#93 머지
+- [ ] 시스템 범위가 빈 대화에서 `/memories`가 전체 시스템 메모리를 보여 주는 원인 추적 (삭제 오조작 위험)
+- [ ] 후속 질문이 "후속 질문 문장"을 그대로 베끼는지 관찰 — 재발 시 응답 정리 미들웨어에서 링크 글자 정리
+- [x] SQL 예제 화면 스타일 stash 복원 (`style/sql-example-ui`) — SQL 하이라이트는 공통 `SqlHighlightStyle` 컴포넌트로 해결
+- [ ] 로컬 테스트 커맨드 `admin-guide`·`data-tour` 정리 여부 결정
+
+## 2026-09-22 — SQL 예제 AI 생성 수정, 북마크 등록 404·해제 보류 (`fix/bookmark-component-row`)
+
+- [x] fix(백엔드): task 모드 SQL 예제 AI 생성 러너가 설정된 작업 테이블(`sql_collection_jobs_v2`)을 조회하도록 수정 — `fix/collection-task-job-table` `7be2643`
+- [x] 원인 규명: AI 생성 0건은 대상 DB 쿼리 이력 미설정(`pg_stat_statements` 라이브러리 미로드) → [[knowledge/troubleshooting/sql-history-collection-prerequisites]]
+- [x] style(웹): SQL 예제 수정 창 상태 선택을 공통 `RadioGroup`으로 (`style/sql-example-ui` `7acfd93`)
+- [x] fix: 차트 북마크 404 — 서버가 컴포넌트를 담은 실제 행으로 보정, 웹은 단계별 저장 행 id 유지 → [[issues/bookmark-component-row-mismatch-404]]
+- [x] feat: 북마크 페이지 해제 보류·상단 저장/되돌리기·저장하지 않고 나갈 때 확인 → [[decisions/044-bookmark-page-deferred-remove]]
+- [x] feat: 북마크 목록·참조 API에 사용 중인 대시보드 정보, 북마크 페이지 카드 안내·채팅 화면 확인창(대시보드 포함 시에만)
+- [x] PR: 백엔드 #163, 웹 #94 (백엔드 북마크 테스트 15건 통과)
+
+### 다음
+
+- [ ] PR #163·#94 리뷰·머지
+- [ ] `fix/collection-task-job-table`(`7be2643`) PR 생성
+- [ ] 수집기가 쿼리 이력 조회 실패를 로그로만 남겨 "0건 완료"로 보이는 문제 — 작업 오류 표시 여부 결정
+- [ ] Postgres 수집기의 `스키마명.` 포함 필터로 스키마 없이 쓴 쿼리가 제외되는 문제 검토
+- [ ] SQL 예제 스타일(`style/sql-example-ui`) 화면 확인 후 항목별 커밋·PR
+
 ## 블로커
 
 _(없음)_
@@ -356,6 +925,8 @@ _(없음)_
 - 미팅: [[meetings/2026-05-13 SQL Agent 검토 회의 (실장님 제작 버전)|2026-05-13 SQL Agent 검토 회의 (실장님 제작 버전)]]
 - 미팅: [[projects/dna-sql-agent/meetings/2026-05-18 활용 방안 및 제품명 결정]]
 - 미팅: [[projects/dna-sql-agent/meetings/2026-05-26 벡터 연관관계 추론 및 SQL 리버스 엔지니어링 검토]]
+- 미팅: [[projects/dna-sql-agent/meetings/2026-07-28 환경설정, 관리자기능, 권한, 라이선스 정책 검토]]
+- 미팅: [[projects/dna-sql-agent/meetings/2026-08-06 다답 일정 및 사업 현황 정리]]
 - PPT 추가기능 동작 흐름 (실장님 설명):
   1. LLM에게 비율 상의 PPT 컴포넌트·내용 생성 요청
   2. LLM이 JSON 형식으로 슬라이드 구조 반환

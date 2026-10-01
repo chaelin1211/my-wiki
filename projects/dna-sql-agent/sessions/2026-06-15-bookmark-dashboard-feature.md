@@ -72,9 +72,9 @@ outcome: in-progress
 ## 핵심 결정
 
 - **결정 1:** 북마크 생성 시 SQL을 사전 추출 (사이드카 파일 방식 대신)
-  → ADR: [[decisions/015-bookmark-sql-extraction]]
+  → ADR: [[decisions/015-bookmark-dashboard-architecture]]
 - **결정 2:** 위젯 초기 로드는 스냅샷, 새로고침 시에만 SQL 재실행 (성능 최적화)
-  → ADR: [[decisions/015-bookmark-sql-extraction]] (캐시 전략 포함)
+  → ADR: [[decisions/015-bookmark-dashboard-architecture]] (캐시 전략 포함)
 - **결정 3:** Split-panel 레이아웃 (목록 + 상세 동시 표시) — 채팅 레이아웃과 동일한 UX 패턴
 
 ## 배운 것

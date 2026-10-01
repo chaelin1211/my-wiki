@@ -1,5 +1,5 @@
 ---
-type: issue-record
+type: troubleshooting
 project: dna-sql-agent
 date: 2026-06-08
 status: resolved
