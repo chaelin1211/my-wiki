@@ -1,7 +1,7 @@
 ---
 type: project-status
 project: dna-sql-agent-web
-updated: 2026-07-20
+updated: 2026-10-01
 phase: active
 ---
 
@@ -292,12 +292,68 @@ phase: active
       가려서 잘려 보임. 바깥 div(`rounded-lg border overflow-hidden`) +
       안쪽 div(`overflow-y-auto`, radius 없음) 이중 구조로 분리해야 함
 
+## 완료된 것 (2026-07-24 — SQL 카드 렌더링 성능 + 채팅 목록 로딩 조사)
+
+- [x] perf: SQL 카드 `dangerouslySetInnerHTML` + 매번 재계산 → `useMemo` 캐싱 + Prism 토큰 기반
+      React 렌더링으로 교체 (jsdom 벤치마크로 84% 감소 실측) — `perf/sql-block-render` 브랜치,
+      커밋 `aad250a`, push 완료 — ADR-016, [[decisions/016-sql-block-keep-dual-parse-prism-sql-formatter]]
+- [x] Prism 제거/sql-formatter 내부 토크나이저 딥임포트 등 대안 검토 후 현행(이중 파싱 + 캐싱) 유지
+      결정 — ADR-016
+- [x] perf: 로그인 초기화 시 `loadMySystems`/`loadConnections`/`loadConversationList` 순차 실행 →
+      `loadConnections`을 `loadMySystems`와 병렬화 (같은 브랜치, 커밋 `9f8a8f2`, push는 보류)
+- [x] "채팅 목록 로딩 느림" 체감 원인 진단 — API 자체는 정상(수십~수백 ms), 실제 원인은
+      `next dev`(Turbopack) 번들 비압축/HMR 오버헤드로 `loadEvent` 2.5~3초 소요 확인
+      → [[knowledge/troubleshooting/next-dev-overhead-masks-real-bottleneck]]
+- [x] `.vscode/launch.json`에 "Run Script: build & start" 설정 추가 (프로덕션 빌드 비교용)
+- [x] git 사고 예방: `perf/sql-block-render` 브랜치에 `feat/group-admin` 미완료 변경 73개 파일이
+      섞여 스테이징된 것을 커밋 전에 발견, `git stash`로 안전 보관 후 `origin/main` 기준 재정리
+
+## 완료된 것 (2026-09-30 ~ 10-01 — 데이터셋 관리 정리 + 관리자 설정 저장/적용)
+
+세션: [[sessions/2026-10-01-dataset-manager-and-settings-apply-flow]]
+
+- [x] 채팅 헤더 북마크 버튼 위치 복구(PR #96 사이드이펙트), 분석보고서 버튼 툴팁, 툴팁 꼬리 테두리 — PR 웹 #97
+      → [[issues/chat-header-bookmark-shifted-by-dataset-pr]]
+- [x] 데이터셋 관리 다이얼로그 스타일 통일·훅 위반 수정·단계 칩 상태 구분·구축 중 삭제 차단·목록 제목 고정 — PR 웹 #97
+- [x] 관리자 화면에서 개인 데이터셋 제외 (`owner_user_id`, `exclude_personal`) — PR 백엔드 #170(머지)·웹 #97
+      → [[projects/dna-sql-agent/decisions/045-connections-owner-user-id-personal-dataset]]
+- [x] 지식화 상태: 이번 실행 job만 응답, relation_info 사전 생성, 중단 시 정리 — PR 백엔드 #170(머지)
+- [x] 관계 FAQ SQLite 스레드 오류·검증 타임아웃, 업로드 재구축 시 관계 정보 실패 — PR 백엔드 #172
+      → [[projects/dna-sql-agent/issues/relation-faq-sqlite-cross-thread]],
+        [[projects/dna-sql-agent/issues/stale-relation-info-cancel-flag-on-upload-rebuild]]
+- [x] 관리자 연결·시스템 목록 검색·정렬 복구(PR #160 머지에서 유실), 권한 시스템 목록 이름순 — PR 백엔드 #170
+      → [[projects/dna-sql-agent/issues/admin-list-search-sort-lost-in-merge]]
+- [x] 관리자 설정 저장만 해도 자동 적용되던 문제 수정 — 백엔드 `fix/settings-apply-timing` (push 전)
+      → [[projects/dna-sql-agent/decisions/046-settings-reload-signal-on-apply-only]]
+- [x] 설정 배너 4버튼·전체 탭 기준 저장/리셋·RAG 카드별 변경 점·반영 방식 안내 — 웹 `refactor/settings-save-banner` (push 전)
+      → [[decisions/017-settings-banner-global-save-and-apply-hint]]
+- [x] (이월 해소) 바로 반영/적용 반영 구분 — 배너 ※ 안내로 구현
+- [x] 백엔드 문서 갱신: `architecture-review.md`, `server-settings-design.md` §9, `settings-ui-design.md` §10
+
 ## 진행 중
 
-- [ ] 바로 반영/적용 반영 구분 (SQL Guardrail: 즉시 / 마스킹 룰: 저장 후 적용)
+- [ ] 백엔드 `fix/settings-apply-timing`(3커밋)·웹 `refactor/settings-save-banner`(3커밋) push·PR (함께 배포)
 
 ## 다음 할 일
 
+- [ ] (신규 2026-10-01) PR #172 머지 후 업로드 → 취소 → 재업로드 흐름 실사용 확인
+- [ ] (신규 2026-10-01) 관계 정보가 실제로 실패하면 관계 FAQ 건너뛰기 (한 줄)
+- [ ] (신규 2026-10-01) 지식화 실행 ID + DB 기준 취소 + 실제 멈춤 대기 구조 개선 (관리자 "모두 시작"과 통합 검토)
+- [ ] (신규 2026-10-01) 설정 `PATCH` 검증 실패 500 → 422 + 읽을 수 있는 detail
+- [ ] (신규 2026-10-01) 파운데이션·라이센스 탭에서도 다른 탭 미저장 변경 저장 경로 제공 검토
+- [ ] (신규 2026-10-01) 개인 데이터셋 값 프로파일링 미실행 의도 확인, `get_table_info` 폴링 부하 개선
+- [ ] (신규 2026-10-01) PR #160 머지에서 다른 기능도 되돌아갔는지 점검
+
+- [ ] **폐쇄망에서 관리자·대시보드 버튼 미표시 수정** (2026-08-28 발견)
+      `hooks/use-office-addin.ts` 가 `load` 만 듣고 `error` 를 안 들어, 외부 office.js 가
+      로드되지 않는 폐쇄망에서 판정이 `null` 로 남는다. `isOfficeAddin === false` 로
+      게이팅된 `sidebar-user-menu.tsx:38`·`conversation-list.tsx:240` 이 조용히 사라진다.
+      `error` 리스너 + 타임아웃 폴백 필요
+      → [[admin-button-hidden-when-office-js-blocked]]
+
+- [ ] (신규 2026-07-24) `use-conversations.ts` 병렬화 커밋(`9f8a8f2`) push 및
+      `perf/sql-block-render` PR 생성 (사용자가 직접 진행 예정)
+- [ ] (신규 2026-07-24) 프로덕션 빌드로 채팅 목록 로딩 체감 속도 재확인
 - [x] (이월) 그룹 관리자 기능 프론트엔드 커밋 + PR #72 생성·머지 — 2026-07-22
       섹션에서 해소
 - [ ] (이월) 시스템관리자/그룹관리자 두 세션으로 전체 플로우 실사용 재확인

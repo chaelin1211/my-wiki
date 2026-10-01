@@ -17,15 +17,15 @@ goal: "dna-sql-agent 백엔드와 SSE로 연동하는 Text-to-SQL AI 챗봇 웹 
 
 ## 기술 스택
 
-| 영역 | 기술 | 비고 |
-|------|------|------|
-| Framework | Next.js 16 (App Router) | |
-| 언어 | TypeScript | |
-| 스타일링 | Tailwind CSS v4 | |
-| UI 컴포넌트 | shadcn/ui (Radix UI) | |
-| 차트 | Plotly.js (react-plotly.js) | |
-| Markdown | react-markdown + remark-gfm | |
-| 패키지 매니저 | pnpm | |
+| 영역        | 기술                          | 비고  |
+| --------- | --------------------------- | --- |
+| Framework | Next.js 16 (App Router)     |     |
+| 언어        | TypeScript                  |     |
+| 스타일링      | Tailwind CSS v4             |     |
+| UI 컴포넌트   | shadcn/ui (Radix UI)        |     |
+| 차트        | Plotly.js (react-plotly.js) |     |
+| Markdown  | react-markdown + remark-gfm |     |
+| 패키지 매니저   | pnpm                        |     |
 
 ## 주요 기능
 
