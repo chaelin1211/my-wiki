@@ -1,7 +1,7 @@
 ---
 type: project-status
 project: kacportal
-updated: 2026-07-15
+updated: 2026-08-12
 phase: active
 ---
 
@@ -23,11 +23,14 @@ phase: active
 - [x] 인포그래픽 쿼리 수정 반영 (실장님 방문 — 2026-06-01)
 - [x] 스마트기기 이용통계 엑셀 다운로드 오류 수정 — `sheetName` 누락 (`smDevcSmartStatistics.js`, `dev` 브랜치 커밋 완료)
 - [x] 로컬 Tomcat(cargo-maven3-plugin) 디버그 실행 스크립트 작성 (`run-tomcat.sh`, `run-tomcat-debug.sh`, 로컬 전용)
+- [x] 기사 수집 건수 차트 x축 기간순 정렬 수정 — `labelISO` 기준 정렬 + `argumentAxis.categories` 고정 (`dev` 커밋 `47af1dea2`, 근본 원인은 미확인 상태의 화면단 방어)
+- [x] 로컬 실행환경 저장소 밖으로 재구축 — `~/dev/mobigen/kacportal-run/`(러너 pom + `run.sh` + 테스트데이터 SQL), `.vscode/launch.json` 단독으로 Antigravity Run and Debug 실행
 
 ## 진행 중
 
 - [ ] 미커밋 설정 파일 검토 (`globals-dev.properties`, `context-properties.xml`, `log4j2.xml`)
-- [ ] `pom.xml`의 cargo-maven3-plugin `<property>` 문법 오류 수정 커밋 여부 결정 (진짜 버그, 현재 로컬에만 존재)
+- [ ] `pom.xml`의 cargo-maven3-plugin `<property>` 문법 오류 수정 커밋 여부 결정 (진짜 버그, 현재 로컬에만 존재 — 2026-08-12에도 동일 문제로 우회함)
+- [ ] 법령검색 ES 랭킹 개선 — `multi_match` 기본값 문제 1차 분석 완료, 인덱스 매핑 확인 후 수정안 확정 필요
 
 ## 다음 할 일
 
@@ -37,6 +40,9 @@ phase: active
 - [ ] Altibase 내부망(127.0.0.1:1721) 접속 터널링 방법 확인 — 로컬에서 DB 연동 화면 완전 테스트하려면 필요
 - [ ] `.vscode/`, `run-tomcat*.sh`를 팀 공유용으로 git에 추가할지 개인 전용으로 둘지 결정
 - [ ] `test-excel-sample.html` 임시 테스트 파일 정리
+- [ ] 기사 수집 차트 순서 **근본 원인** 규명 — 상용 콘솔 `window.weeklyChartData.map(d => d.label)` 확인 → 필요 시 Tibero에서 `selectWeeklyStats` 직접 실행
+- [ ] `MediaArticle_SQL.xml` 주 시작 계산 `TO_CHAR(날짜,'D')`의 NLS_TERRITORY 의존성 확인 (주 경계 하루 밀림 가능성)
+- [ ] 개발 DB 테스트 데이터 정리 — `DELETE FROM IDP_ANL.A_ANL_F_NEWS_EXTR_KYWD_INFO WHERE RMRK='CLAUDE_TEST'`
 
 ## 블로커
 
@@ -47,4 +53,6 @@ phase: active
 - 브랜치: `dev`
 - 원격: `mobigen` (`192.168.105.45:12401`, 접속 가능) / `origin` (`14.35.255.226:12401`, 세션 중 접속 불가 확인됨)
 - 로컬 Tomcat: cargo-maven3-plugin embedded, 기본 포트는 `pom.xml` 기준 8080 (로컬에서는 8081 + 루트 컨텍스트로 임시 변경해 사용 중, 미커밋)
-- 마지막 세션: [[sessions/2026-07-15-excel-download-sheetname-bug-tomcat-debug-setup]]
+- 로컬 실행: 저장소 밖 러너 `~/dev/mobigen/kacportal-run/` (`run.sh`, 포트 8081, 루트 컨텍스트). 저장소에는 `.vscode/`(gitignore 처리)만 존재
+- 개발 ES: `192.168.105.14:12511` (법령검색 인덱스 `law_contents_law_*`)
+- 마지막 세션: [[sessions/2026-08-12-media-chart-axis-order-law-search-scoring]]

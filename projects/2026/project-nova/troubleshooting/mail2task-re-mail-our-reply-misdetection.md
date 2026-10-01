@@ -83,4 +83,4 @@ judgment_template `_note`에 our_reply 판단 기준 명시:
 
 여기 해결책(prep이 envelope/top_comment를 judgment_request에 동봉)은 **판단 레이어 보정**이라, prep을 안 거치는
 결정론 스크립트나 `pipeline --new` 경로는 여전히 `top_comment`를 잃는다. ingest 자체에서 두 턴을 보존하도록 고치는
-설계 결정: [[projects/project-nova/decisions/003-fwd-두턴-보존-최신턴-기준|ADR-003 FWD 두 턴 보존 + 최신 턴 기준]].
+설계 결정: [[../decisions/003-fwd-두턴-보존-최신턴-기준|ADR-003 FWD 두 턴 보존 + 최신 턴 기준]].

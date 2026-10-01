@@ -52,12 +52,12 @@ outcome: success
 - **문제:** 법령정보 첨부파일 다운로드 URL이 `https://law.go.kr/https://law.go.kr/...` 형태로 더블 프리픽스 발생
 - **원인:** 외부 법령 API가 절대 URL / 상대 URL을 혼용 반환하는데 컨트롤러가 무조건 `lawUrl` prefix를 붙임
 - **해결:** `fileUrl.startsWith("http")` 분기로 절대 URL은 그대로 사용
-  → 이슈: [[issues/law-url-double-prefix]]
+  → 이슈: [[../issues/law-url-double-prefix]]
 
 - **문제:** 공지사항 팝업에서 링크 클릭 시 페이지 이동 안 됨
 - **원인:** POST 방식 사용 중인데 팝업에서는 미지원
 - **해결:** GET 방식 `location.href`로 변경
-  → 이슈: [[issues/notice-popup-post-navigation]]
+  → 이슈: [[../issues/notice-popup-post-navigation]]
 
 ## 다음 할 일
 

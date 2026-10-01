@@ -67,12 +67,12 @@ Altibase 드라이버는 팀 공용 `pom.xml`에는 커밋하지 않고(다른 �
 
 ## 예방책
 
-- `pom.xml`의 cargo 설정 오류는 진짜 버그이므로 언젠가 정식으로 고쳐서 커밋해야 함 (이번 세션에서는 스코프를 좁게 유지하려고 보류함 — [[projects/kacportal/status]] "진행 중" 참고).
+- `pom.xml`의 cargo 설정 오류는 진짜 버그이므로 언젠가 정식으로 고쳐서 커밋해야 함 (이번 세션에서는 스코프를 좁게 유지하려고 보류함 — [[../status]] "진행 중" 참고).
 - 상용/비공개 JDBC 드라이버는 pom.xml에 커밋하는 대신, README나 팀 위키에 "로컬 `.m2`에 수동 설치가 필요하다"는 안내를 남겨두는 게 낫다.
 - DB 연동이 필요한 report 화면을 로컬에서 테스트하려면 Altibase 내부망 터널링 방법을 먼저 팀에 확인해둘 것.
 
 ## 관련 페이지
 
-- [[projects/kacportal/issues/smdevc-smart-statistics-excel-download-sheetname-missing]]
-- [[projects/kacportal/sessions/2026-07-15-excel-download-sheetname-bug-tomcat-debug-setup]]
+- [[smdevc-smart-statistics-excel-download-sheetname-missing]]
+- [[../sessions/2026-07-15-excel-download-sheetname-bug-tomcat-debug-setup]]
 - [[knowledge/troubleshooting/cargo-maven3-plugin-property-vs-properties-syntax]]

@@ -77,8 +77,8 @@ _(ADR 추가 시 갱신)_
 
 ## 현재 상태
 
-→ [[projects/kacportal/status|상세 상태]] 참조
+→ [[status|상세 상태]] 참조
 
 ## 관련 지식
 
-- [[projects/kac-idp-noti/overview|kac-idp-noti]] — Kafka 알림 서버 (연동 프로젝트)
+- [[../kac-idp-noti/overview|kac-idp-noti]] — Kafka 알림 서버 (연동 프로젝트)

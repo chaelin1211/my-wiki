@@ -11,7 +11,7 @@ tags: [mail2task, numbering, batch, our_reply, orchestration]
 # mail2task 같은 배치 new + our_reply 스레드 채번 어긋남
 
 > 대상: mail2task 스킬 `scripts/run_pipeline.py` (finish)
-> 선행: [[projects/project-nova/issues/batch-issue-numbering-duplicate|배치 이슈번호 중복 채번 버그]] (버그 #1). 그 문서가 미해결 주의로 남긴 "same-batch our_reply 결과 점검"이 바로 이 버그(#2).
+> 선행: [[batch-issue-numbering-duplicate|배치 이슈번호 중복 채번 버그]] (버그 #1). 그 문서가 미해결 주의로 남긴 "same-batch our_reply 결과 점검"이 바로 이 버그(#2).
 
 ## 채번 정의 (정본)
 
@@ -114,8 +114,8 @@ our_reply (회신) → 이슈 2·트래킹 1   (updates_applied=1, 처리내용 
 
 ## 관련 페이지
 
-- [[projects/project-nova/issues/batch-issue-numbering-duplicate|배치 이슈번호 중복 채번 (버그 #1)]]
-- [[projects/project-nova/issues/batch-received-time-ordering|배치 채번 수신 시각순 정렬 (버그 #3)]]
-- [[projects/project-nova/issues/fwd-sender-our-reply-misclassification|FWD 회신을 고객 요청으로 오인]]
-- [[projects/project-nova/troubleshooting/mail2task-re-mail-our-reply-misdetection|Re 메일 our_reply 오판정]]
-- [[projects/project-nova/status|project NOVA 상태]]
+- [[batch-issue-numbering-duplicate|배치 이슈번호 중복 채번 (버그 #1)]]
+- [[batch-received-time-ordering|배치 채번 수신 시각순 정렬 (버그 #3)]]
+- [[fwd-sender-our-reply-misclassification|FWD 회신을 고객 요청으로 오인]]
+- [[../troubleshooting/mail2task-re-mail-our-reply-misdetection|Re 메일 our_reply 오판정]]
+- [[../status|project NOVA 상태]]

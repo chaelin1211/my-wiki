@@ -53,8 +53,8 @@ _(ADR 추가 시 갱신)_
 
 ## 현재 상태
 
-→ [[projects/kac-idp-noti/status|상세 상태]] 참조
+→ [[status|상세 상태]] 참조
 
 ## 관련 지식
 
-- [[projects/kacportal/overview|kacportal]] — 알림 요청을 발행하는 포털 (연동 프로젝트)
+- [[../kacportal/overview|kacportal]] — 알림 요청을 발행하는 포털 (연동 프로젝트)

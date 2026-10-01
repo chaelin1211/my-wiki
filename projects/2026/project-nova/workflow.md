@@ -7,7 +7,7 @@ updated: 2026-06-19
 
 # mail2task — 현재 워크플로우 (구현 기준)
 
-> 초기 PoC 구상([[projects/project-nova/architecture|architecture]] — n8n·GitLab 이슈)에서
+> 초기 PoC 구상([[architecture|architecture]] — n8n·GitLab 이슈)에서
 > **Claude Code 스킬 기반 파이프라인**으로 구현 방향이 바뀐 현재 상태를 정리한다.
 > 산출물은 GitLab 이슈가 아니라 `task_<코드>.xlsx`(Task/Log 시트) + 회신초안 `.txt`이며,
 > AI는 **확정하지 않고 Task 후보만** 만들고 사람이 검토 후 등록·발송한다.
@@ -51,7 +51,7 @@ updated: 2026-06-19
 
 ## 채번 규칙 (03-triage)
 
-> 자세히: [[projects/project-nova/issues/batch-issue-numbering-duplicate|배치 채번 이슈]]
+> 자세히: [[issues/batch-issue-numbering-duplicate|배치 채번 이슈]]
 
 | 번호 | 의미 | 증번 |
 |------|------|------|
@@ -154,9 +154,9 @@ criteria = {
 
 세 버그 수정이 전부 prep(#3) / finish(#1·#2) 루프 안에 들어가 있다.
 
-- [[projects/project-nova/issues/batch-issue-numbering-duplicate|#1 중복 채번]] — finish `batch_scan`으로 메일 간 채번 누적.
-- [[projects/project-nova/issues/batch-same-thread-new-our-reply-ordering|#2 new+our_reply 스레드 연결]] — finish new 우선 정렬 + `batch_threads`.
-- [[projects/project-nova/issues/batch-received-time-ordering|#3 수신 시각순 채번]] — prep이 mail_id 부여 전 수신 시각순 정렬.
+- [[issues/batch-issue-numbering-duplicate|#1 중복 채번]] — finish `batch_scan`으로 메일 간 채번 누적.
+- [[issues/batch-same-thread-new-our-reply-ordering|#2 new+our_reply 스레드 연결]] — finish new 우선 정렬 + `batch_threads`.
+- [[issues/batch-received-time-ordering|#3 수신 시각순 채번]] — prep이 mail_id 부여 전 수신 시각순 정렬.
 
 ### 수동 경로 (단계별)
 빠른 경로가 막히거나(스크립트 오류) 단일 단계만 손볼 때 `--plan` → `--workdir` → 00 ingest → 01~06 단계별 실행. **동일 결과**.
@@ -171,7 +171,7 @@ criteria = {
 ## 저장 (06-output)
 - 위치 정본: `mail2task_paths.yml` (6키: config·task_results·reply_drafts·except_results·logs·eml_inbox).
 - 키별 `type: local|cloud` — local은 마운트 경로 직접 in-place 쓰기, cloud는 드라이브 업로드.
-  (→ [[projects/project-nova/decisions/002-공통경로-로컬클라우드-타입|ADR-002]])
+  (→ [[decisions/002-공통경로-로컬클라우드-타입|ADR-002]])
 - `task_<코드>.xlsx`: Task 시트(채번·분류·담당자·우선순위·Task·요약) + Log 시트(날짜·제목·발신·요약).
 - 회신은 드라이브 `.txt` 초안으로만 (Gmail 초안 자동 생성 안 함).
 
@@ -183,7 +183,7 @@ criteria = {
 5. 도구 호출 최소화 · 되묻는 곳은 게이트 soft 검토 단 하나.
 
 ## 관련 페이지
-- [[projects/project-nova/architecture|아키텍처(초기 PoC 구상)]]
-- [[projects/project-nova/decisions/002-공통경로-로컬클라우드-타입|ADR-002 공통경로 타입]]
-- [[projects/project-nova/issues/batch-issue-numbering-duplicate|배치 채번 이슈]]
-- [[projects/project-nova/status|프로젝트 상태]]
+- [[architecture|아키텍처(초기 PoC 구상)]]
+- [[decisions/002-공통경로-로컬클라우드-타입|ADR-002 공통경로 타입]]
+- [[issues/batch-issue-numbering-duplicate|배치 채번 이슈]]
+- [[status|프로젝트 상태]]

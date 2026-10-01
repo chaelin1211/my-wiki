@@ -50,19 +50,19 @@ goal: "사내 AI 업무 활용 skill 공모전 — 메일 기반 프로젝트 �
 
 ## 주요 의사결정
 
-- LLM 선택: 사내 LLM 우선 (보안) → [[projects/project-nova/decisions/001-llm-선택]]
-- 공통 경로 키별 local/cloud 타입 + 활성 파일 고정 경로 보관 → [[projects/project-nova/decisions/002-공통경로-로컬클라우드-타입]]
+- LLM 선택: 사내 LLM 우선 (보안) → [[decisions/001-llm-선택]]
+- 공통 경로 키별 local/cloud 타입 + 활성 파일 고정 경로 보관 → [[decisions/002-공통경로-로컬클라우드-타입]]
 - 공모전 주제: '메일 기반 프로젝트 별 이슈 관리' (2026-05-18 회의에서 확정)
-- 아이디어 전체 개요: [[projects/project-nova/raw/idea]]
+- 아이디어 전체 개요: [[raw/idea]]
 
 ## 현재 상태
 
-→ [[projects/project-nova/status|상세 상태]] 참조
+→ [[status|상세 상태]] 참조
 
 ## 관련 지식
 
-- [[projects/project-nova/troubleshooting/mail2task-re-mail-our-reply-misdetection]] — Re: 메일 our_reply 오인식 및 envelope 누락 버그
-- [[projects/project-nova/troubleshooting/mail2task-log-sheet-duplicate-not-blocked]] — Log 시트 중복 처리 버그
+- [[troubleshooting/mail2task-re-mail-our-reply-misdetection]] — Re: 메일 our_reply 오인식 및 envelope 누락 버그
+- [[troubleshooting/mail2task-log-sheet-duplicate-not-blocked]] — Log 시트 중복 처리 버그
 
 ## 참고: Mail2Task (개인 프로토타입)
 

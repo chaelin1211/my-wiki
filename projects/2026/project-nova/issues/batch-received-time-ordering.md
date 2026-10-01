@@ -11,7 +11,7 @@ tags: [mail2task, numbering, batch, ordering, prep]
 # mail2task 배치 채번이 수신 시각순이 아니라 파일명순으로 매겨짐
 
 > 대상: mail2task 스킬 `scripts/run_pipeline.py` (prep)
-> 계열: 배치 채번/순서 버그 #3. 선행 — [[projects/project-nova/issues/batch-issue-numbering-duplicate|#1 중복 채번]], [[projects/project-nova/issues/batch-same-thread-new-our-reply-ordering|#2 new+our_reply 스레드 연결]].
+> 계열: 배치 채번/순서 버그 #3. 선행 — [[batch-issue-numbering-duplicate|#1 중복 채번]], [[batch-same-thread-new-our-reply-ordering|#2 new+our_reply 스레드 연결]].
 
 ## 채번 정의 (정본)
 
@@ -93,6 +93,6 @@ for i, (eml, ingest_result, state, recv_date, recv_time, _idx) in enumerate(inge
 
 ## 관련 페이지
 
-- [[projects/project-nova/issues/batch-issue-numbering-duplicate|배치 이슈번호 중복 채번 (#1)]]
-- [[projects/project-nova/issues/batch-same-thread-new-our-reply-ordering|같은 배치 new+our_reply 스레드 채번 (#2)]]
-- [[projects/project-nova/status|project NOVA 상태]]
+- [[batch-issue-numbering-duplicate|배치 이슈번호 중복 채번 (#1)]]
+- [[batch-same-thread-new-our-reply-ordering|같은 배치 new+our_reply 스레드 채번 (#2)]]
+- [[../status|project NOVA 상태]]

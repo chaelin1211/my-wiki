@@ -47,10 +47,10 @@ outcome: success
 - **문제:** 스마트기기 이용통계 화면에서 엑셀 다운로드 버튼을 눌러도 아무 반응이 없음.
 - **원인:** `smDevcSmartStatistics.js`의 엑셀 다운로드 핸들러가 만드는 `xl` 객체에 `sheetName` 속성이 빠져 있어, `commonLib.js`의 `makeXl()`이 `xl.sheetName.toString()`에서 `Cannot read properties of undefined (reading 'toString')`로 즉시 실패.
 - **해결:** `sheetName: '공항별 항공사별 스마트기기 이용통계(월별)'` 한 줄 추가.
-  → 이슈: [[issues/smdevc-smart-statistics-excel-download-sheetname-missing]]
+  → 이슈: [[../issues/smdevc-smart-statistics-excel-download-sheetname-missing]]
 
 - **문제:** 로컬에서 Tomcat이 아예 뜨지 않음 (cargo:run 빌드 실패 → war 없음 → Altibase 드라이버 없음 → DB 접속 불가, 4단 콤보).
-- **원인/해결:** [[issues/local-tomcat-cargo-run-setup-broken]] 참고.
+- **원인/해결:** [[../issues/local-tomcat-cargo-run-setup-broken]] 참고.
 
 ## 다음 할 일
 

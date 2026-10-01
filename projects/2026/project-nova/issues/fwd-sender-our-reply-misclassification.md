@@ -61,10 +61,10 @@ tags: [mail2task, triage, nature, classification, fwd]
 
 이 문서의 "서명 우선" 규칙은 **판단 레이어 밴드에이드**다. 근본은 ingest가 demo FWD에서 `top_comment`(이번 턴)를
 버리고 `body_main`(옛 메일)만 `input.body`로 쓰는 데이터 손실이다. 이를 "두 턴 보존 + 최신 턴 기준"으로 고치는
-설계 결정: [[projects/project-nova/decisions/003-fwd-두턴-보존-최신턴-기준|ADR-003]].
+설계 결정: [[../decisions/003-fwd-두턴-보존-최신턴-기준|ADR-003]].
 
 ## 관련 페이지
 
-- [[projects/project-nova/decisions/003-fwd-두턴-보존-최신턴-기준|ADR-003 FWD 두 턴 보존 + 최신 턴 기준]]
-- [[projects/project-nova/issues/batch-issue-numbering-duplicate|배치 이슈번호 중복 채번 버그]]
-- [[projects/project-nova/status|project NOVA 상태]]
+- [[../decisions/003-fwd-두턴-보존-최신턴-기준|ADR-003 FWD 두 턴 보존 + 최신 턴 기준]]
+- [[batch-issue-numbering-duplicate|배치 이슈번호 중복 채번 버그]]
+- [[../status|project NOVA 상태]]

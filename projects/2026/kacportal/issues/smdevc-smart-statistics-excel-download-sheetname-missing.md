@@ -57,6 +57,6 @@ var xl = {
 
 ## 관련 페이지
 
-- [[projects/kacportal/issues/local-tomcat-cargo-run-setup-broken]]
-- [[projects/kacportal/sessions/2026-07-15-excel-download-sheetname-bug-tomcat-debug-setup]]
+- [[local-tomcat-cargo-run-setup-broken]]
+- [[../sessions/2026-07-15-excel-download-sheetname-bug-tomcat-debug-setup]]
 - [[knowledge/patterns/static-html-harness-bypass-missing-db]]
