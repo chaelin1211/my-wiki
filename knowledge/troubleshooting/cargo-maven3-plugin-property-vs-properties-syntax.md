@@ -68,4 +68,4 @@ cargo-maven2-plugin 시절(또는 다른 예제/블로그) 문법인 `<property 
 
 ## 관련 페이지
 
-- [[projects/kacportal/issues/local-tomcat-cargo-run-setup-broken]]
+- [[../../projects/2026/kacportal/issues/local-tomcat-cargo-run-setup-broken]]

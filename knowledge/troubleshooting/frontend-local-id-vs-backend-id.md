@@ -45,6 +45,10 @@ await deleteApi(backendId)
 - API 호출 헬퍼에 백엔드 ID 조회를 캡슐화
 - 새로 생성된 리소스의 API 연동을 통합 테스트로 커버
 
+## 관련
+
+- [[knowledge/troubleshooting/merged-rows-single-id-loses-child-location]] — 여러 저장 행을 한 항목으로 합칠 때 id 하나로 하위 항목 위치를 못 가리키는 경우
+
 ## 실제 사례
 
 - [[projects/dna-sql-agent-web/issues/new-conversation-local-id-api-404]]

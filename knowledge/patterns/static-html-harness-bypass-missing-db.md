@@ -28,7 +28,7 @@ tags: [testing, frontend, debugging, offline-dev]
 ## 예시
 
 `kacportal`의 스마트기기 이용통계 화면 — Altibase DB가 로컬에서 접속 불가라 화면 자체가 로딩 단계에서 멈추는 상황. `commonLib.js`(엑셀 생성 유틸)와 `Tabulator`, `ExcelJS`를 그대로 로드하고, `AIRPORT`/`QUARTER`/`MONTH`/`BIO_USER_CT_KE` 등 실제 응답과 동일한 필드명의 샘플 데이터 2행을 하드코딩해서 엑셀 다운로드 버튼만 독립적으로 테스트. `sheetName` 누락 버그를 재현(에러 재현, 파일 미생성 확인)하고 수정(파일 생성 + 시트명 확인)까지 실제 라이브러리로 end-to-end 검증함.
-→ [[projects/kacportal/issues/smdevc-smart-statistics-excel-download-sheetname-missing]]
+→ [[../../projects/2026/kacportal/issues/smdevc-smart-statistics-excel-download-sheetname-missing]]
 
 ## 주의할 점
 
@@ -38,4 +38,4 @@ tags: [testing, frontend, debugging, offline-dev]
 
 ## 관련 페이지
 
-- [[projects/kacportal/issues/local-tomcat-cargo-run-setup-broken]]
+- [[../../projects/2026/kacportal/issues/local-tomcat-cargo-run-setup-broken]]

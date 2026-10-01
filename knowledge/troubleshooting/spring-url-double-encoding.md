@@ -65,4 +65,4 @@ if (responseCode == HttpURLConnection.HTTP_MOVED_PERM
 
 ## 관련 이슈
 
-- [[projects/kacportal/issues/law-url-double-prefix]]
+- [[../../projects/2026/kacportal/issues/law-url-double-prefix]]
