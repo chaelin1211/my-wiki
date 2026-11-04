@@ -2,7 +2,7 @@
 type: project-status
 project: dna-sql-agent
 created: 2026-04-20
-updated: 2026-09-22
+updated: 2026-11-04
 phase: active
 ---
 
@@ -782,7 +782,7 @@ phase: active
 - [ ] PR #140 리뷰·머지 (웹 #82 는 서버 머지 후)
 - [ ] `masking.json` 의 `strategies.*.columns` 8곳에 `_item` 추가 (린터 WARN 8건)
 - [ ] `check_default_config.py` CI 연결 여부 결정
-- [ ] `settings-ui-design.md` Tab 6(Foundation/llm) 이 폐기된 섹션 기준 — 화면 실제 구성과 대조 필요
+- [x] `settings-ui-design.md` Tab 6(Foundation/llm) 이 폐기된 섹션 기준 — 화면 실제 구성과 대조 필요 (2026-10-23 실제 6개 탭 기준으로 정리, 파운데이션 = LLM 연결)
 - [x] 도구 권한 fail-open 정리 — 빈 목록을 거부로 뒤집고 전 도구 전환 시딩 → [[issues/tool-permission-revoke-all-becomes-allow-all]]
 - [ ] `origin/main` 병합(ac6d29b) 후속 — `docs/clarification-design.md` 의 "tool_access 에서 접근 그룹 관리" 서술이 우리 구조와 어긋남
 
@@ -915,6 +915,156 @@ phase: active
 - [ ] 수집기가 쿼리 이력 조회 실패를 로그로만 남겨 "0건 완료"로 보이는 문제 — 작업 오류 표시 여부 결정
 - [ ] Postgres 수집기의 `스키마명.` 포함 필터로 스키마 없이 쓴 쿼리가 제외되는 문제 검토
 - [ ] SQL 예제 스타일(`style/sql-example-ui`) 화면 확인 후 항목별 커밋·PR
+
+## 2026-10-08 — 대화 검색 검토와 대화 내 검색 (`fix/search-target-merged-message`, `fix/search-ascii-word-spacing`)
+
+- [x] 대화 검색 기능 검토 — 권한·인젝션 문제없음, 화면 말풍선과 저장 행 불일치가 핵심
+- [x] fix(웹): 답변에만 일치한 검색 결과를 열면 해당 답변으로 이동·강조 → [[issues/search-target-merged-message-row-id]]
+- [x] feat(웹): 대화 내 검색어 하이라이트(일치 노랑·현재 주황), 이동 버튼 순환, 연 메시지에 일치 없으면 `–/N` → [[projects/dna-sql-agent-web/decisions/018-in-chat-search-highlight-render-time-mark]]
+- [x] feat(웹): 대화 내 검색 바에서 검색어 수정·재검색, 채팅 헤더 돋보기로 열기
+- [x] fix(웹): 대화 검색창 입력 시 결과 목록 깜빡임 → [[knowledge/patterns/keep-stale-results-while-loading]]
+- [x] fix: 띄어 쓴 영어 검색어 0건(서버·웹 같은 규칙), 검색창 시스템 이름을 채팅 목록 표시명으로(검색 결과 `connection_name` 추가)
+- [x] chore(웹): 고객사 산출물 주석 규칙 위반 22줄 정리
+- [x] PR: 백엔드 #175(커밋 2개), 웹 #100(커밋 9개) — 함께 배포 필요
+
+### 다음
+
+- [x] PR #175·#100 리뷰·머지
+- [ ] 백엔드 `ruff` 확인 (로컬 미설치, CI 결과로)
+- [ ] 대화에 `system_id` 저장 — 마이그레이션·backfill·저장 훅·목록/상세/검색 API·웹 표시를 ID 기준으로
+- [ ] 영어 붙여 쓴 검색어로 띄어 쓴 본문 찾기 여부 (노이즈 측정 후)
+- [ ] 여러 단어 검색 OR/AND 결정 (OR 설계·실측 완료, 현재는 구절 일치 유지)
+- [ ] 접힌 도구 호출 설명 글 검색 제외 여부, 검색 결과 20개 이후 "더 보기"
+- [ ] 실시간 대화 `reconcileBackendMessageIds` id 밀림 검증
+- [ ] 대화 검색 설계 문서 갱신 (백엔드 §5, 웹 §8·§11.4)
+
+## 2026-10-12 — 도구 표시명 일원화·지도 행정구역 갱신·위젯 새로고침 실패 처리 (`feat/tool-display-name`)
+
+- [x] refactor: 도구 표시명을 `dna/tools/display_names.py` enum 한 곳에서 관리, 에이전트에 조회 함수 주입 → [[decisions/047-tool-display-name-fixed-enum]]
+- [x] feat: 관리자 도구 표시명 조회 API, 웹 관리자 도구 표에 한글명 + 클래스명 표시
+- [x] feat: 지도 시도 경계에 `전남광주통합특별시` 폴리곤 추가 (옛 광주·전남과 공존)
+- [x] feat: 위젯 새로고침 실패 원인 구분 응답(`CONNECTION_FAILED`·`QUERY_FAILED`·`CHART_MISMATCH`, 원문은 로그만), 결과 0건은 200 + `empty`
+- [x] feat(웹): 새로고침 아이콘 `!` 툴팁 + "새로고침 실패: 이유", 실패 위젯 테두리 강조, 전체 새로고침 실패 개수 토스트 → [[knowledge/troubleshooting/radix-tooltip-forced-open-hover]]
+- [x] PR: 백엔드 #176(커밋 4개), 웹 #101(커밋 4개) — 함께 배포 권장
+- 세션: [[sessions/2026-10-12-tool-display-name-map-region-widget-refresh-error]]
+
+### 다음
+
+- [x] PR #176·#101 리뷰·머지
+- [ ] 지도 매칭 보강: 영문명·영문 약칭, 시군구가 붙은 값을 시도로 합산, 옛 코드·행정표준코드 충돌(`26` → 울산 오매칭)
+- [ ] 지도 미매칭 값 LLM 재매핑(`region_mapping`, 재시도 1회, 폴리곤 없는 지역은 `null`) — 설계만 논의
+- [ ] 위젯 새로고침 실패를 DB에 남길지 (지금은 화면에만)
+
+## 2026-10-19 — 회원가입·로그인·계정 관리 고도화 마무리 (`feat/auth-enhancement`)
+
+- [x] 사용자·관리자 매뉴얼 정리 — 내부 구현 설명·과장 표현 제거, "회원 및 권한 관리" 단락·사이드바 일치, DB 연결 생성 설명을 실제 화면에 맞춤, 비밀번호 초기화 소단락 통합
+- [x] fix: 72바이트 넘는 비밀번호 500 → [[knowledge/troubleshooting/bcrypt-72-byte-limit]]
+- [x] feat: 이름·생년월일 선택 항목화(둘 다 비우면 확인 창), 프로필 입력 페이지 강제 이동 제거
+- [x] feat: 비밀번호 초기화 요청 — 이메일 + 이름 또는 생년월일, 응답 항상 동일, 상태 무관 접수, 일치·불일치·계정 없음 모두 이력 저장(입력값 제외) → [[decisions/048-password-reset-identity-and-full-history]]
+- [x] feat: 가입 경로(`signup_type`)·승인·거절 기록(`review_result`·`reviewed_at`·`reviewed_by`), 가입일 = 승인 시각 기준(승인 대기·거절은 없음) → [[decisions/049-signup-review-record-and-joined-at]]
+- [x] feat(웹): 관리자 "계정 관리" 탭 — 가입 방식 토글 + 회원 현황·처리할 요청 카드(→ 사용자 목록 필터). 이력 목록 화면은 만들었다가 되돌림, 조회 API는 유지
+- [x] feat(웹): 사용자 목록 가입일 칸에서 바로 승인·거절, 승인 대기·거절 팝업은 안내만, 표 고정 너비·말줄임
+- [x] feat: 회원가입 시 이메일 중복 확인을 먼저(이메일 사용 가능 여부 API), 없는 날짜 입력 처리, 초기화 요청 화면 엔터 제출 막기
+- [x] chore(웹): main 병합(#103 마스킹 태그 정규화, #104 하위 경로 basePath — 새 화면 로고 2곳 `withBasePath`)
+- [x] PR: 백엔드 #180, 웹 #102 — 둘 다 충돌 없이 병합 가능(백엔드 먼저 머지)
+- 세션: [[sessions/2026-10-19-auth-enhancement-signup-reset-account-management]]
+
+### 다음
+
+- [ ] PR #180·#102 본문을 현재 내용으로 갱신 후 리뷰·머지
+- [ ] 로그인·비밀번호 초기화 요청 횟수 제한 (초기화 요청 "계정 없음" 이력이 계속 쌓일 수 있음)
+- [ ] JWT 서명 키 하드코딩(`jwt_utils._get_secret`) 환경변수화 — 관리자 토큰 위조 가능
+- [ ] 비활성화·권한 회수 즉시 반영 (지금은 접속 토큰 만료까지 최대 30분)
+- [ ] 이메일 대소문자 정규화 (기존 중복 계정 확인 후)
+- [ ] 비밀번호 초기화 요청 이력 보관 정책
+
+## 2026-10-19 — Altibase 한글 컬럼명·결과 표 컬럼 순서·후속 질문 링크 보정 (`fix/korean-columns`)
+
+- [x] fix(웹): 다시 연 대화의 결과 표 컬럼 순서가 SQL과 달라짐 — JSONB 키 재정렬, 백엔드 `columns` 배열 기준으로 표시(표·엑셀 다운로드·엑셀 반영) → [[issues/result-table-column-order-lost-after-jsonb-reload]]
+- [x] fix: Altibase 한글 컬럼명 깨짐 — ODBC 드라이버가 UTF-8 바이트를 1바이트씩 넓혀 반환, 읽는 지점(SQL 실행·벡터화 표본 조회)에서 연결 문자셋으로 복원. 벡터화 시 한글 컬럼 예시 값 누락도 해결 → [[issues/altibase-odbc-korean-column-names-byte-widened]]
+- [x] fix(웹): 후속 질문 링크(`dna-ask`) 형식 보정 — 공백 제거, 괄호 닫기, 리스트 기호 추가(렌더 직전, 예전 대화에도 적용) → [[decisions/050-dna-ask-link-render-normalization]]
+- [x] chore: `Dockerfile.local`에 Altibase 클라이언트 설치(공용). 맥 전용 설정은 개인 `Dockerfile.local.mac`(git 제외)
+- [x] 로컬 Altibase A+ 7.3 Docker 재현 환경 → [[knowledge/tools/altibase-aplus-docker]]
+- [x] PR: 백엔드 #183(커밋 3개), 웹 #105(커밋 2개) — 최신 main 기준 리베이스, 충돌 없음
+- 세션: [[sessions/2026-10-19-altibase-korean-columns-dna-ask-links]]
+
+### 다음
+
+- [ ] PR #183·#105 리뷰·머지 후 main으로 배포
+- [ ] Altibase 시스템 재벡터화(`altibase-LH-sample` 포함) — 한글 컬럼 `data_example` 채우기
+- [ ] 테스트 자원 정리 — 테스트 메시지 4건(`conv_aa42dc19`), 연결 `altibase-aplus-local`, 시스템 `altibase-korean-test`, 테이블 `public.test_korean_columns`, 로컬 컨테이너·이미지
+- [ ] `test_connection_pool.py`·`test_altibase_connection.py` 기존 실패 정리(`RunSqlToolArgs.title` 필수, `_detect_altibase_version` 제거 미반영)
+
+## 2026-10-20 — task 모드 SQL 예제 생성 실패(lease 테이블 없음) 수정 (`fix/collection-health-task-mode`)
+
+- [x] fix: 새 DB에 task 모드로 배포 시 SQL 예제 AI 추가가 성공 토스트만 뜨고 생성 안 됨, 상태 조회 500 반복 — task 모드 상태 검사가 loop 전용 `background_worker_leases`를 조회하던 것을 생략, 복구 훅(러너 재기동)도 loop 모드에서만 → [[decisions/051-collection-lease-table-loop-only]], [[issues/collection-health-lease-table-missing-on-fresh-db]]
+- [x] test: `tests/sql_examples/test_collection_health_execution_mode.py` 3건, 실제 PostgreSQL 새 DB(`init_schema()`만)에서 수정 전 오류 재현·수정 후 정상 확인
+- [x] docs: `docs/collection-runner-orchestrator-migration.md` §10 후속 수정·남은 과제, F13 정정
+- [x] PR: 백엔드 #185 (커밋 4개)
+- 세션: [[sessions/2026-10-20-collection-health-task-mode-lease]]
+
+### 다음
+
+- [ ] PR #185 리뷰·머지 후 운영 배포
+- [ ] 수집 시작 시 예상 밖 오류도 실패로 응답·표시 (지금은 200 + `status: "error"` → 성공 토스트)
+- [ ] 수집 작업 정리를 경과 시간 기준에서 생존 신호 기준으로 — 대상 DB 수집 함수 `to_thread` 이동, 작업 행 생존 신호, `run_job` 전체 타임아웃, 수집 시작·상태·이력 조회 시 판정, 기동 시 시간 기준 정리 삭제 → [[knowledge/patterns/job-liveness-owner-finalizes-reader-expires]]
+- [ ] (검토) `schema.py` 관리 — 테이블 생성 위치 검사 테스트, 빈 DB 설치 테스트, `init_schema()` advisory lock, 이후 버전 번호 마이그레이션
+- [ ] (검토) 서버 기동 코드 두 벌(`src/main.py`·`src/dna/app/lifecycle.py`) 통합 — 정리 기준(60초/600초)·복구 훅 등록이 서로 다름
+- [ ] `tests/sql_examples/test_sql_collectors_routes.py` 기존 깨짐 정리 (삭제된 함수 import)
+
+## 2026-10-23 — 도구 접근 제어·화면 정보 표시 분리와 도구별 세부 조정 (`feat/tool-management`)
+
+- [x] feat: 도구 접근 제어는 실행만(LLM 노출·실행), 그룹별 화면 정보 표시는 표시만 담당 — 결과 표시에서 실행 권한 판정 제거, 표시 판정 5곳을 `_can_show` 하나로
+- [x] feat: 화면 표시 항목 정리 — 진행 단계·실행 상세·결과 화면(신규)·에러 상세·답변 스트리밍. 에러 상세를 끄면 실행 카드도 "도구 실패"만, 질문 확인 카드는 항상 표시
+- [x] feat: 도구별 세부 조정 — `tool_display_overrides` 테이블·API, 팝업(기본값 → 표시 → 숨김, 예외 수·변경 점, 질문 카드 잠금)
+- [x] feat: 결과 화면 권한 첫 기동 때 전 그룹 부여(표식 방식, 재시작해도 관리자 설정 유지), 새 그룹 기본 권한, 화면 정보 표시에도 신규 그룹 기본 열(진행 단계·결과 화면 기본 켜짐)
+- [x] feat: 메모리 결과 항목 제거 → 사례 검색 결과도 결과 화면 기준, 사례 저장 결과 카드
+- [x] fix: 대화를 다시 열 때 답변 스트리밍 권한 적용, 권한 표 그룹 순서를 그룹 탭과 통일
+- [x] fix: 시스템 프롬프트 기반 문구가 첫 요청 때 고정돼 도구를 켜고 꺼도 옛 도구 목록이 남던 문제 — 도구 구성별 캐시
+- [x] refactor: 프롬프트 도구 안내를 "단계 → 필요한 도구" 표로, 꺼진 도구 안내 제거. 골든은 운영 도구 구성(6개) 기준
+- [x] feat: 메모리 도구가 켜져 있으면 사례 검색(STEP 0)·저장 안내, 저장 도구 설명 구체화 → 성공 SQL 저장 확인
+- [x] style: 인프라 탭 카드 순서(감사 → 도구 접근 제어 → 화면 정보 표시 → 비용 예측기), ⓘ 툴팁, 예외 글자 primary
+- [x] docs: 관리자 매뉴얼, 설계 문서 3개(`server-settings-design.md`, `settings-ui-design.md`, 웹 `admin-design.md`) 현재 화면·`ApplyMode` 기준 정리
+- [x] PR: 백엔드 #186, 웹 #107
+- 결정: [[decisions/052-tool-access-vs-ui-display-separation|ADR-052]]
+- 세션: [[sessions/2026-10-23-tool-access-ui-display-separation]]
+
+### 다음
+
+- [ ] PR #186 · #107 리뷰·머지 (백엔드 먼저)
+- [ ] `describe_schema` 호출 깨짐 수정 — 호출 문장 예시 설명형 + 깨진 형식 복구 안전장치 → [[issues/describe-schema-tool-call-syntax-in-name]]
+- [ ] 설정 메뉴 탭 개편 (보안·에이전트·검색·모델·라이센스 5개 탭 안)
+- [ ] 메모리 도구 정제 — 같은 질문 중복 저장, 옛 `visualize_data` 기록(`x_col`/`filename`), dadap MEMORY SYSTEM 안내와 STEP 3 충돌
+- [ ] 긴 대화(메시지 30~35개 이상)에서 도구 없이 답을 지어내는 문제 조사
+- [ ] PDF 보고서에 답변 스트리밍 권한 적용
+- [ ] 질문 확인 카드 예외 목록을 백엔드 한 곳에서 내려주기 (지금 백엔드·프론트 상수 두 곳)
+- [ ] 보안·AI/RAG 탭 설계 문서 세부 필드 대조
+
+## 2026-11-03 — Altibase 한글·문자셋, 행 제한 문법, 값 프로파일, 보고서 404 (`fix/altibase-korean-identifiers` → main 직접 반영)
+
+- [x] fix: 데이터 탐색 `need to escape`·`utf-16-le` — unixODBC가 UTF-8 로케일에서 한글 컬럼명 길이를 바이트 수로 넘김. 컨테이너 `LC_ALL=C` + `PYTHONUTF8=1` → [[issues/altibase-utf8-locale-column-name-nul]]
+- [x] fix: 컬럼명 NUL 정리·원본 경고 로그, 문자 변환 오류 메시지에 사유·재시도 방향, Altibase 오류 메시지 속 한글 복원
+- [x] fix: 마스킹 `SELECT *` 확장 시 한글 컬럼명 깨짐(42S22)·한글 규칙 마스킹 누락
+- [x] fix: 데이터 구조 검색 도구가 한글 테이블명을 식별자 오류로 거부
+- [x] fix: DB가 실행 못 하는 행 제한 문법(Oracle `LIMIT`, Altibase·MySQL·SQLite `FETCH`)을 대체 문법 안내와 함께 거절 + 프롬프트 DB별 행 제한 한 줄
+- [x] fix: 값 프로파일 제외 테이블(`스키마.테이블`) 미적용 → 판정 통일, 재생성 시 남은 트리플 5,000행씩 삭제, COUNT·PK·L4·연결 끊김 로그
+- [x] feat: 값 프로파일 이름 컬럼 접미어 `명`·`명칭`·`이름`
+- [x] fix: PDF 보고서 404·마지막 질문 결과 누락 — 답변 끝까지 읽기, 메시지별 슬라이드는 행 ID 목록 비교 → [[issues/report-reads-only-first-row-of-answer]]
+- [x] feat: `/data-tour` 기본 커맨드 자동 등록
+- [x] 원격 main 반영 (`63b5215`까지 14커밋, 브랜치 추적 실수로 리뷰 없이 반영 — 그대로 유지)
+- 결정: [[decisions/053-altibase-container-c-locale|ADR-053]], [[decisions/054-row-limit-reject-with-hint|ADR-054]]
+- 세션: [[sessions/2026-11-03-altibase-korean-charset-row-limit-report]]
+
+### 다음
+
+- [ ] 개발 서버 배포 후 지식 베이스 검색 시간 확인 (로컬 도커 에뮬레이션에서 30~50초, 운영 1~2초 기대)
+- [ ] RICS에서 `need to escape`·`utf-16-le` 재발 여부 확인, RICS 값 프로파일 재생성(`force=true`)
+- [ ] (보안) 데이터 탐색 결과에 마스킹 미적용
+- [ ] (보안) 프롬프트 VALUE MAPPING이 사용자별 차단 테이블을 거르지 않음
+- [ ] 테스트 자원 정리 — 로컬 `altibase-aplus`·`dna-sql-agent-main`·이미지, 공유 DB 커넥션 `altibase-aplus-local`·시스템 `altibase-korean-test`, 원격 브랜치 `fix/altibase-korean-identifiers`
+- [ ] Altibase 기술지원 문의 — ODBC 클라이언트 W 함수 미제공(추적 로그·재현 스크립트 첨부)
+- [ ] main 브랜치 보호 규칙 검토
+- [ ] (참고) 고정 길이 문자형 코드 끝 공백, PK 없는 코드표·뷰 지원, value profile COUNT 상한
 
 ## 블로커
 

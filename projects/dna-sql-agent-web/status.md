@@ -1,7 +1,7 @@
 ---
 type: project-status
 project: dna-sql-agent-web
-updated: 2026-10-01
+updated: 2026-10-28
 phase: active
 ---
 
@@ -330,11 +330,21 @@ phase: active
 - [x] (이월 해소) 바로 반영/적용 반영 구분 — 배너 ※ 안내로 구현
 - [x] 백엔드 문서 갱신: `architecture-review.md`, `server-settings-design.md` §9, `settings-ui-design.md` §10
 
+## 완료된 것 (2026-10-28 — mobigen 서버(구 dev) 도메인·공인 인증서)
+
+세션: [[sessions/2026-10-28-mobigen-domain-certificate-swap]]
+
+- [x] mobigen 서버(구 dev) 공인 인증서 적용 — `/home/dnadev/ca/server.crt`·`server.key` 교체 + nginx reload, 사설 CA는 `ca-old/`로 이동
+      → [[decisions/020-mobigen-domain-public-cert-file-swap]]
+
 ## 진행 중
 
 - [ ] 백엔드 `fix/settings-apply-timing`(3커밋)·웹 `refactor/settings-save-banner`(3커밋) push·PR (함께 배포)
 
 ## 다음 할 일
+
+- [ ] (신규 2026-10-28) ADR-020 mobigen 서버 정보(도메인·IP·발급처·만료일) 채우기, 만료일 캘린더 등록
+- [ ] (신규 2026-10-28) `ca-old/` 사설 CA 다른 서비스 참조 여부 확인 후 정리
 
 - [ ] (신규 2026-10-01) PR #172 머지 후 업로드 → 취소 → 재업로드 흐름 실사용 확인
 - [ ] (신규 2026-10-01) 관계 정보가 실제로 실패하면 관계 FAQ 건너뛰기 (한 줄)

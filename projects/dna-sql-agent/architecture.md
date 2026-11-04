@@ -75,12 +75,16 @@ src/
   │     └─ SQL 생성 또는 일반 응답
   │
   ├─ 5. 도구 실행 (SQL인 경우)
+  │     ├─ 도구 실행 권한 (도구 접근 제어, group_permissions category=tool) — 없으면 LLM 노출·실행 모두 차단
   │     ├─ SQL 가드레일 검사 (SELECT 전용, ROWNUM 제한)
   │     ├─ 데이터 마스킹
   │     ├─ Oracle/Postgres 실행 → DataFrame
   │     └─ 차트 시각화 (옵션) — ECharts / DevExtreme / Plotly
   │
-  ├─ 6. Qdrant 메모리 저장 (질문-SQL-결과 쌍)
+  ├─ 6. 화면 표시 판정 (그룹별 화면 정보 표시 + 도구별 예외 tool_display_overrides)
+  │     └─ 진행 단계·실행 상세·결과 화면·에러 상세·답변 스트리밍별로 보낼 컴포넌트 결정. 실행에는 영향 없음 ([[052-tool-access-vs-ui-display-separation]])
+  │
+  ├─ (사례 저장 도구가 불리면) Qdrant 메모리에 질문-도구-인자 저장
   │
   └─ 7. SSE 스트림으로 응답 반환
         └─ Langfuse 트레이싱, audit.log 기록
@@ -95,6 +99,8 @@ src/
 | GET | `/health` | 헬스체크 |
 | GET | `/api/v1/commands` | 사용자가 쓸 수 있는 슬래시 커맨드 목록 |
 | GET·POST·PATCH·DELETE | `/api/v1/commands/admin` | 슬래시 커맨드 관리 (관리자) |
+| GET·PUT | `/api/v1/group-permissions/{tool\|ui_feature}` | 그룹별 도구 실행 권한·화면 표시 권한 (관리자) |
+| GET·PUT | `/api/v1/group-permissions/tool-display/overrides` | 도구별 화면 표시 예외 (관리자) |
 
 외부 포트: **18000** (Docker) → 내부 8000 (FastAPI)
 
@@ -124,3 +130,4 @@ src/
 - [[034-defaults-as-config-validation-spec]] — `defaults/*.json` 이 초기값이자 `config/*.json` 검증 스펙, 기동 시 대조해 불일치면 중단
 - [[041-slash-commands-db-registry]] — 슬래시 커맨드 정의는 DB에, 실행 로직만 코드에
 - [[043-command-result-dedicated-component]] — 항목별 동작이 있는 커맨드 결과는 전용 컴포넌트로
+- [[052-tool-access-vs-ui-display-separation]] — 도구 접근 제어는 실행만, 그룹별 화면 정보 표시는 표시만, 도구별 예외는 별도 테이블

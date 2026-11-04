@@ -127,6 +127,7 @@ sudo update-ca-certificates
 - nginx 컨테이너가 443 → localhost:28001 프록시 역할
 - **CORS 이슈 발생**: 브라우저가 직접 API 서버를 호출하는 구조에서 origin이 `http://` → `https://`로 바뀌어 CORS 오류 발생 → API 서버 CORS 정책에 `https://<서버IP>` 추가하여 해결
 - 인증서 만료(1년) 시 `server.key`, `server.crt`만 재발급, CA는 재사용
+- 2026-10-28 mobigen 서버는 도메인 연결로 공인 인증서로 전환 → [[020-mobigen-domain-public-cert-file-swap]]
 
 ## 참고 자료
 

@@ -61,6 +61,7 @@ goal: "자연어 질문을 SQL로 변환하여 Oracle/Postgres DB 결과를 반�
 | [[decisions/030-deploy-package-separate-repo\|030]] | 고객사 배포 패키지를 별도 저장소로 분리 | accepted |
 | [[decisions/032-connection-info-env-single-source\|032]] | 접속정보의 출처를 `.env` 하나로 고정 | accepted |
 | [[decisions/041-slash-commands-db-registry\|041]] | 슬래시 커맨드 정의는 DB에, 실행 로직만 코드에 | accepted |
+| [[decisions/052-tool-access-vs-ui-display-separation\|052]] | 도구 접근 제어는 실행만, 화면 정보 표시는 표시만 — 도구별 예외는 별도 테이블 | accepted |
 
 주요 항목만 발췌. 전체 43건은 `decisions/` 폴더 참조.
 

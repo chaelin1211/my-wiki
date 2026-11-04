@@ -46,3 +46,32 @@ project: dna-sql-agent
 
 - 2026-09-22 SQL 예제 AI 생성이 "작업을 처리하지 못했습니다"로 실패 → task 모드 러너(`get_collection_runner`)가 `CollectionRunner()`를 인자 없이 만들어 설정 작업 테이블(`sql_collection_jobs_v2`) 대신 기본 `sql_collection_jobs`를 조회. 설정 테이블 이름 전달로 수정(`7be2643`)
 - 2026-09-22 SQL 예제 AI 생성이 오류 없이 "완료 0건" → 대상 DB `shared_preload_libraries`에 `pg_stat_statements` 없음. 수집기가 예외를 로그로만 남기고 빈 목록 반환해 원인이 화면에 안 보임 → [[knowledge/troubleshooting/sql-history-collection-prerequisites]]
+- 2026-10-08 띄어 쓴 영어 검색어("sales report", "list of")가 대화 검색에서 0건 → 검색어 공백을 모두 지우고 한글 옆에만 `\s*`를 넣는 규칙이라 영어 단어가 붙어 버림. 검색어에 띄어 쓴 자리에도 `\s*` 허용(백엔드 #175 `25c7f14`, 웹 #100 `0eee752`). 붙여 쓴 영어 검색어로 띄어 쓴 본문 찾기는 미결
+- 2026-10-08 대화 검색창에 시스템 내부 이름이 그대로 노출 → 검색 결과에 커넥션 이름이 없어 채팅 목록처럼 `(connection_name, system_name)` 쌍으로 표시명을 찾을 수 없었음. 검색 결과에 `connection_name` 추가 후 같은 `getSystemDisplayName` 사용(백엔드 #175 `f36f804`, 웹 #100 `ddb9c0f`)
+- 2026-10-08 지도에 `전남광주통합특별시` 데이터가 표시되지 않음 → 경계 데이터가 통합(2026-07-01) 이전 기준. 전라남도 별칭으로 붙이면 광주 자리가 구멍으로 남아(전남 폴리곤이 광주를 비운 도넛 모양) 전남 폴리곤의 구멍을 메운 통합시 폴리곤을 따로 추가, 옛 광주·전남과 공존(#176 `0030c3f`)
+- 2026-10-08 대시보드 위젯 새로고침이 실패해도 표시 없이 예전 차트·예전 시각 유지 → 웹 `catch {}` 로 오류 무시, 백엔드는 데이터 변경도 500. 실패 원인 구분(`CONNECTION_FAILED`·`QUERY_FAILED`·`CHART_MISMATCH`, 원문은 로그만) + 새로고침 아이콘 `!` 툴팁·테두리 강조(#176 `0975a40`, 웹 #101 `34ee8ad`)
+- 2026-10-12 위젯 새로고침 툴팁이 hover해도 `!` 가 안 사라지거나 깜빡이며 사라짐 → 강제로 열어 둔 Radix 툴팁의 hover·자기 닫힘·가장자리 pointerleave 문제. 열림을 버튼 hover·focus로만 정하고 툴팁에 `pointer-events-none`(웹 #101 `b5dd54b`) → [[knowledge/troubleshooting/radix-tooltip-forced-open-hover]]
+- 2026-10-19 72바이트 넘는 비밀번호(한글 약 25자)로 가입·변경·로그인 시 500 → bcrypt 5.0이 초과 입력에 예외. 새 비밀번호 72바이트 제한 + 확인은 앞 72바이트 비교(백엔드 `8133efc`, 웹 `f8567ab`) → [[knowledge/troubleshooting/bcrypt-72-byte-limit]]
+- 2026-10-19 가입일 정렬 추가 후 사용자 목록 API `column "joined_at" does not exist` → ORDER BY 식 안에서 별칭 사용. 계산식을 직접 넣음(백엔드 `5cf2d94`), 가짜 DB 테스트로는 못 잡아 실제 DB로 함수 호출해 확인 → [[knowledge/troubleshooting/postgres-order-by-alias-in-expression]]
+- 2026-10-19 승인·거절 기록 SQL에서 asyncpg `inconsistent types deduced for parameter $1` → 같은 `$1` 을 `status = $1` 과 `CASE WHEN $1 = ...` 에 사용. `$1::varchar` 로 명시
+- 2026-10-19 생년월일 칸에 없는 날짜(11월 31일 등)를 넣으면 화면엔 날짜가 보이는데 버튼이 안 켜지거나, 선택 항목이면 "생년월일 없음"으로 저장 → 브라우저가 값을 빈 문자열로 넘김. 회원가입·마이페이지는 제출 시 `validity.badInput` 확인(웹 `adb6faf`) → [[knowledge/troubleshooting/html-date-input-invalid-date-empty-value]]
+- 2026-10-19 초기화 요청 버튼을 날짜 없이도 켜 두자 엔터로 바로 제출 → 버튼이 꺼져 있으면 브라우저가 엔터 제출을 막던 동작이 사라짐. 생년월일 방식은 값 있을 때만 활성화로 되돌리고 초기화 요청 화면은 모든 칸 엔터 제출 막음(웹 `52c78af`)
+- 2026-10-19 초기화 요청 이력에 확정되지 않은 "90일 보관"을 정책처럼 넣음 → 제안만 했던 값을 구현. 삭제 코드·문구·매뉴얼 모두 제거, 보관 정책은 미정으로 남김
+- 2026-10-19 Altibase 한글 컬럼명 원인을 `SQL_WMETADATA` 디코딩 누락으로 가정하고 수정 → 영문은 원래 정상이라 모순, 되돌린 뒤 실서버 `cursor.description` 원본을 코드포인트로 확인하고 확정
+- 2026-10-19 맥 전용 설정(`PIP_CFLAGS`, CPU판 torch)을 공용 `Dockerfile.local`에 넣음 → 공용은 Altibase 클라이언트 설치만 남기고 개인 `Dockerfile.local.mac`(`.git/info/exclude`)로 분리
+- 2026-10-19 수정 전 비교용 이미지 빌드가 pip 캐시를 못 탐 → 중간에 추가한 CPU판 torch RUN 줄 때문에 레이어 무효화
+- 2026-10-20 task 모드 lease 오류를 분석하며 "같은 시스템 동시 요청 시 작업 중복 생성"이라고 판단 → 작업 생성 트랜잭션이 `pg_advisory_xact_lock('sql_collection:{system_id}')`로 이미 직렬화, 문서에서 정정
+- 2026-10-20 "죽은 수집 작업은 수동 취소 전까지 영구 409"라고 판단 → 수집 시작 시 600초 넘은 running을 자동 마감(`_recover_stale_active_collection_jobs_for_system`), 최대 10분만 막힘
+- 2026-10-20 "기동 시 정리는 600초 기준"이라고 `lifecycle.py`만 보고 판단 → 실제 배포 경로 `main.py`는 orphan grace 60초 기준
+- 2026-10-20 "수집 시작이 실패하면 다 200"이라고 과장 → 404·409·503은 정상 오류 코드, 예상 밖 예외만 200 + `status: "error"`
+- 2026-10-20 ADR을 050번으로 만들었는데 10-19 세션의 `050-dna-ask-link-render-normalization`과 번호가 겹침 → 새 ADR 전에 `decisions/`의 최대 번호를 직접 확인, 052로 변경
+- 2026-10-21 메모리 컬렉션을 `scroll(limit=200)` 한 번만 보고 "메모리가 비어 있다", "같은 질문은 1건만 저장"이라고 단정 → 실제 1,143건·3건 중복, 끝까지 페이지 넘겨 세야 함
+- 2026-10-22 회귀 비교로 `tests/admin` 전체를 돌려 `license_files/license.json`이 또 테스트 값으로 덮어써짐 → `license.key`로 복구, 이후 `--ignore=tests/admin/test_license.py`와 라이선스 파일 해시 확인으로 실행
+- 2026-10-22 일부 파일만 stash하려던 `git stash push -- <경로>`가 없는 경로 때문에 오류를 내면서 전체 변경이 stash로 들어감 → stash 목록으로 확인 후 복원, 경로 지정 stash 대신 커밋 시점 파일을 직접 만들어 나눠 커밋
+- 2026-11-03 데이터 구조 검색이 한글 테이블명을 `Invalid table identifier`로 거부 → 영문 전용 식별자 정규식, 유니코드 허용·따옴표 벗기기·재시도 금지 안내
+- 2026-11-03 마스킹 `SELECT *` 확장이 한글 컬럼명을 깨진 채 넣어 42S22, 한글 규칙은 마스킹이 조용히 빠짐 → 확장 컬럼명에 복원 미적용, 복원·NUL 정리·비식별자 이름 따옴표
+- 2026-11-03 값 프로파일이 화면에서 제외한 테이블까지 스캔(L4 실패 로그로 확인) → 화면은 `스키마.테이블` 저장, 프로파일은 테이블명만 비교. `should_skip_table`로 통일, 남은 트리플은 재생성 시 나눠 삭제
+- 2026-11-03 서버 컨테이너 안에서 임베딩 모델을 별도 프로세스로 올리다 OOM으로 서버 종료 → 무거운 실험은 별도 컨테이너에서, 메모리 여유 먼저 확인
+- 2026-11-03 중단된 회귀 확인 명령이 `git stash`까지 실행돼 커밋할 변경이 사라진 것처럼 보임 → stash 목록 확인 후 복원
+- 2026-11-03 `origin/main`에서 만든 브랜치가 main을 추적한 채 push해 커밋 13개가 리뷰 없이 원격 main에 반영 → `--no-track`으로 생성, push 대상 명시 (사용자 결정으로 유지)
+- 2026-11-04 `git fetch` 실패로 `&&` 뒤 브랜치 생성이 실행 안 됐는데 만들었다고 보고 → 연결 명령은 각 단계 결과를 확인하고 보고

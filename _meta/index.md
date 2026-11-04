@@ -1,6 +1,6 @@
 ---
 type: index
-updated: 2026-08-26
+updated: 2026-10-20
 ---
 
 # my-wiki — Index
@@ -24,11 +24,16 @@ updated: 2026-08-26
 - [[knowledge/tools/colima|Colima — macOS Docker 데몬 (바인드 마운트 권한 미강제 → 리눅스 전용 버그 재현 불가)]]
 - [[knowledge/tools/tailwind-shadcn-theming|Tailwind CSS v4 + shadcn/ui 테마 구조]]
 - [[knowledge/tools/keyless-map-tile-providers|키 없이 쓸 수 있는 지도 타일 제공처 — 래스터/벡터 선택지와 함정]]
+- [[knowledge/tools/altibase-aplus-docker|Altibase 로컬 Docker — Docker Hub 이미지는 라이선스 필요, A+ Edition 설치본으로 직접 구성]]
 
 ### 작업 규칙
 - [[knowledge/pr-rule|PR 작성 규칙]]
 
 ### 패턴
+- [[knowledge/patterns/job-liveness-owner-finalizes-reader-expires|비동기 작업 정리 — 끝내는 건 실행 주체, 죽음 판정은 읽는 쪽이 생존 신호로]]
+- [[knowledge/patterns/one-time-permission-seed-marker|새 권한 항목은 "행이 없으면 넣기"가 아니라 표식으로 한 번만 부여 — 관리자 해제를 재시작이 되살리지 않게]]
+- [[knowledge/patterns/keep-stale-results-while-loading|검색 중에도 이전 결과 유지 — 목록 깜빡임 없애기]]
+- [[knowledge/patterns/sync-derived-state-during-render|prop에서 파생한 편집 state는 effect가 아니라 렌더 중에 맞춘다]]
 - [[knowledge/patterns/cross-worker-settings-signal-on-apply|멀티 워커 설정 전파 — 신호는 "적용" 시점에만, 신호 종류는 목적별로]]
 - [[knowledge/patterns/hf-model-ship-local-dir-not-hub-cache|폐쇄망에 모델 넣기 — HF 캐시가 아니라 flat 디렉터리로]]
 - [[knowledge/patterns/empty-state-ambiguity-record-dont-infer|"비어 있음"을 신호로 쓰지 않기 — 추론하지 말고 기록한다]]
@@ -58,7 +63,13 @@ updated: 2026-08-26
 - [[knowledge/patterns/llm-tool-schema-mirrors-implementation|LLM 도구 스키마가 구현을 그대로 비추게 하기 — 능력이 조건부일 때 양방향 어긋남 막기]]
 - [[knowledge/patterns/runtime-config-via-server-route|배포처마다 다른 화면 설정은 빌드가 아니라 서버 라우트에서 — NEXT_PUBLIC_ 은 빌드에 박힌다]]
 
+- [[knowledge/patterns/llm-tool-reject-with-fix-hint|LLM이 만든 입력이 틀리면 고치지 말고 대신 쓸 형태와 함께 거절 — 반복 실수는 프롬프트 한 줄로]]
 ### 트러블슈팅
+- [[projects/dna-sql-agent/issues/collection-health-lease-table-missing-on-fresh-db|dna-sql-agent: 새 DB에서 SQL 예제 AI 추가가 성공 토스트만 뜨고 생성 안 됨 — task 모드가 loop 전용 lease 테이블 조회 (해결)]]
+- [[knowledge/troubleshooting/runtime-created-table-missing-on-fresh-db|실행 중에 만드는 테이블은 새 DB에서만 터진다 — 기존 환경 E2E로는 못 잡음]]
+- [[projects/dna-sql-agent/issues/describe-schema-tool-call-syntax-in-name|dna-sql-agent: describe_schema 호출이 문장째 도구 이름으로 들어가 "not found" — 프롬프트의 호출 문장 예시를 모델이 베낌 (수정 대기)]]
+- [[knowledge/troubleshooting/llm-behavior-replay-ablation|LLM 이상 동작은 실패한 요청을 그대로 재전송하고 요소를 하나씩 빼서 좁힌다]]
+- [[projects/dna-sql-agent/issues/search-target-merged-message-row-id|dna-sql-agent: 검색 결과로 연 대화가 답변 일치 위치로 이동하지 않음 (해결)]]
 - [[knowledge/troubleshooting/sqlite-connection-shared-across-asyncio-threads|asyncio 에서 SQLite 연결을 보조 스레드로 넘길 때 — check_same_thread 와 progress handler 타임아웃]]
 - [[knowledge/troubleshooting/merge-keep-ours-silently-reverts-other-features|오래된 브랜치 머지에서 다른 기능이 조용히 되돌아간다 — keep ours 와 git log -m]]
 - [[projects/dna-sql-agent/issues/relation-faq-sqlite-cross-thread|dna-sql-agent: 관계 FAQ 생성 시 SQLite 스레드 오류 (해결)]]
@@ -170,10 +181,31 @@ updated: 2026-08-26
 - [[knowledge/troubleshooting/frontend-local-id-vs-backend-id|프론트엔드 로컬 ID vs 백엔드 ID 불일치로 인한 API 404]]
 - [[knowledge/troubleshooting/react-grid-layout-typescript-setup|react-grid-layout TypeScript 설정 트러블슈팅]]
 - [[knowledge/troubleshooting/shadcn-destructive-foreground-color-mismatch|shadcn — destructive-foreground 오설정 시 레드 on 레드]]
+- [[knowledge/troubleshooting/radix-tooltip-forced-open-hover|Radix 툴팁을 강제로 열어 둘 때 — hover 미감지·자기 닫힘·가장자리 깜빡임]]
+- [[knowledge/troubleshooting/patch-dict-sys-modules-drops-new-imports|patch.dict(sys.modules) 가 테스트 중 새로 import된 모듈까지 지운다 — monkeypatch.setitem 사용]]
+- [[knowledge/troubleshooting/bcrypt-72-byte-limit|bcrypt 72바이트 제한 — 5.0부터 초과 입력에 예외(한글 약 25자), 검증은 바이트 기준·확인은 앞 72바이트]]
+- [[knowledge/troubleshooting/postgres-jsonb-object-key-order|PostgreSQL JSONB는 객체 키 순서를 보존하지 않는다 — 순서는 배열로 따로]]
+- [[knowledge/troubleshooting/odbc-column-names-byte-widened-mojibake|ODBC 결과 컬럼명이 바이트 단위로 넓혀져 한글만 깨진다 — 읽는 지점에서 복원]]
+- [[projects/dna-sql-agent/issues/altibase-odbc-korean-column-names-byte-widened|dna-sql-agent: Altibase 결과 표 한글 컬럼명 깨짐, 벡터화 예시 값 누락 (해결)]]
+- [[projects/dna-sql-agent/issues/result-table-column-order-lost-after-jsonb-reload|dna-sql-agent: 다시 연 대화의 결과 표 컬럼 순서가 SQL과 다름 (해결)]]
+- [[knowledge/troubleshooting/html-date-input-invalid-date-empty-value|<input type="date"> — 없는 날짜는 화면엔 보여도 값이 빈 문자열, validity.badInput 으로 확인]]
+- [[knowledge/troubleshooting/postgres-order-by-alias-in-expression|PostgreSQL ORDER BY 별칭은 단독으로만 — 식 안에서는 계산식 직접, 가짜 DB 테스트로는 못 잡음]]
 
+- [[knowledge/troubleshooting/git-branch-from-origin-main-pushes-to-main|origin/main에서 만든 브랜치 push가 원격 main을 갱신 — --no-track·push 대상 명시]]
+- [[projects/dna-sql-agent/issues/altibase-utf8-locale-column-name-nul|dna-sql-agent: Altibase 데이터 탐색 `need to escape`·`utf-16-le` 반복 — UTF-8 로케일에서 unixODBC 변환 길이 오류 (해결)]]
+- [[projects/dna-sql-agent/issues/report-reads-only-first-row-of-answer|dna-sql-agent: 결과 있는 대화의 PDF 404·마지막 질문 누락 — 답변 첫 행 ID까지만 읽음 (해결)]]
 ### 주요 결정 (ADR)
+- [[projects/dna-sql-agent-web/decisions/020-mobigen-domain-public-cert-file-swap|mobigen 서버(구 dev) 도메인 연결 — 공인 인증서는 기존 마운트 경로에 파일만 교체 (공유 nginx.conf 유지)]]
 - [[projects/dna-sql-agent/decisions/045-connections-owner-user-id-personal-dataset|개인 데이터셋 구분은 connections.owner_user_id — 이름 prefix 는 공용 sqlite 연결과 충돌]]
 - [[projects/dna-sql-agent/decisions/046-settings-reload-signal-on-apply-only|설정 리로드 신호는 "설정 적용" 시점에만 — 저장=적용 방지, 표식은 공유 파일]]
+- [[projects/dna-sql-agent/decisions/047-tool-display-name-fixed-enum|도구 표시명은 dna 쪽 고정 enum 한 곳에서 — 설정·도구 클래스가 아닌 이유]]
+- [[projects/dna-sql-agent/decisions/048-password-reset-identity-and-full-history|비밀번호 초기화 요청 — 이름 또는 생년월일로 본인 확인, 응답 동일, 모든 요청 이력 저장(입력값 제외)]]
+- [[projects/dna-sql-agent/decisions/049-signup-review-record-and-joined-at|가입 경로·승인 기록은 users 칼럼에, 가입일은 승인 시각 기준]]
+- [[projects/dna-sql-agent/decisions/052-tool-access-vs-ui-display-separation|도구 접근 제어는 실행만, 그룹별 화면 정보 표시는 표시만 — 도구별 예외는 별도 테이블, 결과 화면 항목 신설, 메모리 결과 통합]]
+- [[projects/dna-sql-agent/decisions/053-altibase-container-c-locale|Altibase 한글 컬럼명 깨짐은 컨테이너 로케일 C(+PYTHONUTF8)로 해결 — MS949 우회·JDBC 대신]]
+- [[projects/dna-sql-agent/decisions/054-row-limit-reject-with-hint|DB가 실행 못 하는 행 제한 문법은 고치지 않고 대체 문법 안내와 함께 거절 + 프롬프트 한 줄]]
+- [[projects/dna-sql-agent/decisions/050-dna-ask-link-render-normalization|후속 질문 링크 형식은 화면에서 렌더 직전에 보정 — 프롬프트 강화 대신]]
+- [[projects/dna-sql-agent-web/decisions/018-in-chat-search-highlight-render-time-mark|대화 내 검색어 하이라이트 — 렌더링 시 <mark>, 브라우저 찾기 관례(일치 노랑·현재 주황)]]
 - [[projects/dna-sql-agent-web/decisions/017-settings-banner-global-save-and-apply-hint|관리자 설정 배너 — 전체 탭 기준 단일 저장 + 반영 방식 안내]]
 - [[projects/dna-sql-agent/decisions/040-keyless-raster-basemap|기본 지도 배경은 키 없는 래스터(Esri) — 납품 제품의 기본값은 계정에 묶이지 않게]]
 - [[projects/dna-sql-agent/decisions/041-slash-commands-db-registry|슬래시 커맨드 정의는 DB에, 실행 로직만 코드에 — builtin·text·skill, public·admin]]
@@ -188,6 +220,7 @@ updated: 2026-08-26
 - [[projects/dna-sql-agent-web/decisions/004-sse-done-event-message-id|SSE done 이벤트에서 필요 ID 직접 수신 (타이밍 레이스 제거)]]
 - [[projects/dna-sql-agent-web/decisions/006-optimistic-update-permission-matrix|권한 매트릭스 셀 토글 옵티미스틱 업데이트]]
 - [[projects/dna-sql-agent-web/decisions/016-sql-block-keep-dual-parse-prism-sql-formatter|SQL 카드 하이라이팅 — Prism+sql-formatter 이중 파싱 구조 유지 (파싱 1회 최적화보다 안정성 우선)]]
+- [[projects/dna-sql-agent/decisions/051-collection-lease-table-loop-only|수집 러너 lease 테이블은 loop 모드 전용 — task 모드는 조회·복구 훅 생략, schema.py 추가 안 함]]
 
 ### 프롬프팅
 - [[knowledge/prompting/effective-instructions|Claude Code 효과적 지시법]]

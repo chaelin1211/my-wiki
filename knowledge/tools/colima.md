@@ -2,7 +2,7 @@
 type: knowledge
 tags: [docker, colima, macos, devops]
 created: 2026-07-24
-updated: 2026-08-26
+updated: 2026-10-19
 ---
 
 # Colima (macOS Docker 데몬)
@@ -68,7 +68,20 @@ colima ssh          # VM(리눅스) 자체로 진입
 | 라이선스 머신 바인딩 | `/etc/machine-id`·`/proc` 부재 |
 | `linux/amd64` 성능 | Apple Silicon 에서는 QEMU 에뮬레이션 |
 
+## amd64 에뮬레이션 빌드 — gcc SIGSEGV와 느린 빌드
+
+`--platform linux/amd64` 빌드는 Rosetta를 켜지 않으면 QEMU 에뮬레이션으로 돈다(`colima status`에 `vz`만 보이고 rosetta 언급 없음).
+
+- **C 확장 컴파일 중 gcc가 `SIGSEGV`로 죽는다** — 예: `pip install mariadb` → `Failed building wheel for mariadb`(로그 위쪽에 `died with <Signals.SIGSEGV: 11>`). 패키지 문제가 아니라 에뮬레이션 문제. `CFLAGS=-O0`로 최적화를 끄면 빌드됨 → Dockerfile에서는 `ARG PIP_CFLAGS=` + `CFLAGS="$PIP_CFLAGS" pip install …`로 필요할 때만 넘김.
+- **근본 대책**: `colima stop && colima start --vm-type vz --vz-rosetta`(VM 재시작, 컨테이너 중지됨) 또는 x86 서버에서 빌드(`docker buildx create … ssh://서버` 원격 빌더, `docker save`/`load`).
+- **느린 원인 점검**: `requirements.txt`의 `--find-links …/cu118` 때문에 리눅스 빌드는 CUDA판 torch(수 GB)를 받는다. 맥 로컬용이면 CPU판(`--index-url https://download.pytorch.org/whl/cpu`)을 먼저 깔면 `torch==x.y.z`가 `+cpu`로도 충족돼 CUDA판을 다시 받지 않음. 다만 RUN 줄을 바꾸면 그 아래 캐시가 모두 무효화되므로, 이미 빌드해 둔 게 있으면 바꾸지 않는 편이 빠를 수 있음.
+- **exporting layers가 오래 걸림**: `--load`는 수 GB 레이어를 압축해 내보낸 뒤 Docker 저장소로 다시 풀어 넣는다. 끊으면 처음부터라 기다리는 게 낫다.
+- 진행 확인: `docker buildx history ls`, `docker buildx history logs <ID>`
+
+맥 전용 설정은 팀 공용 Dockerfile에 넣지 말고 개인 파일(`.git/info/exclude`로 제외)로 둔다.
+
 ## 관련 페이지
 
+- [[knowledge/tools/altibase-aplus-docker]]
 - [[knowledge/troubleshooting/docker-bind-mount-uid-mismatch]]
 - 사례: [[projects/dna-sql-agent-deploy/issues/embedding-model-not-found-despite-correct-mount]]

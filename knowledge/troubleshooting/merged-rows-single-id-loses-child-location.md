@@ -31,3 +31,4 @@ tags: [api, id-mismatch, 404, data-model, react]
 ## 실제 사례
 
 - [[projects/dna-sql-agent/issues/bookmark-component-row-mismatch-404]]
+- [[projects/dna-sql-agent/issues/search-target-merged-message-row-id]] — 같은 구조에서 재발(2026-10-08). 서버가 가리킨 일치 행으로 화면 항목을 찾지 못해 검색 결과 이동·강조 누락. 행 id로 화면 항목을 찾을 때는 포함 관계(`ownsBackendMessageId`)로 찾는다.
